@@ -46,6 +46,10 @@ let package = Package(
       from: "0.14.0"
     ),
     .package(
+      url: "https://github.com/IGRSoft/OpenCombineJS.git",
+      branch: "fix/jskit-0.54"
+    ),
+    .package(
       url: "https://github.com/google/swift-benchmark",
       from: "0.1.2"
     ),
@@ -115,6 +119,11 @@ let package = Package(
           package: "JavaScriptKit",
           condition: .when(platforms: [.wasi])
         ),
+        .product(
+          name: "OpenCombineJS",
+          package: "OpenCombineJS",
+          condition: .when(platforms: [.wasi])
+        ),
       ]
     ),
     .executableTarget(
@@ -127,13 +136,7 @@ let package = Package(
           condition: .when(platforms: [.wasi])
         ),
       ],
-      resources: [.copy("logo-header.png")],
-      linkerSettings: [
-        .unsafeFlags(
-          ["-Xlinker", "--stack-first", "-Xlinker", "-z", "-Xlinker", "stack-size=16777216"],
-          .when(platforms: [.wasi])
-        )
-      ]
+      resources: [.copy("logo-header.png")]
     ),
     .executableTarget(
       name: "TokamakStaticHTMLDemo",
