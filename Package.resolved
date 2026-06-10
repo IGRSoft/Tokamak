@@ -1,5 +1,5 @@
 {
-  "originHash" : "b1e887bc5fbe6d081b91c5d2daea307b1e3ef530ed56443559e8d3562ebfb073",
+  "originHash" : "d2d070411587accf5a70d8bfbe563a5117f4959cd803f639bfa58e3f0bde5b4f",
   "pins" : [
     {
       "identity" : "javascriptkit",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/IGRSoft/OpenCombineJS.git",
       "state" : {
-        "branch" : "fix/jskit-0.54",
-        "revision" : "bc071eefa7416996121d7b8cbde40a51e94f0f32"
+        "branch" : "main",
+        "revision" : "669de46201d424b63ab9570293700da52f11b7dc"
       }
     },
     {
