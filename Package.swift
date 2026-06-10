@@ -28,14 +28,6 @@ let package = Package(
       targets: ["TokamakStaticHTMLDemo"]
     ),
     .library(
-      name: "TokamakGTK4",
-      targets: ["TokamakGTK4"]
-    ),
-    .executable(
-      name: "TokamakGTKDemo",
-      targets: ["TokamakGTKDemo"]
-    ),
-    .library(
       name: "TokamakShim",
       targets: ["TokamakShim"]
     ),
@@ -84,37 +76,8 @@ let package = Package(
       name: "TokamakShim",
       dependencies: [
         .target(name: "TokamakDOM", condition: .when(platforms: [.wasi])),
-        .target(name: "TokamakGTK4", condition: .when(platforms: [.linux])),
         .target(name: "TokamakCore", condition: .when(platforms: [.android, .linux, .wasi, .windows])),
       ]
-    ),
-    .systemLibrary(
-      name: "CGTK4",
-      pkgConfig: "gtk4",
-      providers: [
-        .apt(["libgtk-4-dev", "gtk4"]),
-        .yum(["gtk4-devel"]),
-        .brew(["gtk4"]),
-      ]
-    ),
-    .target(
-      name: "TokamakGTK4CHelpers",
-      dependencies: ["CGTK4"]
-    ),
-    .target(
-      name: "TokamakGTK4",
-      dependencies: [
-        "TokamakCore", "CGTK4", "TokamakGTK4CHelpers",
-        .product(
-          name: "OpenCombineShim",
-          package: "OpenCombine"
-        ),
-      ]
-    ),
-    .executableTarget(
-      name: "TokamakGTKDemo",
-      dependencies: ["TokamakGTK4"],
-      resources: [.copy("logo-header.png")]
     ),
     .target(
       name: "TokamakStaticHTML",
