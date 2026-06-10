@@ -1,0 +1,5 @@
+.build
+.git
+.github
+**/.DS_Store
+docs
