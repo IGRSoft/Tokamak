@@ -47,7 +47,7 @@ let package = Package(
     ),
     .package(
       url: "https://github.com/IGRSoft/OpenCombineJS.git",
-      branch: "fix/jskit-0.54"
+      branch: "main"
     ),
     .package(
       url: "https://github.com/google/swift-benchmark",

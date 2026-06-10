@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends binaryen && rm 
 COPY . .
 
 # Bundle TokamakDemo to a browser ESM module + optimized .wasm via PackageToJS.
-RUN swift package --swift-sdk swift-6.3.2-RELEASE_wasm --disable-sandbox \
+# -j2 caps peak memory: JavaScriptKit 0.54's macros pull in swift-syntax, whose
+# parallel compile otherwise OOM-kills the BuildKit builder.
+RUN swift package -j 2 --swift-sdk swift-6.3.2-RELEASE_wasm --disable-sandbox \
       js --product TokamakDemo -c release --use-cdn \
  && cp docker/index.html .build/plugins/PackageToJS/outputs/Package/index.html
 
