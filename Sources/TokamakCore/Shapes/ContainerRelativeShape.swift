@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/6/21.
 //
 
+import CoreGraphics
 import Foundation
 
 public struct ContainerRelativeShape: Shape, EnvironmentReader {
@@ -64,7 +65,8 @@ extension ContainerRelativeShape: InsettableShape {
 
 private extension EnvironmentValues {
   enum ContainerShapeKey: EnvironmentKey {
-    static let defaultValue: (CGRect, GeometryProxy) -> Path? = { _, _ in nil }
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+    nonisolated(unsafe) static let defaultValue: (CGRect, GeometryProxy) -> Path? = { _, _ in nil }
   }
 
   var _containerShape: (CGRect, GeometryProxy) -> Path? {

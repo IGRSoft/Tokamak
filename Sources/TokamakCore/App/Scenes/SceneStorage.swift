@@ -20,7 +20,8 @@ import OpenCombineShim
 /// The renderer must specify a default `_StorageProvider` before any `SceneStorage`
 /// values are accessed.
 public enum _DefaultSceneStorageProvider {
-  public static var `default`: _StorageProvider!
+  // Single-threaded (Wasm/DOM) runtime: the renderer sets this once at startup.
+  nonisolated(unsafe) public static var `default`: _StorageProvider!
 }
 
 @propertyWrapper

@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 9/18/21.
 //
 
+import CoreGraphics
 import Foundation
 
 public extension GraphicsContext {

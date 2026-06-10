@@ -39,7 +39,8 @@ public protocol AnyColorBoxDeferredToRenderer: AnyColorBox {
   func deferredResolve(in environment: EnvironmentValues) -> AnyColorBox.ResolvedValue
 }
 
-public class AnyColorBox: AnyTokenBox, Hashable {
+// Single-threaded (Wasm/DOM) runtime: box hierarchy is effectively immutable and never shared across threads.
+public class AnyColorBox: AnyTokenBox, Hashable, @unchecked Sendable {
   public struct _RGBA: Hashable, Equatable {
     public let red: Double
     public let green: Double
@@ -79,7 +80,7 @@ public class AnyColorBox: AnyTokenBox, Hashable {
   }
 }
 
-public final class _ConcreteColorBox: AnyColorBox {
+public final class _ConcreteColorBox: AnyColorBox, @unchecked Sendable {
   public let rgba: AnyColorBox._RGBA
 
   override public func equals(_ other: AnyColorBox) -> Bool {
@@ -101,7 +102,7 @@ public final class _ConcreteColorBox: AnyColorBox {
   }
 }
 
-public final class _EnvironmentDependentColorBox: AnyColorBox {
+public final class _EnvironmentDependentColorBox: AnyColorBox, @unchecked Sendable {
   public let resolver: (EnvironmentValues) -> Color
 
   override public func equals(_ other: AnyColorBox) -> Bool {
@@ -123,7 +124,7 @@ public final class _EnvironmentDependentColorBox: AnyColorBox {
   }
 }
 
-public final class _OpacityColorBox: AnyColorBox {
+public final class _OpacityColorBox: AnyColorBox, @unchecked Sendable {
   public let parent: AnyColorBox
   public let opacity: Double
 
@@ -155,7 +156,7 @@ public final class _OpacityColorBox: AnyColorBox {
   }
 }
 
-public final class _SystemColorBox: AnyColorBox, CustomStringConvertible {
+public final class _SystemColorBox: AnyColorBox, CustomStringConvertible, @unchecked Sendable {
   public enum SystemColor: String, Equatable, Hashable {
     case clear
     case black

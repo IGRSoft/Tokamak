@@ -21,7 +21,8 @@ struct ToolbarKey: PreferenceKey {
     value = nextValue()
   }
 
-  final class ToolbarValue: Equatable {
+  // Single-threaded (Wasm/DOM) runtime: items never mutated nor shared across threads.
+  final class ToolbarValue: Equatable, @unchecked Sendable {
     let items: [AnyToolbarItem]
     init(_ items: [AnyToolbarItem]) {
       self.items = items

@@ -280,7 +280,8 @@ public final class FiberReconciler<Renderer: FiberRenderer> {
 
 public extension EnvironmentValues {
   private enum AfterReconcileKey: EnvironmentKey {
-    static let defaultValue: (@escaping () -> ()) -> () = { _ in }
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+    nonisolated(unsafe) static let defaultValue: (@escaping () -> ()) -> () = { _ in }
   }
 
   var afterReconcile: (@escaping () -> ()) -> () {

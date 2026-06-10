@@ -25,7 +25,8 @@ public struct WheelPickerStyle: PickerStyle {}
 public struct DefaultPickerStyle: PickerStyle {}
 
 enum PickerStyleKey: EnvironmentKey {
-  static var defaultValue: PickerStyle = DefaultPickerStyle()
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+  nonisolated(unsafe) static var defaultValue: PickerStyle = DefaultPickerStyle()
 }
 
 extension EnvironmentValues {

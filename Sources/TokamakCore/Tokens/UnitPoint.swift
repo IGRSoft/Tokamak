@@ -17,7 +17,7 @@
 
 import Foundation
 
-public struct UnitPoint: Hashable {
+public struct UnitPoint: Hashable, Sendable {
   public var x: CGFloat
   public var y: CGFloat
 

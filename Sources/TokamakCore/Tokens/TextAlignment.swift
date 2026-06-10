@@ -15,7 +15,7 @@
 //  Created by Max Desiatov on 30/12/2018.
 //
 
-public enum TextAlignment: Hashable, CaseIterable {
+public enum TextAlignment: Hashable, CaseIterable, Sendable {
   case leading,
        center,
        trailing
@@ -23,7 +23,8 @@ public enum TextAlignment: Hashable, CaseIterable {
 
 extension EnvironmentValues {
   private struct _MultilineTextAlignmentKey: EnvironmentKey {
-    static var defaultValue: TextAlignment = .leading
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+    nonisolated(unsafe) static var defaultValue: TextAlignment = .leading
   }
 
   public var multilineTextAlignment: TextAlignment {

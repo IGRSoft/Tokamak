@@ -15,7 +15,7 @@
 //  Created by Carson Katri on 7/31/20.
 //
 
-public struct RedactionReasons: OptionSet {
+public struct RedactionReasons: OptionSet, Sendable {
   public let rawValue: Int
   public init(rawValue: Int) {
     self.rawValue = rawValue

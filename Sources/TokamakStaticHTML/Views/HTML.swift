@@ -24,7 +24,7 @@ import TokamakCore
  [`setAttribute`](https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute) function.
  The `isUpdatedAsProperty` flag is used to disambiguate between these two cases.
  */
-public struct HTMLAttribute: Hashable {
+public struct HTMLAttribute: Hashable, Sendable {
   public let value: String
   public let isUpdatedAsProperty: Bool
 

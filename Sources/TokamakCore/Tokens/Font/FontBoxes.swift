@@ -34,7 +34,8 @@ public protocol AnyFontBoxDeferredToRenderer: AnyFontBox {
   func deferredResolve(in environment: EnvironmentValues) -> AnyFontBox.ResolvedValue
 }
 
-public class AnyFontBox: AnyTokenBox, Hashable, Equatable {
+// Single-threaded (Wasm/DOM) runtime: box hierarchy is effectively immutable and never shared across threads.
+public class AnyFontBox: AnyTokenBox, Hashable, Equatable, @unchecked Sendable {
   public struct _Font: Hashable, Equatable {
     public var _name: _FontNames
     public var _size: CGFloat
@@ -86,7 +87,7 @@ public class AnyFontBox: AnyTokenBox, Hashable, Equatable {
   }
 }
 
-public class _ConcreteFontBox: AnyFontBox {
+public class _ConcreteFontBox: AnyFontBox, @unchecked Sendable {
   public let font: ResolvedValue
 
   public static func == (lhs: _ConcreteFontBox, rhs: _ConcreteFontBox) -> Bool {
@@ -111,7 +112,7 @@ public class _ConcreteFontBox: AnyFontBox {
   }
 }
 
-public class _ModifiedFontBox: AnyFontBox {
+public class _ModifiedFontBox: AnyFontBox, @unchecked Sendable {
   public let provider: AnyFontBox
   public let modifier: (inout ResolvedValue) -> ()
 
@@ -144,7 +145,7 @@ public class _ModifiedFontBox: AnyFontBox {
   }
 }
 
-public class _SystemFontBox: AnyFontBox {
+public class _SystemFontBox: AnyFontBox, @unchecked Sendable {
   public enum SystemFont: Equatable, Hashable {
     case largeTitle
     case title
@@ -195,7 +196,7 @@ public class _SystemFontBox: AnyFontBox {
   }
 }
 
-public class _CustomFontBox: AnyFontBox {
+public class _CustomFontBox: AnyFontBox, @unchecked Sendable {
   public let name: String
   public let size: Size
   public enum Size: Hashable {

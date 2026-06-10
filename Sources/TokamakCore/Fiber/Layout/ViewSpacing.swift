@@ -22,7 +22,8 @@ import Foundation
 /// When computing spacing in a custom `Layout`, use `distance(to:along:)`
 /// to find the smallest spacing needed to accommodate the preferences
 /// of the `View`s you are aligning.
-public struct ViewSpacing {
+// Single-threaded (Wasm/DOM) runtime: closures and metatype never shared across threads.
+public struct ViewSpacing: @unchecked Sendable {
   /// The `View` type this `ViewSpacing` is for.
   /// Some `View`s prefer different spacing based on the `View` they are adjacent to.
   @_spi(TokamakCore)

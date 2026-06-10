@@ -26,7 +26,8 @@ public struct _ListOutlineGroupStyle: _OutlineGroupStyle {
 }
 
 enum _OutlineGroupStyleKey: EnvironmentKey {
-  static let defaultValue: _OutlineGroupStyle = _DefaultOutlineGroupStyle()
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) static let defaultValue: _OutlineGroupStyle = _DefaultOutlineGroupStyle()
 }
 
 extension EnvironmentValues {

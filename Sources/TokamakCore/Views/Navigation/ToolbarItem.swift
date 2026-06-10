@@ -29,7 +29,7 @@ public struct _ToolbarItemGroupProxy<ID, Items> {
   public var _items: [AnyView] { subject._items }
 }
 
-public struct ToolbarItemPlacement: Hashable {
+public struct ToolbarItemPlacement: Hashable, Sendable {
   let rawValue: Int8
   public static let automatic: ToolbarItemPlacement = .init(rawValue: 1 << 0)
   public static let principal: ToolbarItemPlacement = .init(rawValue: 1 << 1)

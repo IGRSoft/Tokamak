@@ -91,7 +91,8 @@ extension ForEach: ParentView {
 extension ForEach: GroupView {}
 
 struct _IDKey: EnvironmentKey {
-  static let defaultValue: AnyHashable? = nil
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) static let defaultValue: AnyHashable? = nil
 }
 
 public extension EnvironmentValues {

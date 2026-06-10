@@ -17,7 +17,8 @@
 
 import Foundation
 
-public class _AnyTransitionBox: AnyTokenBox {
+// Single-threaded (Wasm/DOM) runtime: box hierarchy holds closures never shared across threads.
+public class _AnyTransitionBox: AnyTokenBox, @unchecked Sendable {
   public typealias ResolvedValue = ResolvedTransition
 
   public struct ResolvedTransition {
@@ -58,13 +59,13 @@ public class _AnyTransitionBox: AnyTokenBox {
   }
 }
 
-final class IdentityTransitionBox: _AnyTransitionBox {
+final class IdentityTransitionBox: _AnyTransitionBox, @unchecked Sendable {
   override func resolve(in environment: EnvironmentValues) -> _AnyTransitionBox.ResolvedValue {
     .init(transitions: [])
   }
 }
 
-final class ConcreteTransitionBox: _AnyTransitionBox {
+final class ConcreteTransitionBox: _AnyTransitionBox, @unchecked Sendable {
   let transition: ResolvedTransition.Transition
 
   init(_ transition: ResolvedTransition.Transition) {
@@ -76,7 +77,7 @@ final class ConcreteTransitionBox: _AnyTransitionBox {
   }
 }
 
-final class AsymmetricTransitionBox: _AnyTransitionBox {
+final class AsymmetricTransitionBox: _AnyTransitionBox, @unchecked Sendable {
   let insertion: _AnyTransitionBox
   let removal: _AnyTransitionBox
 
@@ -97,7 +98,7 @@ final class AsymmetricTransitionBox: _AnyTransitionBox {
   }
 }
 
-final class CombinedTransitionBox: _AnyTransitionBox {
+final class CombinedTransitionBox: _AnyTransitionBox, @unchecked Sendable {
   let a: _AnyTransitionBox
   let b: _AnyTransitionBox
 
@@ -118,7 +119,7 @@ final class CombinedTransitionBox: _AnyTransitionBox {
   }
 }
 
-final class AnimatedTransitionBox: _AnyTransitionBox {
+final class AnimatedTransitionBox: _AnyTransitionBox, @unchecked Sendable {
   let animation: Animation?
   let parent: _AnyTransitionBox
 

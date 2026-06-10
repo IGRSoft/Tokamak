@@ -15,7 +15,7 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
-public enum ControlSize: CaseIterable, Hashable {
+public enum ControlSize: CaseIterable, Hashable, Sendable {
   case mini
   case small
   case regular
@@ -24,7 +24,8 @@ public enum ControlSize: CaseIterable, Hashable {
 
 extension EnvironmentValues {
   private enum ControlSizeKey: EnvironmentKey {
-    static var defaultValue: ControlSize = .regular
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+    nonisolated(unsafe) static var defaultValue: ControlSize = .regular
   }
 
   public var controlSize: ControlSize {

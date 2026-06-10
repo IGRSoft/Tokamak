@@ -15,7 +15,7 @@
 //  Created by Carson Katri on 7/6/21.
 //
 
-public struct Material {
+public struct Material: Sendable {
   private let style: _MaterialStyle
 
   private init(_ style: _MaterialStyle) {
@@ -29,7 +29,7 @@ public struct Material {
   public static let ultraThick = Self(.ultraThick)
 }
 
-public enum _MaterialStyle {
+public enum _MaterialStyle: Sendable {
   case regular
   case thick
   case thin

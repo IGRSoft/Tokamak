@@ -15,7 +15,7 @@
 //  Created by Max Desiatov on 16/10/2018.
 //
 
-public struct Color: Hashable, Equatable {
+public struct Color: Hashable, Equatable, Sendable {
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.provider == rhs.provider
   }
@@ -85,7 +85,7 @@ public struct _ColorProxy {
 }
 
 public extension Color {
-  enum RGBColorSpace {
+  enum RGBColorSpace: Sendable {
     case sRGB
     case sRGBLinear
     case displayP3

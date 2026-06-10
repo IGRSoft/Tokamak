@@ -219,7 +219,8 @@ public struct LayoutView<L: Layout, Content: View>: View, Layout {
 /// A default `Layout` that fits to the first subview and places its children at its origin.
 struct DefaultLayout: Layout {
   /// An erased `DefaultLayout` that is shared between all views.
-  static let shared: AnyLayout = .init(Self())
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) static let shared: AnyLayout = .init(Self())
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
     let size = subviews.first?.sizeThatFits(proposal) ?? .zero
