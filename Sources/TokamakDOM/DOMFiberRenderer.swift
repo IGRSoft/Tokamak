@@ -18,7 +18,6 @@
 import Foundation
 import JavaScriptEventLoop
 import JavaScriptKit
-import OpenCombineJS
 import OpenCombineShim
 
 @_spi(TokamakCore)

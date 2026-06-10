@@ -39,15 +39,11 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/swiftwasm/JavaScriptKit.git",
-      from: "0.15.0"
+      from: "0.54.1"
     ),
     .package(
       url: "https://github.com/OpenCombine/OpenCombine.git",
       from: "0.14.0"
-    ),
-    .package(
-      url: "https://github.com/swiftwasm/OpenCombineJS.git",
-      from: "0.2.0"
     ),
     .package(
       url: "https://github.com/google/swift-benchmark",
@@ -119,7 +115,6 @@ let package = Package(
           package: "JavaScriptKit",
           condition: .when(platforms: [.wasi])
         ),
-        "OpenCombineJS",
       ]
     ),
     .executableTarget(
