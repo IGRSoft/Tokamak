@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 6/20/22.
 //
 
+import CoreGraphics
 import Foundation
 
 @frozen

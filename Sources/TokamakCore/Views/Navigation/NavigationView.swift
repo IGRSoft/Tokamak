@@ -77,7 +77,8 @@ public struct _NavigationViewProxy<Content: View> {
 }
 
 struct NavigationDestinationKey: EnvironmentKey {
-  public static let defaultValue: Binding<AnyView>? = nil
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) public static let defaultValue: Binding<AnyView>? = nil
 }
 
 extension EnvironmentValues {

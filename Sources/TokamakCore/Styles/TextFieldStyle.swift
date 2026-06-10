@@ -64,7 +64,8 @@ public extension TextFieldStyle {
 }
 
 enum TextFieldStyleKey: EnvironmentKey {
-  static let defaultValue: _AnyTextFieldStyle = DefaultTextFieldStyle()
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) static let defaultValue: _AnyTextFieldStyle = DefaultTextFieldStyle()
 }
 
 extension EnvironmentValues {

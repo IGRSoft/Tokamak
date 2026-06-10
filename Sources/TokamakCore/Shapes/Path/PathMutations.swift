@@ -15,6 +15,7 @@
 //  Created by Max Desiatov on 20/06/2021.
 //
 
+import CoreGraphics
 import Foundation
 
 public extension Path {

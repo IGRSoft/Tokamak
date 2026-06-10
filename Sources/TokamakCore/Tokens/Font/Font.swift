@@ -14,7 +14,7 @@
 
 import Foundation
 
-public struct Font: Hashable {
+public struct Font: Hashable, Sendable {
   let provider: AnyFontBox
 
   init(_ provider: AnyFontBox) {
@@ -23,7 +23,7 @@ public struct Font: Hashable {
 }
 
 public extension Font {
-  struct Weight: Hashable {
+  struct Weight: Hashable, Sendable {
     public let value: Int
 
     public static let ultraLight: Self = .init(value: 100)

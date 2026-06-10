@@ -26,7 +26,8 @@ public extension View {
 }
 
 private struct DomTextSanitizerKey: EnvironmentKey {
-  static let defaultValue: _DomTextSanitizer = Sanitizers.HTML.encode
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) static let defaultValue: _DomTextSanitizer = Sanitizers.HTML.encode
 }
 
 public extension EnvironmentValues {

@@ -55,7 +55,7 @@ let package = Package(
     ),
     .package(
       url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
-      from: "1.9.0"
+      from: "1.9.2"
     ),
   ],
   targets: [
@@ -184,8 +184,8 @@ let package = Package(
       exclude: ["__Snapshots__", "RenderingTests/__Snapshots__"]
     ),
   ],
-  // Manifest is swift-tools 6.3, but TokamakCore relies on hundreds of nonisolated
-  // global statics; keep Swift 5 language mode so it builds. Full Swift 6 strict
-  // concurrency is tracked as a separate migration.
-  swiftLanguageModes: [.v5]
+  // Swift 6 strict concurrency. The token/box types are made Sendable; genuinely
+  // mutable global state uses `nonisolated(unsafe)`, justified by the single-threaded
+  // Wasm/DOM runtime.
+  swiftLanguageModes: [.v6]
 )

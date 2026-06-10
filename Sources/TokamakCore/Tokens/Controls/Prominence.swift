@@ -15,14 +15,15 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
-public enum Prominence: Hashable {
+public enum Prominence: Hashable, Sendable {
   case standard
   case increased
 }
 
 extension EnvironmentValues {
   private enum HeaderProminenceKey: EnvironmentKey {
-    static var defaultValue: Prominence = .standard
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+    nonisolated(unsafe) static var defaultValue: Prominence = .standard
   }
 
   public var headerProminence: Prominence {

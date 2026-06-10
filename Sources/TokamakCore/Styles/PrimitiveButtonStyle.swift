@@ -115,7 +115,8 @@ extension EnvironmentValues {
       case buttonStyle(AnyButtonStyle)
     }
 
-    public static let defaultValue: ButtonStyleKeyValue = .primitiveButtonStyle(
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+    nonisolated(unsafe) public static let defaultValue: ButtonStyleKeyValue = .primitiveButtonStyle(
       .init(DefaultButtonStyle())
     )
   }

@@ -18,7 +18,8 @@
 import TokamakCore
 
 public struct HTMLTitlePreferenceKey: PreferenceKey {
-  public static var defaultValue: String = ""
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+  nonisolated(unsafe) public static var defaultValue: String = ""
 
   public static func reduce(value: inout String, nextValue: () -> String) {
     value = nextValue()
@@ -26,7 +27,8 @@ public struct HTMLTitlePreferenceKey: PreferenceKey {
 }
 
 public struct HTMLMetaPreferenceKey: PreferenceKey {
-  public static var defaultValue: [HTMLMeta.MetaTag] = []
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+  nonisolated(unsafe) public static var defaultValue: [HTMLMeta.MetaTag] = []
 
   public static func reduce(
     value: inout [HTMLMeta.MetaTag],

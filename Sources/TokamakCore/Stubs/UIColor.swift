@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-public struct UIColor {
+public struct UIColor: Sendable {
   let color: Color
 
   public static let clear: Self = .init(color: .clear)

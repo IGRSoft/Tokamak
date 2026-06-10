@@ -78,7 +78,8 @@ public struct SidebarListStyle: ListStyle {
 }
 
 enum ListStyleKey: EnvironmentKey {
-  static let defaultValue: ListStyle = DefaultListStyle()
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) static let defaultValue: ListStyle = DefaultListStyle()
 }
 
 extension EnvironmentValues {

@@ -24,7 +24,8 @@ public struct Animation: Equatable {
     self.box = box
   }
 
-  public static let `default` = Self.easeInOut
+  // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+  nonisolated(unsafe) public static let `default` = Self.easeInOut
 
   public func delay(_ delay: Double) -> Animation {
     .init(DelayedAnimationBox(delay: delay, parent: box))

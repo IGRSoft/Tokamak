@@ -31,7 +31,8 @@ public struct BackgroundStyle: ShapeStyle {
 
 extension EnvironmentValues {
   private struct BackgroundStyleKey: EnvironmentKey {
-    static let defaultValue: AnyShapeStyle? = nil
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+    nonisolated(unsafe) static let defaultValue: AnyShapeStyle? = nil
   }
 
   public var _backgroundStyle: AnyShapeStyle? {

@@ -26,7 +26,7 @@ public extension AnyColorBox.ResolvedValue {
   }
 }
 
-extension GridItem: @retroactive CustomStringConvertible {
+extension GridItem: CustomStringConvertible {
   public var description: String {
     switch size {
     case let .adaptive(minimum: min, maximum: max):
