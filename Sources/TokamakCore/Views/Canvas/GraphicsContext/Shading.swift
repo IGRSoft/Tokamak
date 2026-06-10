@@ -15,7 +15,11 @@
 //  Created by Carson Katri on 9/18/21.
 //
 
+#if canImport(CoreGraphics)
 import CoreGraphics
+#else
+import Foundation
+#endif
 import Foundation
 
 public extension GraphicsContext {

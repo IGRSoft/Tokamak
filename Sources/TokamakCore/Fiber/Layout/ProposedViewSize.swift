@@ -15,7 +15,11 @@
 //  Created by Carson Katri on 6/20/22.
 //
 
+#if canImport(CoreGraphics)
 import CoreGraphics
+#else
+import Foundation
+#endif
 import Foundation
 
 @frozen

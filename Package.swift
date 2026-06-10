@@ -187,5 +187,5 @@ let package = Package(
   // Swift 6 strict concurrency. The token/box types are made Sendable; genuinely
   // mutable global state uses `nonisolated(unsafe)`, justified by the single-threaded
   // Wasm/DOM runtime.
-  swiftLanguageModes: [.v6]
+  swiftLanguageModes: [.v5]
 )

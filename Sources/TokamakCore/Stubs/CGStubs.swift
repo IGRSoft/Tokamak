@@ -68,7 +68,7 @@ extension CGAffineTransform {
   ///     a   b   0
   ///     c   d   0
   ///     tx  ty  1
-  public struct CGAffineTransform: Equatable {
+  public struct CGAffineTransform: Equatable, Sendable {
     public var a: CGFloat
     public var b: CGFloat
     public var c: CGFloat
