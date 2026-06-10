@@ -1,12 +1,12 @@
-// swift-tools-version:5.6
+// swift-tools-version:6.3
 
 import PackageDescription
 
 let package = Package(
   name: "Tokamak",
   platforms: [
-    .macOS(.v11),
-    .iOS(.v13),
+    .macOS(.v15),
+    .iOS(.v18),
   ],
   products: [
     // Products define the executables and libraries produced by a package,
@@ -180,5 +180,9 @@ let package = Package(
       ],
       exclude: ["__Snapshots__", "RenderingTests/__Snapshots__"]
     ),
-  ]
+  ],
+  // Manifest is swift-tools 6.3, but TokamakCore relies on hundreds of nonisolated
+  // global statics; keep Swift 5 language mode so it builds. Full Swift 6 strict
+  // concurrency is tracked as a separate migration.
+  swiftLanguageModes: [.v5]
 )
