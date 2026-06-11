@@ -44,7 +44,14 @@ final class GestureContext {
     if activeGestures[event] == nil {
       activeGestures[event] = [gesture]
     } else if case .highPriority = gesture.priority {
-      activeGestures[event] = [gesture]
+      // Merge into the existing set instead of replacing it wholesale: a
+      // high-priority gesture should evict only lower-priority *competitors*
+      // for the same event, not every other gesture registered under this
+      // event key. Wholesale replacement killed sibling gestures (e.g. a
+      // standard tap on the same target) and produced total non-response.
+      var set = activeGestures[event]!.removeLowerPriorities(than: .highPriority)
+      set.insert(gesture)
+      activeGestures[event] = set
     } else {
       activeGestures[event]?.insert(gesture)
     }
