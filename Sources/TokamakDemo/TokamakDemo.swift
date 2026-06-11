@@ -145,12 +145,10 @@ struct TokamakDemoView: View {
             NavItem("Task", destination: TaskDemo())
           #endif
         }
-        #if os(WASI)
         Section(header: Text("Gestures")) {
           NavItem("Gestures", destination: GesturesDemo())
           NavItem("Gesture & CoordinateSpace", destination: GestureCoordinateSpaceDemo())
         }
-        #endif
         Section(header: Text("Selectors")) {
           NavItem("DatePicker", destination: DatePickerDemo())
           NavItem("Picker", destination: PickerDemo())
