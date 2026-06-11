@@ -47,3 +47,6 @@ Pods/
 
 # Conductor worktask context
 .context/
+
+# Generated test/demo render artifact
+rendered.html

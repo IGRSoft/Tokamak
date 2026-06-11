@@ -136,7 +136,14 @@ let package = Package(
           condition: .when(platforms: [.wasi])
         ),
       ],
-      resources: [.copy("logo-header.png")]
+      resources: [.copy("logo-header.png")],
+      linkerSettings: [
+        // Tokamak's deeply-nested generic view types (e.g. ModifiedContent<ModifiedContent<…>>)
+        // make the Swift runtime's recursive type-name demangler blow the default ~1MB wasm
+        // stack, corrupting the heap (crashes in free during Demangle::NodePrinter::print).
+        // Raise the wasm stack to 16MB.
+        .unsafeFlags(["-Xlinker", "-z", "-Xlinker", "stack-size=16777216"], .when(platforms: [.wasi])),
+      ]
     ),
     .executableTarget(
       name: "TokamakStaticHTMLDemo",
