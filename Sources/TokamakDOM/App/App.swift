@@ -57,6 +57,10 @@ public extension App {
 
     ScenePhaseObserver.observe()
     ColorSchemeObserver.observe(div)
+    // The stack reconciler (default) must also attach the global pointer-event
+    // listeners that drive gesture recognition; only the Fiber renderer wired
+    // these previously, leaving all gestures dead on the default web path.
+    GestureEventsObserver.observe(body)
   }
 
   static func _setTitle(_ title: String) {
