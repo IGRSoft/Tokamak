@@ -141,9 +141,16 @@ struct TokamakDemoView: View {
         Section(header: Text("Modifiers")) {
           NavItem("Shadow", destination: ShadowDemo())
           #if os(WASI) && compiler(>=5.5) && (canImport(Concurrency) || canImport(_Concurrency))
+            NavItem("Receive Change", destination: ReceiveChangeDemo())
             NavItem("Task", destination: TaskDemo())
           #endif
         }
+        #if os(WASI)
+        Section(header: Text("Gestures")) {
+          NavItem("Gestures", destination: GesturesDemo())
+          NavItem("Gesture & CoordinateSpace", destination: GestureCoordinateSpaceDemo())
+        }
+        #endif
         Section(header: Text("Selectors")) {
           NavItem("DatePicker", destination: DatePickerDemo())
           NavItem("Picker", destination: PickerDemo())
@@ -155,31 +162,33 @@ struct TokamakDemoView: View {
           NavItem("TextField", destination: TextFieldDemo())
           NavItem("TextEditor", destination: TextEditorDemo())
         }
-        Section(header: Text("Misc")) {
-          NavItem("Animation", destination: AnimationDemo())
-          NavItem("Transitions", destination: TransitionDemo())
-          NavItem("ProgressView", destination: ProgressViewDemo())
-          NavItem("Environment", destination: EnvironmentDemo().font(.system(size: 8)))
-          if #available(macOS 11.0, iOS 14.0, *) {
-            NavItem("Preferences", destination: PreferenceKeyDemo())
+        Group {
+          Section(header: Text("Misc")) {
+            NavItem("Animation", destination: AnimationDemo())
+            NavItem("Transitions", destination: TransitionDemo())
+            NavItem("ProgressView", destination: ProgressViewDemo())
+            NavItem("Environment", destination: EnvironmentDemo().font(.system(size: 8)))
+            if #available(macOS 11.0, iOS 14.0, *) {
+              NavItem("Preferences", destination: PreferenceKeyDemo())
+            }
+            if #available(OSX 11.0, iOS 14.0, *) {
+              NavItem("AppStorage", destination: AppStorageDemo())
+            } else {
+              NavItem(unavailable: "AppStorage")
+            }
+            if #available(OSX 11.0, iOS 14.0, *) {
+              NavItem("Redaction", destination: RedactionDemo())
+            } else {
+              NavItem(unavailable: "Redaction")
+            }
           }
-          if #available(OSX 11.0, iOS 14.0, *) {
-            NavItem("AppStorage", destination: AppStorageDemo())
-          } else {
-            NavItem(unavailable: "AppStorage")
-          }
-          if #available(OSX 11.0, iOS 14.0, *) {
-            NavItem("Redaction", destination: RedactionDemo())
-          } else {
-            NavItem(unavailable: "Redaction")
-          }
+          #if os(WASI)
+            Section(header: Text("TokamakDOM")) {
+              NavItem("DOM reference", destination: DOMRefDemo())
+              NavItem("URL hash changes", destination: URLHashDemo())
+            }
+          #endif
         }
-        #if os(WASI)
-          Section(header: Text("TokamakDOM")) {
-            NavItem("DOM reference", destination: DOMRefDemo())
-            NavItem("URL hash changes", destination: URLHashDemo())
-          }
-        #endif
       }
       .frame(minHeight: 300)
       .modifier(TitleViewModifier(title: "Demos"))
