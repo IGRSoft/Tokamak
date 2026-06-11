@@ -366,7 +366,7 @@ extension CGAffineTransformTest {
 
     check(
       point: CGPoint(x: 3, y: 1),
-      // Scale by (-5, 5) then scale by (0, 10)
+      // Scale by (-5, 5) then translate by (0, 10)
       withTransform: CGAffineTransform.identity
         .scaledBy(x: -5, y: 5)
         .translatedBy(x: 0, y: 10),
@@ -406,7 +406,7 @@ extension CGAffineTransformTest {
 
     check(
       point: CGPoint(x: 20, y: 5),
-      // Rotate by -90º the scale by (0.5, 3)
+      // Rotate by -90º then scale by (3, -0.5)
       withTransform: CGAffineTransform.identity
         .rotated(by: .pi / -2)
         .scaledBy(x: 3, y: -0.5),
