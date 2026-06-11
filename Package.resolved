@@ -1,5 +1,5 @@
 {
-  "originHash" : "d2d070411587accf5a70d8bfbe563a5117f4959cd803f639bfa58e3f0bde5b4f",
+  "originHash" : "cd73ec06f135cf8fa878a991ca6371593cdb05e7e151b8f007eb7512512f8830",
   "pins" : [
     {
       "identity" : "javascriptkit",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/IGRSoft/OpenCombineJS.git",
       "state" : {
         "branch" : "main",
-        "revision" : "fefb814b99cfda73ea7636e3a2b9dda0838f12a9"
+        "revision" : "5c95435cf73cd2791dbd7ab0172ee775f84f66eb"
       }
     },
     {
