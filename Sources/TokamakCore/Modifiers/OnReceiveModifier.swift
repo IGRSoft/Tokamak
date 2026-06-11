@@ -19,16 +19,25 @@ import Foundation
 import OpenCombineShim
 
 struct OnReceiveModifier<P: Publisher>: ViewModifier where P.Failure == Never {
+  private final class Holder {
+    var cancellable: AnyCancellable?
+  }
+
+  @State private var holder = Holder()
+
+  let publisher: P
+  let action: (P.Output) -> ()
+
   init(publisher: P, action: @escaping (P.Output) -> ()) {
-    Task {
-      for await value in publisher.values {
-        action(value)
-      }
-    }
+    self.publisher = publisher
+    self.action = action
   }
 
   func body(content: Content) -> some View {
-    content
+    if holder.cancellable == nil {
+      holder.cancellable = publisher.sink(receiveValue: action)
+    }
+    return content
   }
 }
 

@@ -49,7 +49,7 @@ public struct TapGesture: Gesture {
 
         // If we have multi count tap gesture, handle it if the taps are with in desired delays
         if numberOfTapsSinceGestureBegan > 0, delayInSeconds > delay {
-          numberOfTapsSinceGestureBegan = 0
+          numberOfTapsSinceGestureBegan = 1
         } else {
           numberOfTapsSinceGestureBegan += 1
         }

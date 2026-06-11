@@ -160,7 +160,7 @@ struct LongPressGestureModifier: ViewModifier {
       LongPressGesture(minimumDuration: minimumDuration, maximumDistance: maximumDistance)
         .updating($isPressing) { currentState, gestureState, _ in
           gestureState = currentState
-          onPressingChanged?(isPressing)
+          onPressingChanged?(currentState)
         }
         .onEnded { _ in
           action()
