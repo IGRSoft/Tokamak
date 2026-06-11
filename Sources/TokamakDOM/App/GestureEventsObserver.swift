@@ -40,10 +40,24 @@ enum GestureEventsObserver {
          let originX = rect.x.number,
          let originY = rect.y.number
       {
+        // Resolve which gesture views own the hit target: walk the ancestor
+        // chain collecting `data-gesture-id` stamps, innermost → outermost.
+        var ownerIds = [String]()
+        var node: JSObject? = target
+        while let current = node {
+          if let id = current.getAttribute?("data-gesture-id").string {
+            ownerIds.append(id)
+          }
+          node = current.parentElement.object
+        }
+        // No gesture view in the hit path: don't wake every view.
+        guard !ownerIds.isEmpty else { return .undefined }
+
         let phase = _GesturePhaseContext(
           eventId: String(describing: target.hashValue),
           boundsOrigin: CGPoint(x: originX, y: originY),
-          location: CGPoint(x: x, y: y)
+          location: CGPoint(x: x, y: y),
+          ownerIds: ownerIds
         )
         publisher.send(.began(phase))
       }

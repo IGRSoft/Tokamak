@@ -38,10 +38,29 @@ public struct _GesturePhaseContext {
   let boundsOrigin: CGPoint?
   /// The current location of the gesture in global coordinates.
   let location: CGPoint?
+  /// Gesture-view ids whose elements contain the hit target, ordered
+  /// innermost → outermost. `nil` means no ownership information is
+  /// available (native renderers, synthesized phases) and the event
+  /// targets every view.
+  let ownerIds: [String]?
 
-  public init(eventId: String? = nil, boundsOrigin: CGPoint? = nil, location: CGPoint? = nil) {
+  public init(
+    eventId: String? = nil,
+    boundsOrigin: CGPoint? = nil,
+    location: CGPoint? = nil,
+    ownerIds: [String]? = nil
+  ) {
     self.eventId = eventId
     self.boundsOrigin = boundsOrigin
     self.location = location
+    self.ownerIds = ownerIds
+  }
+
+  /// The depth of `gestureViewId` in the hit path (innermost = 0), or `nil`
+  /// when the event did not hit that view's element. Contexts without
+  /// ownership information target every view at depth 0.
+  func hitDepth(of gestureViewId: String) -> Int? {
+    guard let ownerIds else { return 0 }
+    return ownerIds.firstIndex(of: gestureViewId)
   }
 }

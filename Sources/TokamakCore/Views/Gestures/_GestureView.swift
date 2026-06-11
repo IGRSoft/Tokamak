@@ -22,6 +22,8 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
     var gesture: G
     var gestureId: String = UUID().uuidString
     var eventId: String? = nil
+    /// Depth of this view in the active event's hit path (innermost = 0).
+    var hitDepth: Int = 0
 
     init(_ gesture: G) {
       self.gesture = gesture
@@ -67,25 +69,36 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
       return
     }
 
-    let value = GestureValue(
-      gestureId: gestureId,
-      mask: mask,
-      priority: priority
-    )
-
     var eventId = coordinator.eventId
 
     switch phase {
     case let .began(context) where context.eventId != nil:
+      // Fail closed: only process a began phase whose hit path contains this
+      // view's element. A foreign began must never fall through to the
+      // recognizer — mis-delivery executes another view's handlers.
+      guard let depth = context.hitDepth(of: gestureId) else {
+        return
+      }
       startDelay()
       coordinator.eventId = context.eventId
-      gestureListener.registerStart(value, for: context.eventId!)
+      coordinator.hitDepth = depth
+      gestureListener.registerStart(
+        GestureValue(gestureId: gestureId, mask: mask, priority: priority, depth: depth),
+        for: context.eventId!
+      )
       eventId = context.eventId
     case .cancelled, .ended:
       coordinator.eventId = nil
     default:
       break
     }
+
+    let value = GestureValue(
+      gestureId: gestureId,
+      mask: mask,
+      priority: priority,
+      depth: coordinator.hitDepth
+    )
 
     guard let currentEventId = eventId else {
       // Gesture has not started

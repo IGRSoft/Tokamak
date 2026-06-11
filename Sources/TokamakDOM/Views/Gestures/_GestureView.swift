@@ -22,12 +22,17 @@ import TokamakStaticHTML
 
 extension TokamakCore._GestureView: DOMPrimitive {
   var renderedBody: AnyView {
+    // Stamp the wrapper element with this view's id so the global pointer
+    // observer can resolve which gesture views own the hit target (the
+    // ancestor walk in GestureEventsObserver collects these ids).
     AnyView(
-      content
-        .onReceive(GestureEventsObserver.publisher) { phase in
-          guard let phase else { return }
-          onPhaseChange(phase)
-        }
+      DynamicHTML("div", ["data-gesture-id": gestureId]) {
+        content
+          .onReceive(GestureEventsObserver.publisher) { phase in
+            guard let phase else { return }
+            onPhaseChange(phase)
+          }
+      }
     )
   }
 }
@@ -38,7 +43,7 @@ extension TokamakCore._GestureView: HTMLConvertible {
   public var listeners: [String: Listener] { [:] }
 
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
-    [:]
+    ["data-gesture-id": gestureId]
   }
 
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
