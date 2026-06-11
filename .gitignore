@@ -44,3 +44,6 @@ Pods/
 
 # VS Code
 .vscode/launch.json
+
+# Conductor worktask context
+.context/
