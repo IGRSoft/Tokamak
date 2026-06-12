@@ -7,12 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		85ED186A24AD38F20085DFA0 /* UIAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED186924AD38F20085DFA0 /* UIAppDelegate.swift */; };
-		85ED188A24AD3CD60085DFA0 /* macOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85ED188724AD3CC30085DFA0 /* macOS.storyboard */; };
-		85ED188C24AD3CF10085DFA0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85ED188B24AD3CF10085DFA0 /* LaunchScreen.storyboard */; };
 		85ED18A924AD425E0085DFA0 /* TokamakDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED189D24AD425E0085DFA0 /* TokamakDemo.swift */; };
 		85ED18AA24AD425E0085DFA0 /* TokamakDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED189D24AD425E0085DFA0 /* TokamakDemo.swift */; };
-		85ED18B624AD42D70085DFA0 /* NSAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED189424AD41B90085DFA0 /* NSAppDelegate.swift */; };
+		85ED18C124AD46340085DFA1 /* TokamakDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */; };
+		85ED18C224AD46340085DFA1 /* TokamakDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */; };
 		D107874E274BD1E5003E787B /* SpacerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078726274BD1E5003E787B /* SpacerDemo.swift */; };
 		D107874F274BD1E5003E787B /* SpacerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078726274BD1E5003E787B /* SpacerDemo.swift */; };
 		D1078750274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */; };
@@ -55,10 +53,6 @@
 		D1078779274BD1E5003E787B /* PreferenceKeyDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078741274BD1E5003E787B /* PreferenceKeyDemo.swift */; };
 		D107877A274BD1E5003E787B /* TransitionDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078742274BD1E5003E787B /* TransitionDemo.swift */; };
 		D107877B274BD1E5003E787B /* TransitionDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078742274BD1E5003E787B /* TransitionDemo.swift */; };
-		FE00000000000000000000A3 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
-		FE00000000000000000000A4 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
-		FE00000000000000000000A5 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
-		FE00000000000000000000A6 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
 		D107877C274BD1E5003E787B /* ProgressViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078743274BD1E5003E787B /* ProgressViewDemo.swift */; };
 		D107877D274BD1E5003E787B /* ProgressViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078743274BD1E5003E787B /* ProgressViewDemo.swift */; };
 		D107877E274BD1E5003E787B /* AppStorageDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078744274BD1E5003E787B /* AppStorageDemo.swift */; };
@@ -80,6 +74,10 @@
 		D1E5FDAD24C1D57000E7485E /* TokamakShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E5FDAC24C1D57000E7485E /* TokamakShim.swift */; };
 		D1E5FDAF24C1D58E00E7485E /* libTokamakShim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */; };
 		D1E5FDB224C1D59400E7485E /* libTokamakShim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */; };
+		FE00000000000000000000A3 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
+		FE00000000000000000000A4 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
+		FE00000000000000000000A5 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
+		FE00000000000000000000A6 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,13 +113,10 @@
 		8587DF5524D4B9A40033EF43 /* TokamakDemo Native.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TokamakDemo Native.entitlements"; sourceTree = "<group>"; };
 		85ED184A24AD379A0085DFA0 /* TokamakDemo Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TokamakDemo Native.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85ED185224AD379A0085DFA0 /* TokamakDemo Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TokamakDemo Native.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		85ED186924AD38F20085DFA0 /* UIAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIAppDelegate.swift; sourceTree = "<group>"; };
-		85ED188724AD3CC30085DFA0 /* macOS.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = macOS.storyboard; sourceTree = "<group>"; };
-		85ED188B24AD3CF10085DFA0 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		85ED189424AD41B90085DFA0 /* NSAppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAppDelegate.swift; sourceTree = "<group>"; };
 		85ED189D24AD425E0085DFA0 /* TokamakDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = TokamakDemo.swift; sourceTree = "<group>"; tabWidth = 2; };
 		85ED18BD24AD46340085DFA0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85ED18BF24AD464B0085DFA0 /* iOS Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iOS Info.plist"; sourceTree = "<group>"; };
+		85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokamakDemoApp.swift; sourceTree = "<group>"; };
 		D1078726274BD1E5003E787B /* SpacerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpacerDemo.swift; sourceTree = "<group>"; };
 		D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeometryReaderDemo.swift; sourceTree = "<group>"; };
 		D1078728274BD1E5003E787B /* GridDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridDemo.swift; sourceTree = "<group>"; };
@@ -143,8 +138,6 @@
 		D1078740274BD1E5003E787B /* AnimationDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationDemo.swift; sourceTree = "<group>"; };
 		D1078741274BD1E5003E787B /* PreferenceKeyDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceKeyDemo.swift; sourceTree = "<group>"; };
 		D1078742274BD1E5003E787B /* TransitionDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionDemo.swift; sourceTree = "<group>"; };
-		FE00000000000000000000A1 /* GesturesDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GesturesDemo.swift; sourceTree = "<group>"; };
-		FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestureCoordinateSpaceDemo.swift; sourceTree = "<group>"; };
 		D1078743274BD1E5003E787B /* ProgressViewDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewDemo.swift; sourceTree = "<group>"; };
 		D1078744274BD1E5003E787B /* AppStorageDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStorageDemo.swift; sourceTree = "<group>"; };
 		D1078745274BD1E5003E787B /* EnvironmentDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnvironmentDemo.swift; sourceTree = "<group>"; };
@@ -156,6 +149,8 @@
 		D107874D274BD1E5003E787B /* ButtonStyleDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonStyleDemo.swift; sourceTree = "<group>"; };
 		D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTokamakShim.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1E5FDAC24C1D57000E7485E /* TokamakShim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokamakShim.swift; sourceTree = "<group>"; };
+		FE00000000000000000000A1 /* GesturesDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GesturesDemo.swift; sourceTree = "<group>"; };
+		FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestureCoordinateSpaceDemo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,10 +185,7 @@
 			children = (
 				8587DF5524D4B9A40033EF43 /* TokamakDemo Native.entitlements */,
 				D1E5FDAB24C1D57000E7485E /* TokamakShim */,
-				85ED188B24AD3CF10085DFA0 /* LaunchScreen.storyboard */,
-				85ED186924AD38F20085DFA0 /* UIAppDelegate.swift */,
-				85ED189424AD41B90085DFA0 /* NSAppDelegate.swift */,
-				85ED188724AD3CC30085DFA0 /* macOS.storyboard */,
+				85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */,
 				85ED18BF24AD464B0085DFA0 /* iOS Info.plist */,
 				85ED18BD24AD46340085DFA0 /* Info.plist */,
 				85ED189924AD425E0085DFA0 /* TokamakDemo */,
@@ -228,15 +220,6 @@
 			);
 			name = TokamakDemo;
 			path = ../Sources/TokamakDemo;
-			sourceTree = "<group>";
-		};
-		FE00000000000000000000A0 /* Gestures */ = {
-			isa = PBXGroup;
-			children = (
-				FE00000000000000000000A1 /* GesturesDemo.swift */,
-				FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */,
-			);
-			path = Gestures;
 			sourceTree = "<group>";
 		};
 		D1078725274BD1E5003E787B /* Layout */ = {
@@ -339,6 +322,15 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FE00000000000000000000A0 /* Gestures */ = {
+			isa = PBXGroup;
+			children = (
+				FE00000000000000000000A1 /* GesturesDemo.swift */,
+				FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */,
+			);
+			path = Gestures;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -444,7 +436,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85ED188C24AD3CF10085DFA0 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,7 +443,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85ED188A24AD3CD60085DFA0 /* macOS.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,12 +453,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85ED18C124AD46340085DFA1 /* TokamakDemoApp.swift in Sources */,
 				D107875C274BD1E5003E787B /* ToggleDemo.swift in Sources */,
 				D1078784274BD1E5003E787B /* TextDemo.swift in Sources */,
 				D107878A274BD1E5003E787B /* Counter.swift in Sources */,
 				D1078752274BD1E5003E787B /* GridDemo.swift in Sources */,
 				D1078774274BD1E5003E787B /* ShapeStyleDemo.swift in Sources */,
-				85ED186A24AD38F20085DFA0 /* UIAppDelegate.swift in Sources */,
 				D107875E274BD1E5003E787B /* OutlineGroupDemo.swift in Sources */,
 				D1078770274BD1E5003E787B /* CanvasDemo.swift in Sources */,
 				85ED18A924AD425E0085DFA0 /* TokamakDemo.swift in Sources */,
@@ -504,6 +494,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85ED18C224AD46340085DFA1 /* TokamakDemoApp.swift in Sources */,
 				D107875D274BD1E5003E787B /* ToggleDemo.swift in Sources */,
 				D1078785274BD1E5003E787B /* TextDemo.swift in Sources */,
 				D107878B274BD1E5003E787B /* Counter.swift in Sources */,
@@ -512,7 +503,6 @@
 				85ED18AA24AD425E0085DFA0 /* TokamakDemo.swift in Sources */,
 				D107875F274BD1E5003E787B /* OutlineGroupDemo.swift in Sources */,
 				D1078771274BD1E5003E787B /* CanvasDemo.swift in Sources */,
-				85ED18B624AD42D70085DFA0 /* NSAppDelegate.swift in Sources */,
 				D1078759274BD1E5003E787B /* SliderDemo.swift in Sources */,
 				D107877B274BD1E5003E787B /* TransitionDemo.swift in Sources */,
 				FE00000000000000000000A4 /* GesturesDemo.swift in Sources */,
@@ -616,13 +606,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
+				MACOSX_DEPLOYMENT_TARGET = 26.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jedfox.Tokamak-Native";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TVOS_DEPLOYMENT_TARGET = 26.6;
+				WATCHOS_DEPLOYMENT_TARGET = 26.6;
+				XROS_DEPLOYMENT_TARGET = 26.6;
 			};
 			name = Debug;
 		};
@@ -671,12 +665,16 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
+				MACOSX_DEPLOYMENT_TARGET = 26.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jedfox.Tokamak-Native";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TVOS_DEPLOYMENT_TARGET = 26.6;
+				WATCHOS_DEPLOYMENT_TARGET = 26.6;
+				XROS_DEPLOYMENT_TARGET = 26.6;
 			};
 			name = Release;
 		};
@@ -690,8 +688,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "iOS Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -717,8 +713,6 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "iOS Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -750,7 +744,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.tokamak.Tokamak-Native";
 				PRODUCT_NAME = "TokamakDemo Native";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -777,7 +770,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.tokamak.Tokamak-Native";
 				PRODUCT_NAME = "TokamakDemo Native";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -791,7 +783,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -806,7 +797,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
