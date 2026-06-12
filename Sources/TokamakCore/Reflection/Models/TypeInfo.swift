@@ -48,10 +48,33 @@ public struct TypeInfo {
   }
 }
 
+// Memoization cache for `typeInfo(of:)`. The reconciler reflects the same
+// `View.Type` thousands of times per render (every `Fiber.init`, every dynamic-property
+// bind, and per child per reconcile pass), and each miss walks all struct fields via
+// raw metadata pointer arithmetic. Caching by `ObjectIdentifier(type)` turns the
+// repeated O(fields) work into O(1) after the first touch.
+//
+// The cache is intentionally unbounded: the view-type universe is finite and sealed at
+// compile time via generic specialization (one entry per distinct `View.Type`), so
+// eviction would add complexity and behavior surface for no measurable benefit.
+//
+// `nonisolated(unsafe)` is consistent with the package's deliberate Swift 5 language-mode
+// posture and its existing global-state pattern (renderer singletons, default storage
+// providers): the Wasm/DOM runtime is single-threaded and host test cases are
+// single-threaded, so no lock is introduced (a lock would also alter timing/behavior).
+nonisolated(unsafe) private var _typeInfoCache: [ObjectIdentifier: TypeInfo] = [:]
+
 public func typeInfo(of type: Any.Type) -> TypeInfo? {
   guard Kind(type: type) == .struct else {
     return nil
   }
 
-  return StructMetadata(type: type).toTypeInfo()
+  let key = ObjectIdentifier(type)
+  if let cached = _typeInfoCache[key] {
+    return cached
+  }
+
+  let info = StructMetadata(type: type).toTypeInfo()
+  _typeInfoCache[key] = info
+  return info
 }
