@@ -85,6 +85,7 @@ benchmark("update wide (FiberReconciler)") { state in
 
   try state.measure {
     button.action()
+    reconciler.renderer.flush()
   }
 }
 
@@ -146,6 +147,7 @@ benchmark("update narrow (FiberReconciler)") { state in
   else { return }
   try state.measure {
     button.action()
+    reconciler.renderer.flush()
   }
 }
 
@@ -218,6 +220,7 @@ benchmark("update deep (FiberReconciler)") { state in
   else { return }
   try state.measure {
     button.action()
+    reconciler.renderer.flush()
   }
 }
 
@@ -288,6 +291,7 @@ benchmark("update shallow (FiberReconciler)") { _ in
   else { return }
   // Using state.measure here hangs the benchmark app?g
   button.action()
+  reconciler.renderer.flush()
 }
 
 Benchmark.main()
