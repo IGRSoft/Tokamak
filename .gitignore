@@ -50,3 +50,4 @@ Pods/
 
 # Generated test/demo render artifact
 rendered.html
+.claude/hooks
