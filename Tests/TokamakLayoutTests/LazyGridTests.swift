@@ -21,6 +21,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class LazyGridTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   @available(macOS 13.0, *)
   func testLazyVGrid() async {
     await compare(size: .init(width: 500, height: 500)) {

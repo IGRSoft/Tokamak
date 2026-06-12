@@ -21,6 +21,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class GridTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   @available(macOS 13.0, *)
   func testGrid() async {
     await compare(size: .init(width: 500, height: 500)) {

@@ -23,6 +23,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class VisualRenderingTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testContentStyles() {
     assertSnapshot(
       matching: HStack {

@@ -21,16 +21,18 @@ import TokamakStaticHTML
 import XCTest
 
 final class LinkTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testLink() async {
     await compare(size: .init(width: 500, height: 500)) {
       SwiftUI.Link(destination: URL(string: "https://tokamak.dev")!) {
-        Rectangle()
+        SwiftUI.Rectangle()
           .fill(Color(white: 0))
           .frame(width: 250, height: 100)
       }
     } to: {
       TokamakStaticHTML.Link(destination: URL(string: "https://tokamak.dev")!) {
-        Rectangle()
+        TokamakStaticHTML.Rectangle()
           .fill(TokamakStaticHTML.Color(white: 0))
           .frame(width: 250, height: 100)
       }

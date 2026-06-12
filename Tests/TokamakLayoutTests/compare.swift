@@ -20,6 +20,38 @@ import SwiftUI
 @_spi(TokamakStaticHTML) import TokamakStaticHTML
 import XCTest
 
+/// Executable path of the headless browser these comparison tests were authored
+/// against: Microsoft Edge.
+///
+/// `compare(...)` asserts *exact* pixel equality between SwiftUI's `NSHostingView`
+/// render and the browser's headless `--screenshot` of the Tokamak HTML. That
+/// equality is engine-specific: empirically, Google Chrome's output matches
+/// neither the SwiftUI render nor Edge's, so resolving to a different Chromium
+/// build turns an environment gap into spurious failures. The guard is therefore
+/// narrowed to Edge — present → tests run; absent → they skip with an annotated
+/// reason (never a hard failure). Tracking: Tokamak#12 / worktask
+/// tokamak-test-green (q1 → path b).
+func referenceBrowserPath() -> String? {
+  let edge = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+  return FileManager.default.isExecutableFile(atPath: edge) ? edge : nil
+}
+
+/// Throws `XCTSkip` when the reference-recording browser (Edge) is unavailable,
+/// so the browser-backed layout comparison tests skip cleanly instead of
+/// hard-failing. Call from `setUpWithError()` in each layout test case.
+func requireReferenceBrowser(file: StaticString = #filePath, line: UInt = #line) throws {
+  if referenceBrowserPath() == nil {
+    throw XCTSkip(
+      "Skipping layout comparison: Microsoft Edge (the reference browser) is not "
+        + "installed. SwiftUI vs Chrome/Chromium renders are not pixel-identical, "
+        + "so running here would produce spurious diffs. Install Edge or run in CI "
+        + "to execute. (Tokamak#12)",
+      file: file,
+      line: line
+    )
+  }
+}
+
 func compare<A: SwiftUI.View, B: TokamakStaticHTML.View>(
   size: CGSize,
   @SwiftUI.ViewBuilder _ native: () -> A,
@@ -80,9 +112,16 @@ private func render<V: TokamakStaticHTML.View>(
 
     // swiftlint:disable:next force_try
     try! html.write(to: renderedPath)
+    guard let browserPath = referenceBrowserPath() else {
+      // Edge absent. The per-test `requireReferenceBrowser()` guard issues
+      // `XCTSkip` before reaching here, so this is only a safety net to avoid
+      // the NSInvalidArgumentException "launch path not accessible" abort that
+      // would tear down the whole suite.
+      continuation.resume(returning: Data())
+      return
+    }
     let browser = Process()
-    browser
-      .launchPath = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+    browser.launchPath = browserPath
 
     var arguments = [
       "--headless",

@@ -21,6 +21,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class AspectRatioTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testAspectRatio() async {
     await compare(size: .init(width: 500, height: 500)) {
       SwiftUI.Rectangle()

@@ -22,6 +22,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class ViewRenderingTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testProgressView() {
     assertSnapshot(
       matching: VStack(spacing: 0) {
