@@ -85,7 +85,7 @@ final class SanitizerTests: XCTestCase {
       "no specials here",                            // plain text
       "<div class=\"a\">&amp; it's here></div>",     // all 5 specials + adjacent text
       "&<>\"'",                                       // bare specials, no text
-      "&amp;&lt;&gt;",                               // already-escaped-looking input (must double-escape `&`)
+      "&amp;&lt;&gt;",                               // escaped-looking input (re-escapes `&`)
       "a&b<c>d\"e'f",                                // specials interleaved with text
       "emoji 😀 & <tag> \"quote\" 'apos'",            // multi-byte scalars + specials
       "\u{0000}\u{FFFF}<>",                           // control + high scalars + specials
