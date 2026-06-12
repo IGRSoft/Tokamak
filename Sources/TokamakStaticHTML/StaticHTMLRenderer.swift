@@ -82,13 +82,22 @@ public extension HTMLMeta.MetaTag {
 //
 // Primary mechanism (zero API surface): the `TOKAMAK_SSR_ENGINE` env var.
 // Set `TOKAMAK_SSR_ENGINE=fiber` to route SSR through the Fiber engine. Any
-// other value (or unset) selects `.legacy`. The `@_spi` engine init (added in
-// C6) provides programmatic per-instance control without changing public API.
+// other value (or unset) selects `.legacy`.
+//
+// Programmatic per-instance control: the `@_spi(TokamakStaticHTML)` inits with
+// an explicit `engine:` parameter. SPI-gated and additive only — no existing
+// public declaration changes. (R9: if review rules even additive SPI is drift,
+// revert this commit; the env var alone is sufficient.)
 //
 // Phase A default is `.legacy`; Phase B flips the internal default to `.fiber`
 // in one line (not part of this change set).
-enum SSREngine {
+
+/// Selects the reconciliation engine used by `StaticHTMLRenderer` for SSR.
+@_spi(TokamakStaticHTML)
+public enum SSREngine {
+  /// The original `StackReconciler` path (Phase A default).
   case legacy
+  /// The unified Fiber engine (`SSRFiberDriver`), opt-in during Phase A.
   case fiber
 }
 
@@ -150,7 +159,10 @@ public final class StaticHTMLRenderer: Renderer {
     _mount(view, rootEnvironment, engine: Self._selectEngine())
   }
 
-  init<V: View>(_ view: V, _ rootEnvironment: EnvironmentValues?, engine: SSREngine) {
+  /// Creates a renderer with an explicit engine selection, bypassing the
+  /// `TOKAMAK_SSR_ENGINE` environment variable. Additive SPI — Phase A only.
+  @_spi(TokamakStaticHTML)
+  public init<V: View>(_ view: V, _ rootEnvironment: EnvironmentValues? = nil, engine: SSREngine) {
     rootTarget = HTMLTarget(view, HTMLBody())
     _mount(view, rootEnvironment, engine: engine)
   }
@@ -185,7 +197,10 @@ public final class StaticHTMLRenderer: Renderer {
     _mount(app, rootEnvironment, engine: Self._selectEngine())
   }
 
-  init<A: App>(_ app: A, _ rootEnvironment: EnvironmentValues?, engine: SSREngine) {
+  /// Creates a renderer for an `App` with an explicit engine selection.
+  /// Additive SPI — Phase A only.
+  @_spi(TokamakStaticHTML)
+  public init<A: App>(_ app: A, _ rootEnvironment: EnvironmentValues? = nil, engine: SSREngine) {
     rootTarget = HTMLTarget(HTMLBody())
     _mount(app, rootEnvironment, engine: engine)
   }

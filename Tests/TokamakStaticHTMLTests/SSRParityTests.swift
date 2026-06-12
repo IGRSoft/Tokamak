@@ -23,46 +23,51 @@
 #if canImport(SnapshotTesting)
 
 import Foundation
-@testable import TokamakStaticHTML
+@_spi(TokamakStaticHTML) @testable import TokamakStaticHTML
 import XCTest
 
 final class SSRParityTests: XCTestCase {
   // MARK: - Engine toggle
 
-  private enum Engine: String {
-    case legacy
-    case fiber
-  }
+  private typealias Engine = SSREngine
 
-  /// Render `view` under the given SSR engine by toggling the env var the
-  /// facade reads at init. Restores the prior value afterward.
+  /// Render `view` under the given SSR engine via the SPI engine init (C6).
   private func render<V: View>(
     _ view: V,
     engine: Engine,
     shouldSortAttributes: Bool = true
   ) -> String {
-    let key = "TOKAMAK_SSR_ENGINE"
-    let previous = ProcessInfo.processInfo.environment[key]
-    setenv(key, engine.rawValue, 1)
-    defer {
-      if let previous = previous { setenv(key, previous, 1) } else { unsetenv(key) }
-    }
-    return StaticHTMLRenderer(view).render(shouldSortAttributes: shouldSortAttributes)
+    StaticHTMLRenderer(view, engine: engine)
+      .render(shouldSortAttributes: shouldSortAttributes)
   }
 
-  /// Render an `App` under the given SSR engine.
+  /// Render an `App` under the given SSR engine via the SPI engine init (C6).
   private func render<A: App>(
     _ app: A,
     engine: Engine,
     shouldSortAttributes: Bool = true
   ) -> String {
+    StaticHTMLRenderer(app, engine: engine)
+      .render(shouldSortAttributes: shouldSortAttributes)
+  }
+
+  /// The env-var opt-in (primary Phase A mechanism) must select the same
+  /// engine the SPI init does.
+  func testEngineEnvVarSelection() {
+    let view = VStack {
+      HTMLTitle("EnvVar")
+      Text("Hello, world!")
+    }
     let key = "TOKAMAK_SSR_ENGINE"
     let previous = ProcessInfo.processInfo.environment[key]
-    setenv(key, engine.rawValue, 1)
+    setenv(key, "fiber", 1)
     defer {
       if let previous = previous { setenv(key, previous, 1) } else { unsetenv(key) }
     }
-    return StaticHTMLRenderer(app).render(shouldSortAttributes: shouldSortAttributes)
+    let envSelected = StaticHTMLRenderer(view).render(shouldSortAttributes: true)
+    let spiSelected = render(view, engine: .fiber)
+    XCTAssertEqual(envSelected, spiSelected, "env-var and SPI init must select the same engine")
+    XCTAssertTrue(envSelected.contains("<title>EnvVar</title>"))
   }
 
   /// Assert the two engines produce byte-identical output for `view`.
