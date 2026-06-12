@@ -55,6 +55,10 @@
 		D1078779274BD1E5003E787B /* PreferenceKeyDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078741274BD1E5003E787B /* PreferenceKeyDemo.swift */; };
 		D107877A274BD1E5003E787B /* TransitionDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078742274BD1E5003E787B /* TransitionDemo.swift */; };
 		D107877B274BD1E5003E787B /* TransitionDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078742274BD1E5003E787B /* TransitionDemo.swift */; };
+		FE00000000000000000000A3 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
+		FE00000000000000000000A4 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
+		FE00000000000000000000A5 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
+		FE00000000000000000000A6 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
 		D107877C274BD1E5003E787B /* ProgressViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078743274BD1E5003E787B /* ProgressViewDemo.swift */; };
 		D107877D274BD1E5003E787B /* ProgressViewDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078743274BD1E5003E787B /* ProgressViewDemo.swift */; };
 		D107877E274BD1E5003E787B /* AppStorageDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078744274BD1E5003E787B /* AppStorageDemo.swift */; };
@@ -139,6 +143,8 @@
 		D1078740274BD1E5003E787B /* AnimationDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationDemo.swift; sourceTree = "<group>"; };
 		D1078741274BD1E5003E787B /* PreferenceKeyDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceKeyDemo.swift; sourceTree = "<group>"; };
 		D1078742274BD1E5003E787B /* TransitionDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionDemo.swift; sourceTree = "<group>"; };
+		FE00000000000000000000A1 /* GesturesDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GesturesDemo.swift; sourceTree = "<group>"; };
+		FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestureCoordinateSpaceDemo.swift; sourceTree = "<group>"; };
 		D1078743274BD1E5003E787B /* ProgressViewDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressViewDemo.swift; sourceTree = "<group>"; };
 		D1078744274BD1E5003E787B /* AppStorageDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppStorageDemo.swift; sourceTree = "<group>"; };
 		D1078745274BD1E5003E787B /* EnvironmentDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnvironmentDemo.swift; sourceTree = "<group>"; };
@@ -212,6 +218,7 @@
 				D107874B274BD1E5003E787B /* Buttons */,
 				D107872F274BD1E5003E787B /* Containers */,
 				D107873A274BD1E5003E787B /* Drawing */,
+				FE00000000000000000000A0 /* Gestures */,
 				D1078725274BD1E5003E787B /* Layout */,
 				D107873F274BD1E5003E787B /* Misc */,
 				D1078734274BD1E5003E787B /* Modifiers */,
@@ -221,6 +228,15 @@
 			);
 			name = TokamakDemo;
 			path = ../Sources/TokamakDemo;
+			sourceTree = "<group>";
+		};
+		FE00000000000000000000A0 /* Gestures */ = {
+			isa = PBXGroup;
+			children = (
+				FE00000000000000000000A1 /* GesturesDemo.swift */,
+				FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */,
+			);
+			path = Gestures;
 			sourceTree = "<group>";
 		};
 		D1078725274BD1E5003E787B /* Layout */ = {
@@ -458,6 +474,8 @@
 				85ED18A924AD425E0085DFA0 /* TokamakDemo.swift in Sources */,
 				D1078758274BD1E5003E787B /* SliderDemo.swift in Sources */,
 				D107877A274BD1E5003E787B /* TransitionDemo.swift in Sources */,
+				FE00000000000000000000A3 /* GesturesDemo.swift in Sources */,
+				FE00000000000000000000A5 /* GestureCoordinateSpaceDemo.swift in Sources */,
 				D1078768274BD1E5003E787B /* ShadowDemo.swift in Sources */,
 				D107877E274BD1E5003E787B /* AppStorageDemo.swift in Sources */,
 				D1078782274BD1E5003E787B /* RedactDemo.swift in Sources */,
@@ -497,6 +515,8 @@
 				85ED18B624AD42D70085DFA0 /* NSAppDelegate.swift in Sources */,
 				D1078759274BD1E5003E787B /* SliderDemo.swift in Sources */,
 				D107877B274BD1E5003E787B /* TransitionDemo.swift in Sources */,
+				FE00000000000000000000A4 /* GesturesDemo.swift in Sources */,
+				FE00000000000000000000A6 /* GestureCoordinateSpaceDemo.swift in Sources */,
 				D1078769274BD1E5003E787B /* ShadowDemo.swift in Sources */,
 				D107877F274BD1E5003E787B /* AppStorageDemo.swift in Sources */,
 				D1078783274BD1E5003E787B /* RedactDemo.swift in Sources */,
