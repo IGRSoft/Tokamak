@@ -61,15 +61,17 @@ final class SSRFiberDriver {
   /// (`<body>`); its descendants become `HTMLTarget` children.
   private static func linkChildren(of element: HTMLTargetElement, into target: HTMLTarget) {
     for child in element.children {
-      guard let html = child.content.html else {
-        // Transparent element with no node (should not occur: non-node views are
-        // not primitives, so never become elements). Flatten its children up.
+      // Derive the legacy `AnyHTML` from the env-resolved view now that
+      // reconcile has fully bound the environment (colorScheme, fonts, etc.).
+      guard let node = _ssrHTMLNode(for: child.content.view) else {
+        // Non-node element (should not occur — non-node views are not
+        // primitives). Flatten its children up to preserve order.
         linkChildren(of: child, into: target)
         continue
       }
-      let node = HTMLTarget(child.content.view, html)
-      target.children.append(node)
-      linkChildren(of: child, into: node)
+      let target0 = HTMLTarget(child.content.view, node.html)
+      target.children.append(target0)
+      linkChildren(of: child, into: target0)
     }
   }
 }

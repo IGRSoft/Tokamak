@@ -34,11 +34,40 @@ import TokamakCore
 /// Returns `nil` for views that do not produce an HTML node (e.g. `TupleView`,
 /// `Group`, optionals) — those are transparent containers whose children attach
 /// to the nearest element parent, identical to the legacy `ParentView` recursion.
-func _ssrHTMLNode<V: View>(for view: V) -> (html: AnyHTML, childSource: AnyView)? {
+/// Detects `ModifiedContent` whose modifier is NOT a `DOMViewModifier`.
+/// On the legacy path such modifiers (environment writers, preference writers,
+/// custom `ViewModifier` bodies) are transparent: `renderedBody` passes
+/// `content` straight through. They must NOT be treated as Fiber primitives —
+/// otherwise the inner view is serialized without its own fiber (no
+/// `@Environment` binding) and the modifier effect is silently dropped.
+protocol _SSRModifiedContentMarker {
+  var _ssrHasDOMModifier: Bool { get }
+}
+
+extension ModifiedContent: _SSRModifiedContentMarker
+  where Content: View, Modifier: ViewModifier
+{
+  var _ssrHasDOMModifier: Bool { modifier is DOMViewModifier }
+}
+
+func _ssrHTMLNode<V: View>(for view: V) -> (html: AnyHTML, children: [AnyView])? {
   let anyView = AnyView(view)
   // 1. View *is* an HTML node directly (Text, HTML<…>, TextSpan-backed, etc.).
+  //    Children come from `ParentView.children` — empty for leaves (Text,
+  //    HTML<String>), exactly mirroring the legacy `StackReconciler` which only
+  //    recurses into `ParentView`s. NOT `_visitChildren`, which would dispatch
+  //    to `body` (a `Never` trap / self-recursion) for primitive leaves.
   if let html = mapAnyView(anyView, transform: { (html: AnyHTML) in html }) {
-    return (html, anyView)
+    return (html, (_AnyViewProxy(anyView).view as? ParentView)?.children ?? [])
+  }
+  // 1.5. `ModifiedContent` with a non-DOM modifier is transparent on the legacy
+  //      path (renderedBody == content). Let the reconciler recurse so the
+  //      modifier's environment/preference machinery runs and the inner view
+  //      gets its own fiber (env-bound).
+  if let modified = _AnyViewProxy(anyView).view as? _SSRModifiedContentMarker,
+     !modified._ssrHasDOMModifier
+  {
+    return nil
   }
   // 2. View is an `_HTMLPrimitive` (VStack/HStack/ZStack/ModifiedContent/…):
   //    its `renderedBody` is an `AnyView(HTML(…))` carrying the real node +
@@ -47,7 +76,7 @@ func _ssrHTMLNode<V: View>(for view: V) -> (html: AnyHTML, childSource: AnyView)
   if let primitive = _AnyViewProxy(anyView).view as? _HTMLPrimitive {
     let rendered = primitive.renderedBody
     if let html = mapAnyView(rendered, transform: { (html: AnyHTML) in html }) {
-      return (html, rendered)
+      return (html, (_AnyViewProxy(rendered).view as? ParentView)?.children ?? [])
     }
   }
   return nil
@@ -58,28 +87,25 @@ func _ssrHTMLNode<V: View>(for view: V) -> (html: AnyHTML, childSource: AnyView)
 /// verbatim. `children` are linked by `commit`.
 final class HTMLTargetElement: FiberElement {
   struct Content: FiberElementContent {
-    /// The legacy serializer node for this element. May be `nil` for the root
-    /// `<body>` placeholder.
-    var html: AnyHTML?
-    /// The originating view, used to construct the `HTMLTarget` (which stores an
-    /// `AnyView`). `EmptyView` for the synthetic root.
+    /// The originating, env-resolved view. The legacy `AnyHTML` node is derived
+    /// from this at tree-translation time (see `SSRFiberDriver`).
     var view: AnyView
 
     static func == (lhs: Self, rhs: Self) -> Bool {
-      // SSR is a single stateless pass — content never updates after insert, so
-      // a structural tag/attribute compare is sufficient and avoids requiring
-      // `AnyHTML: Equatable`.
-      lhs.html?.tag == rhs.html?.tag
-        && lhs.html?.attributes == rhs.html?.attributes
+      // SSR is a single stateless pass — content never updates after insert.
+      // Compare the derived node's structural shape; nil for the root body.
+      _ssrHTMLNode(for: lhs.view)?.html.tag == _ssrHTMLNode(for: rhs.view)?.html.tag
     }
 
     init<V: View>(from primitiveView: V, useDynamicLayout: Bool) {
+      // Store the env-resolved view; defer `AnyHTML` extraction (which reads
+      // `@Environment`-dependent attributes such as colorScheme) to
+      // post-reconcile tree translation, mirroring the legacy serialize-after-
+      // mount timing.
       view = AnyView(primitiveView)
-      html = _ssrHTMLNode(for: primitiveView)?.html
     }
 
-    init(html: AnyHTML?, view: AnyView) {
-      self.html = html
+    init(view: AnyView) {
       self.view = view
     }
   }
@@ -117,7 +143,7 @@ struct HTMLTargetFiberRenderer: FiberRenderer {
 
   init(rootEnvironment: EnvironmentValues) {
     rootElement = HTMLTargetElement(
-      from: .init(html: nil, view: AnyView(EmptyView()))
+      from: .init(view: AnyView(EmptyView()))
     )
     sceneSize = .init(.zero)
     _defaultEnvironment = rootEnvironment
@@ -130,6 +156,12 @@ struct HTMLTargetFiberRenderer: FiberRenderer {
   /// legacy `mountTarget` decision; `HTMLConvertible` is never consulted.
   static func isPrimitive<V>(_ view: V) -> Bool where V: View {
     guard !(view is AnyOptional) else { return false }
+    // `AnyView` is transparent: let the reconciler recurse into it so the inner
+    // view becomes its OWN fiber (with `@Environment` bound via
+    // `bindProperties`). Treating the erased box as the node would serialize an
+    // inner view whose dynamic properties were never injected — reflection on
+    // `AnyView` cannot reach properties behind `view: Any`.
+    guard !(view is AnyView) else { return false }
     return _ssrHTMLNode(for: view) != nil
   }
 
@@ -141,7 +173,12 @@ struct HTMLTargetFiberRenderer: FiberRenderer {
     _ view: Primitive
   ) -> ViewVisitorF<Visitor>? where Primitive: View, Visitor: ViewVisitor {
     guard let node = _ssrHTMLNode(for: view) else { return nil }
-    return { visitor in node.childSource._visitChildren(visitor) }
+    // Visit each legacy child (from `ParentView.children`) individually. Leaves
+    // (empty children) visit nothing — no `body`/`_visitChildren` recursion.
+    let children = node.children
+    return { visitor in
+      for child in children { visitor.visit(child) }
+    }
   }
 
   func commit(_ mutations: [Mutation<Self>]) {
