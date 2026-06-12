@@ -61,41 +61,4 @@ final class SanitizerTests: XCTestCase {
       "&quot;Hello&quot; &amp; &#x27;World&#x27;"
     )
   }
-
-  /// Reference implementation: the original five chained `replacingOccurrences`
-  /// passes that `Sanitizers.HTML.Encode.sanitize` used before the single-pass
-  /// rewrite. Pins the new implementation to be byte-identical to the old one.
-  private func chainedEncode(_ input: String) -> String {
-    let controlCharacters = [("&", "&amp;"),
-                             ("<", "&lt;"),
-                             (">", "&gt;"),
-                             ("\"", "&quot;"),
-                             ("'", "&#x27;")]
-    return controlCharacters.reduce(input) { input, replacement in
-      let (from, to) = replacement
-      return input.replacingOccurrences(of: from, with: to)
-    }
-  }
-
-  /// B2 equivalence gate: the single-pass `Encode.sanitize` must produce output
-  /// byte-identical to the previous chained-`replacingOccurrences` algorithm.
-  func testHTMLEncodeSinglePassEquivalence() {
-    let cases = [
-      "",                                            // empty
-      "no specials here",                            // plain text
-      "<div class=\"a\">&amp; it's here></div>",     // all 5 specials + adjacent text
-      "&<>\"'",                                       // bare specials, no text
-      "&amp;&lt;&gt;",                               // escaped-looking input (re-escapes `&`)
-      "a&b<c>d\"e'f",                                // specials interleaved with text
-      "emoji 😀 & <tag> \"quote\" 'apos'",            // multi-byte scalars + specials
-      "\u{0000}\u{FFFF}<>",                           // control + high scalars + specials
-    ]
-    for input in cases {
-      XCTAssertEqual(
-        Sanitizers.HTML.Encode.sanitize(input),
-        chainedEncode(input),
-        "single-pass encode diverged from chained reference for input: \(input.debugDescription)"
-      )
-    }
-  }
 }

@@ -5,8 +5,8 @@ import PackageDescription
 let package = Package(
   name: "Tokamak",
   platforms: [
-    .macOS(.v26),
-    .iOS(.v26),
+    .macOS(.v15),
+    .iOS(.v18),
   ],
   products: [
     // Products define the executables and libraries produced by a package,

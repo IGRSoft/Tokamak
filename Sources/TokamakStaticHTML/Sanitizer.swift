@@ -130,25 +130,16 @@ public enum Sanitizers {
       }
 
       static func sanitize(_ input: String) -> String {
-        // Single-pass escape. Byte-identical to the previous five chained
-        // `replacingOccurrences` passes: the five source scalars are pairwise
-        // disjoint and none of the entity replacements (`&amp;`, `&lt;`, `&gt;`,
-        // `&quot;`, `&#x27;`) reintroduces `<`, `>`, `"`, or `'`, so escaping each
-        // input scalar exactly once on a single forward scan yields the same string
-        // while avoiding five full-string allocations.
-        var result = ""
-        result.reserveCapacity(input.count)
-        for scalar in input.unicodeScalars {
-          switch scalar {
-          case "&": result += "&amp;"
-          case "<": result += "&lt;"
-          case ">": result += "&gt;"
-          case "\"": result += "&quot;"
-          case "'": result += "&#x27;"
-          default: result.unicodeScalars.append(scalar)
-          }
+        let controlCharacters = [("&", "&amp;"),
+                                 ("<", "&lt;"),
+                                 (">", "&gt;"),
+                                 ("\"", "&quot;"),
+                                 ("'", "&#x27;")]
+
+        return controlCharacters.reduce(input) { input, replacement in
+          let (from, to) = replacement
+          return input.replacingOccurrences(of: from, with: to)
         }
-        return result
       }
     }
 
