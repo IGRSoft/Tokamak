@@ -24,6 +24,41 @@ import XCTest
 // Needed for `NSImage`, but would be great to make this truly cross-platform.
 import class AppKit.NSImage
 
+/// Executable path of the headless browser the image reference snapshots were
+/// recorded against: Microsoft Edge.
+///
+/// The stored PNG references (and the `compare.swift` exact-pixel equality) are
+/// engine-specific — empirically, Google Chrome's headless `--screenshot` output
+/// does NOT match these Edge-recorded references even at `precision: 1`, and
+/// SwiftUI's `NSHostingView` render does not byte-match Chrome either. Resolving
+/// to a *different* Chromium build would therefore turn an environment gap into
+/// spurious pixel-diff failures (or, worse, tempt a blind reference rewrite that
+/// would mask real render regressions). So this guard is intentionally narrowed
+/// to Edge: when Edge is present the render tests run exactly as recorded; when
+/// it is absent they skip with an annotated reason (never a hard failure, never
+/// a rewritten reference). Tracking: Tokamak#12 / worktask tokamak-test-green
+/// (q1 → path b).
+func referenceBrowserPath() -> String? {
+  let edge = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+  return FileManager.default.isExecutableFile(atPath: edge) ? edge : nil
+}
+
+/// Throws `XCTSkip` when the reference-recording browser (Edge) is unavailable,
+/// so browser-backed image-render tests skip cleanly instead of hard-failing.
+/// Call from `setUpWithError()` in each render test case.
+func requireReferenceBrowser(file: StaticString = #filePath, line: UInt = #line) throws {
+  if referenceBrowserPath() == nil {
+    throw XCTSkip(
+      "Skipping image-render snapshot: Microsoft Edge (the reference-recording "
+        + "browser) is not installed. Chrome/Chromium output does not match the "
+        + "Edge-recorded pixel references, so running here would produce spurious "
+        + "diffs. Install Edge or run in CI to execute. (Tokamak#12)",
+      file: file,
+      line: line
+    )
+  }
+}
+
 public extension Snapshotting where Value: View, Format == NSImage {
   static var image: Snapshotting { .image() }
 
@@ -37,9 +72,17 @@ public extension Snapshotting where Value: View, Format == NSImage {
 
         // swiftlint:disable:next force_try
         try! html.write(to: renderedPath)
+        guard let browserPath = referenceBrowserPath() else {
+          // Edge absent: emit a 1x1 sentinel so the strategy resolves instead of
+          // aborting the xctest process with NSInvalidArgumentException. The
+          // companion `requireReferenceBrowser()` guard in each render test's
+          // `setUpWithError()` issues `XCTSkip` before reaching here, so this
+          // branch is only a safety net.
+          callback(NSImage(size: .init(width: 1, height: 1)))
+          return
+        }
         let browser = Process()
-        browser
-          .launchPath = "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+        browser.launchPath = browserPath
 
         var arguments = [
           "--headless",

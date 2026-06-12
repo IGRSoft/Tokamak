@@ -22,6 +22,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class ShapeRenderingTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testContainerRelativeShape() {
     assertSnapshot(
       matching: ZStack {

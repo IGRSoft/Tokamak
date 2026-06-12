@@ -22,6 +22,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class LayoutRenderingTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testAnchoredModifiers() {
     assertSnapshot(
       matching: ZStack {
