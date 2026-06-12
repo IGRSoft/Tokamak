@@ -23,7 +23,7 @@
 #if canImport(SnapshotTesting)
 
 import Foundation
-import TokamakStaticHTML
+@testable import TokamakStaticHTML
 import XCTest
 
 final class SSRParityTests: XCTestCase {
@@ -273,6 +273,74 @@ final class SSRParityTests: XCTestCase {
         }
       }
     }
+  }
+
+  // MARK: - D2 accumulator equivalence (C5)
+
+  /// Verbatim reimplementation of the pre-D2 map/join serializer, used to prove
+  /// the inout-buffer accumulator produces identical bytes on a deep tree.
+  private func legacyJoinOuterHTML(
+    html: AnyHTML,
+    children: [HTMLTarget],
+    shouldSortAttributes: Bool
+  ) -> String {
+    let attributes = html.attributes
+    let renderedAttributes: String
+    if attributes.isEmpty {
+      renderedAttributes = ""
+    } else {
+      let mappedAttributes = attributes
+        .filter { !$1.isEmpty }
+        .map { #"\#($0)="\#($1)""# }
+      if shouldSortAttributes {
+        renderedAttributes = mappedAttributes.sorted().joined(separator: " ")
+      } else {
+        renderedAttributes = mappedAttributes.joined(separator: " ")
+      }
+    }
+    return """
+    <\(html.tag)\(attributes.isEmpty ? "" : " ")\
+    \(renderedAttributes)>\
+    \(html.innerHTML(shouldSortAttributes: shouldSortAttributes) ?? "")\
+    \(children
+      .map { legacyJoinOuterHTML(
+        html: $0.html,
+        children: $0.children,
+        shouldSortAttributes: shouldSortAttributes
+      ) }
+      .joined(separator: "\n"))\
+    </\(html.tag)>
+    """
+  }
+
+  func testD2AccumulatorEquivalence() {
+    // 6-level nested stacks with leaf Texts — exercises sibling separators,
+    // empty-attribute filtering, and innerHTML at depth.
+    let renderer = StaticHTMLRenderer(
+      VStack {
+        HStack {
+          VStack {
+            HStack {
+              VStack {
+                Text("deep")
+                Text("siblings")
+              }
+              Text("mid")
+            }
+          }
+          Text("shallow")
+        }
+        Text("top")
+      }
+    )
+    let root = renderer.rootTarget
+    let accumulated = root.outerHTML(shouldSortAttributes: true)
+    let joined = legacyJoinOuterHTML(
+      html: root.html,
+      children: root.children,
+      shouldSortAttributes: true
+    )
+    XCTAssertEqual(accumulated, joined, "D2 accumulator must be byte-identical to map/join")
   }
 
   func testAppPath() {

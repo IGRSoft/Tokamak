@@ -60,30 +60,63 @@ public extension AnyHTML {
     additonalAttributes: [HTMLAttribute: String] = [:],
     children: [HTMLTarget]
   ) -> String {
+    // D2/H3: single inout-String accumulator — no per-level child array/join
+    // allocations. Byte-identical to the previous map/join implementation
+    // (snapshot- and dual-engine-oracle-verified).
+    var out = ""
+    out.reserveCapacity(512)
+    _serialize(
+      into: &out,
+      shouldSortAttributes: shouldSortAttributes,
+      additonalAttributes: additonalAttributes,
+      children: children
+    )
+    return out
+  }
+
+  /// Appends this node's serialized form to `out`, recursing into `children`
+  /// within the same buffer. Mirrors the legacy join semantics exactly:
+  /// open tag + (space + attributes when the *unfiltered* attribute set is
+  /// non-empty) + innerHTML + children joined by a single `"\n"` between
+  /// siblings (none before the first, none after the last) + close tag.
+  internal func _serialize(
+    into out: inout String,
+    shouldSortAttributes: Bool,
+    additonalAttributes: [HTMLAttribute: String] = [:],
+    children: [HTMLTarget]
+  ) {
     let attributes = attributes.merging(additonalAttributes, uniquingKeysWith: +)
-    let renderedAttributes: String
-    if attributes.isEmpty {
-      renderedAttributes = ""
-    } else {
+    out.append("<")
+    out.append(tag)
+    if !attributes.isEmpty {
+      out.append(" ")
       let mappedAttributes = attributes
         // Exclude empty values to avoid waste of space with `class=""`
         .filter { !$1.isEmpty }
         .map { #"\#($0)="\#($1)""# }
       if shouldSortAttributes {
-        renderedAttributes = mappedAttributes.sorted().joined(separator: " ")
+        out.append(mappedAttributes.sorted().joined(separator: " "))
       } else {
-        renderedAttributes = mappedAttributes.joined(separator: " ")
+        out.append(mappedAttributes.joined(separator: " "))
       }
     }
-
-    return """
-    <\(tag)\(attributes.isEmpty ? "" : " ")\
-    \(renderedAttributes)>\
-    \(innerHTML(shouldSortAttributes: shouldSortAttributes) ?? "")\
-    \(children.map { $0.outerHTML(shouldSortAttributes: shouldSortAttributes) }
-      .joined(separator: "\n"))\
-    </\(tag)>
-    """
+    out.append(">")
+    if let inner = innerHTML(shouldSortAttributes: shouldSortAttributes) {
+      out.append(inner)
+    }
+    var isFirst = true
+    for child in children {
+      if !isFirst { out.append("\n") }
+      isFirst = false
+      child.html._serialize(
+        into: &out,
+        shouldSortAttributes: shouldSortAttributes,
+        children: child.children
+      )
+    }
+    out.append("</")
+    out.append(tag)
+    out.append(">")
   }
 }
 
