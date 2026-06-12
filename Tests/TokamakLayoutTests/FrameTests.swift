@@ -21,6 +21,8 @@ import TokamakStaticHTML
 import XCTest
 
 final class FrameTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testFixedFrame() async {
     await compare(size: .init(width: 500, height: 500)) {
       SwiftUI.Rectangle()
@@ -105,7 +107,7 @@ final class FrameTests: XCTestCase {
               maxHeight: .infinity,
               alignment: .init(horizontal: nativeHorizontal, vertical: nativeVertical)
             )
-            .background(Rectangle().fill(Color(white: 127 / 255)))
+            .background(SwiftUI.Rectangle().fill(Color(white: 127 / 255)))
         } to: {
           TokamakStaticHTML.Rectangle()
             .fill(Color(white: 0))
@@ -118,7 +120,7 @@ final class FrameTests: XCTestCase {
                 vertical: tokamakVertical
               )
             )
-            .background(Rectangle().fill(Color(white: 127 / 255)))
+            .background(TokamakStaticHTML.Rectangle().fill(Color(white: 127 / 255)))
         }
       }
     }

@@ -22,6 +22,8 @@ import XCTest
 
 @available(macOS 12.0, *)
 final class ContainedZLayoutTests: XCTestCase {
+  override func setUpWithError() throws { try requireReferenceBrowser() }
+
   func testBackground() async {
     for (nativeHorizontal, tokamakHorizontal) in SwiftUI.HorizontalAlignment.allCases {
       for (nativeVertical, tokamakVertical) in SwiftUI.VerticalAlignment.allCases {
