@@ -112,14 +112,14 @@ public final class StaticHTMLRenderer: Renderer {
 
   var title: String {
     if let store = fiberDriver?.preferenceStore {
-      return store.value(forKey: HTMLTitlePreferenceKey.self).value ?? ""
+      return store.value(forKey: HTMLTitlePreferenceKey.self).value
     }
     return reconciler?.preferenceStore.value(forKey: HTMLTitlePreferenceKey.self).value ?? ""
   }
 
   var meta: [HTMLMeta.MetaTag] {
     if let store = fiberDriver?.preferenceStore {
-      return store.value(forKey: HTMLMetaPreferenceKey.self).value ?? []
+      return store.value(forKey: HTMLMetaPreferenceKey.self).value
     }
     return reconciler?.preferenceStore.value(forKey: HTMLMetaPreferenceKey.self).value ?? []
   }
