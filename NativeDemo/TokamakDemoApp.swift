@@ -11,26 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-//  Created by Jed Fox on 07/01/2020.
-//
 
 import SwiftUI
-import UIKit
 
-// so we only need one Info.plist
-public class NSApplication: UIApplication {}
-
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-  var window: UIWindow?
-  func application(
-    _: UIApplication,
-    didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
-  ) -> Bool {
-    window = UIWindow()
-    window?.rootViewController = UIHostingController(rootView: TokamakDemoView())
-    window?.makeKeyAndVisible()
-    return true
+@main
+struct TokamakDemoApp: App {
+  var body: some Scene {
+    WindowGroup("Tokamak Demo") {
+      TokamakDemoView()
+    }
   }
 }
