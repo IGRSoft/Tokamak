@@ -31,7 +31,8 @@ final class VaryingPrimitivenessTests: XCTestCase {
 
     final class StateManager: ObservableObject {
       private init() { }
-      static let shared = StateManager()
+      // Single-threaded reconciler test: the shared model is never touched concurrently.
+      nonisolated(unsafe) static let shared = StateManager()
 
       @Published var state = State.a //b(["eins", "2", "III"])
     }

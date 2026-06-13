@@ -129,15 +129,14 @@ struct StructMetadata {
 extension StructMetadata {
   init(type: Any.Type) {
     self = Self(pointer: unsafeBitCast(type, to: UnsafePointer<StructMetadataLayout>.self))
-    assert(
-      _checkMetadataState(
-        .init(desiredState: .layoutComplete, isBlocking: false),
-        self
-      ).state.rawValue < MetadataState.layoutComplete.rawValue,
-      """
-      Struct metadata for \(type) is in incomplete state, \
-      proceeding would result in an undefined behavior.
-      """
-    )
+    // A debug-only `assert` here previously called the Swift runtime's
+    // `swift_checkMetadataState` (bound via `@_silgen_name`) to verify the metadata had
+    // reached at least the `layoutComplete` state. The compiler now diagnoses direct
+    // references to reserved `swift_*` runtime symbols ("this will become an error"),
+    // and the Swift team provides no sanctioned replacement (`@_extern(c)` would be a
+    // calling-convention mismatch for this Swift-CC entry point). Tokamak only ever
+    // reflects fully-realized value types, whose metadata is already complete by this
+    // point, so the diagnostic check was dropped rather than rely on an unsupported,
+    // miscompilation-prone runtime binding.
   }
 }

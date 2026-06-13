@@ -69,7 +69,7 @@ public extension View {
   }
 }
 
-@usableFromInline final class GridRowID: CustomDebugStringConvertible {
+@usableFromInline final class GridRowID: CustomDebugStringConvertible, Sendable {
   @usableFromInline
   let alignment: VerticalAlignment?
 

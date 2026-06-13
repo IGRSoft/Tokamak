@@ -27,7 +27,7 @@ final class VisualRenderingTests: XCTestCase {
 
   func testContentStyles() {
     assertSnapshot(
-      matching: HStack {
+      of: HStack {
         Rectangle()
           .frame(width: 50, height: 50)
           .foregroundStyle(HierarchicalShapeStyle.primary)
@@ -47,7 +47,7 @@ final class VisualRenderingTests: XCTestCase {
     )
 
     assertSnapshot(
-      matching: HStack {
+      of: HStack {
         Rectangle()
           .frame(width: 50, height: 50)
           .foregroundStyle(HierarchicalShapeStyle.primary)
@@ -69,7 +69,7 @@ final class VisualRenderingTests: XCTestCase {
 
   func testForegroundStyle() {
     assertSnapshot(
-      matching: HStack(spacing: 0) {
+      of: HStack(spacing: 0) {
         Rectangle()
           .frame(width: 50, height: 50)
           .foregroundStyle(Color.red)
@@ -116,12 +116,12 @@ final class VisualRenderingTests: XCTestCase {
     }
 
     let matchA = verifySnapshot(
-      matching: gradient,
+      of: gradient,
       as: .image(precision: 0.9, size: size),
       testName: "\(#function)A"
     )
     let matchB = verifySnapshot(
-      matching: gradient,
+      of: gradient,
       as: .image(precision: 0.9, size: size),
       testName: "\(#function)B"
     )
@@ -134,7 +134,7 @@ final class VisualRenderingTests: XCTestCase {
 
   func testMaterial() {
     assertSnapshot(
-      matching: ZStack {
+      of: ZStack {
         HStack(spacing: 0) {
           Color.red
           Color.orange
@@ -176,7 +176,7 @@ final class VisualRenderingTests: XCTestCase {
     }
 
     assertSnapshot(
-      matching: Opacity().preferredColorScheme(.light),
+      of: Opacity().preferredColorScheme(.light),
       as: .image(size: .init(width: 75, height: 75)),
       timeout: defaultSnapshotTimeout
     )
@@ -184,7 +184,7 @@ final class VisualRenderingTests: XCTestCase {
 
   func testScaleEffect() {
     assertSnapshot(
-      matching: ZStack {
+      of: ZStack {
         Circle()
           .fill(Color.red)
           .frame(width: 50, height: 50)

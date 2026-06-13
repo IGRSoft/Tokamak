@@ -15,6 +15,7 @@
 //  Created by Jed Fox on 06/28/2020.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 
 @_spi(TokamakCore)
@@ -136,3 +137,5 @@ extension TextField: HTMLConvertible, DOMNodeConvertible, Layout, _AnyLayout, An
     }
   }
 }
+
+#endif

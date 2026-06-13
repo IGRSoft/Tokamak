@@ -15,6 +15,7 @@
 //  Created by Max Desiatov on 11/04/2020.
 //
 
+#if canImport(JavaScriptKit)
 import JavaScriptEventLoop
 import JavaScriptKit
 import OpenCombineJS
@@ -62,13 +63,15 @@ private extension AnyView {
   }
 }
 
-let global = JSObject.global
-let window = global.window.object!
-let matchMediaDarkScheme = window.matchMedia!("(prefers-color-scheme: dark)").object!
-let log = global.console.object!.log.function!
-let document = global.document.object!
-let body = document.body.object!
-let head = document.head.object!
+// Single-threaded JS event loop (WASM): these DOM handles are bound once at startup and
+// only ever accessed on the main JS thread, so they are never read or written concurrently.
+nonisolated(unsafe) let global = JSObject.global
+nonisolated(unsafe) let window = global.window.object!
+nonisolated(unsafe) let matchMediaDarkScheme = window.matchMedia!("(prefers-color-scheme: dark)").object!
+nonisolated(unsafe) let log = global.console.object!.log.function!
+nonisolated(unsafe) let document = global.document.object!
+nonisolated(unsafe) let body = document.body.object!
+nonisolated(unsafe) let head = document.head.object!
 
 func appendRootStyle(_ rootNode: JSObject) {
   rootNode.style = .string(rootNodeStyles)
@@ -296,3 +299,5 @@ final class DOMRenderer: Renderer {
 protocol DOMPrimitive {
   var renderedBody: AnyView { get }
 }
+
+#endif

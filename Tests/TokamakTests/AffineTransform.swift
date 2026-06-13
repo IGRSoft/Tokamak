@@ -55,7 +55,7 @@ extension CGAffineTransformTest {
     withTransform transform: CGAffineTransform,
     mapsTo expectedPoint: CGPoint,
     _ message: String = "",
-    file: StaticString = #file, line: UInt = #line
+    file: StaticString = #filePath, line: UInt = #line
   ) {
     let newPoint = transform.transform(point: point)
 

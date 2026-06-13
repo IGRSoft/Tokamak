@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptKit
 @_spi(TokamakCore) import TokamakCore
 import TokamakStaticHTML
 
-private let ResizeObserver = JSObject.global.ResizeObserver.function!
+// Single-threaded JS event loop (WASM): bound once, accessed only on the main JS thread.
+nonisolated(unsafe) private let ResizeObserver = JSObject.global.ResizeObserver.function!
 
 extension GeometryReader: DOMPrimitive {
   var renderedBody: AnyView {
@@ -85,3 +87,5 @@ struct _GeometryReader<Content: View>: View {
     }
   }
 }
+
+#endif

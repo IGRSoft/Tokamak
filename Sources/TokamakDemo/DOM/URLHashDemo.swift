@@ -16,8 +16,9 @@
 import JavaScriptKit
 import TokamakDOM
 
-private let location = JSObject.global.location.object!
-private let window = JSObject.global.window.object!
+// Single-threaded JS event loop (WASM): bound once, accessed only on the main JS thread.
+nonisolated(unsafe) private let location = JSObject.global.location.object!
+nonisolated(unsafe) private let window = JSObject.global.window.object!
 
 private final class HashState: ObservableObject {
   var onHashChange: JSClosure!

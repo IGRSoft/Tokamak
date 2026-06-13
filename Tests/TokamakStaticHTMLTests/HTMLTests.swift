@@ -44,7 +44,7 @@ final class HTMLTests: XCTestCase {
     let resultingHTML = StaticHTMLRenderer(OptionalBody(model: Model(color: Color.red)))
       .render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testPaddingFusion() {
@@ -52,13 +52,13 @@ final class HTMLTests: XCTestCase {
       Color.red.padding(10).padding(20)
     ).render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: nestedTwice, as: .html)
+    assertSnapshot(of: nestedTwice, as: .html)
 
     let nestedThrice = StaticHTMLRenderer(
       Color.red.padding(20).padding(20).padding(20)
     ).render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: nestedThrice, as: .html)
+    assertSnapshot(of: nestedThrice, as: .html)
   }
 
   func testFontStacks() {
@@ -67,7 +67,7 @@ final class HTMLTests: XCTestCase {
         .font(.custom("Marker Felt", size: 17))
     ).render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: customFont, as: .html)
+    assertSnapshot(of: customFont, as: .html)
 
     let fallbackFont = StaticHTMLRenderer(
       VStack {
@@ -77,7 +77,7 @@ final class HTMLTests: XCTestCase {
       .font(.system(.body, design: .serif))
     ).render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: fallbackFont, as: .html)
+    assertSnapshot(of: fallbackFont, as: .html)
   }
 
   func testHTMLSanitizer() {
@@ -85,12 +85,12 @@ final class HTMLTests: XCTestCase {
 
     let sanitizedHTML = StaticHTMLRenderer(Text(text))
       .render(shouldSortAttributes: true)
-    assertSnapshot(matching: sanitizedHTML, as: .html)
+    assertSnapshot(of: sanitizedHTML, as: .html)
 
     let insecureHTML =
       StaticHTMLRenderer(Text(text)._domTextSanitizer(Sanitizers.HTML.insecure))
         .render(shouldSortAttributes: true)
-    assertSnapshot(matching: insecureHTML, as: .html)
+    assertSnapshot(of: insecureHTML, as: .html)
   }
 
   func testTitle() {
@@ -102,7 +102,7 @@ final class HTMLTests: XCTestCase {
     ).render(shouldSortAttributes: true)
 
     assert(resultingHTML.contains("<title>Tokamak</title>"))
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testDoubleTitle() {
@@ -118,7 +118,7 @@ final class HTMLTests: XCTestCase {
 
     assert(resultingHTML.contains("<title>Tokamak 2</title>") == true)
     assert(resultingHTML.contains("<title>Tokamak 1</title>") == false)
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testTitleModifier() {
@@ -128,7 +128,7 @@ final class HTMLTests: XCTestCase {
     ).render(shouldSortAttributes: true)
 
     assert(resultingHTML.contains("<title>Tokamak</title>"))
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testDoubleTitleModifier() {
@@ -140,7 +140,7 @@ final class HTMLTests: XCTestCase {
 
     assert(resultingHTML.contains("<title>Tokamak 2</title>") == true)
     assert(resultingHTML.contains("<title>Tokamak 1</title>") == false)
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testMetaCharset() {
@@ -151,7 +151,7 @@ final class HTMLTests: XCTestCase {
       }
     ).render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testMetaCharsetModifier() {
@@ -160,7 +160,7 @@ final class HTMLTests: XCTestCase {
         .htmlMeta(charset: "utf-8")
     ).render(shouldSortAttributes: true)
 
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testMetaAll() {
@@ -175,7 +175,7 @@ final class HTMLTests: XCTestCase {
     ).render(shouldSortAttributes: true)
 
     assert(resultingHTML.components(separatedBy: "<meta ").count == 5)
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 
   func testPreferencePropagation() {
@@ -204,7 +204,7 @@ final class HTMLTests: XCTestCase {
     assert(title1 == "Tokamak 1")
     assert(title2 == "Tokamak 2")
     assert(title3 == "Tokamak 3")
-    assertSnapshot(matching: resultingHTML, as: .html)
+    assertSnapshot(of: resultingHTML, as: .html)
   }
 }
 

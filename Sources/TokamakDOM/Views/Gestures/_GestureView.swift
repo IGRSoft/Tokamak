@@ -15,6 +15,7 @@
 //  Created by Szymon on 16/7/2023.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 
 @_spi(TokamakStaticHTML)
@@ -58,3 +59,5 @@ extension TokamakCore._GestureView: HTMLConvertible {
     }
   }
 }
+
+#endif

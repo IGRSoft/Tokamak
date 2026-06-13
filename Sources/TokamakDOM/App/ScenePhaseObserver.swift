@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import OpenCombineShim
 
 enum ScenePhaseObserver {
-  static var publisher = CurrentValueSubject<ScenePhase, Never>(.active)
+  // Single-threaded JS event loop (WASM): visibility events are delivered serially on
+  // the main JS thread; no concurrent access to this shared publisher/closure storage.
+  nonisolated(unsafe) static var publisher = CurrentValueSubject<ScenePhase, Never>(.active)
 
-  private static var closure: JSClosure?
+  nonisolated(unsafe) private static var closure: JSClosure?
 
   static func observe() {
     let closure = JSClosure { _ -> JSValue in
@@ -34,3 +37,5 @@ enum ScenePhaseObserver {
     Self.closure = closure
   }
 }
+
+#endif

@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 9/17/21.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptKit
 @_spi(TokamakCore)
@@ -367,3 +368,5 @@ extension GraphicsContext.BlendMode {
     }
   }
 }
+
+#endif

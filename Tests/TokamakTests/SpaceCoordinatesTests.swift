@@ -46,7 +46,7 @@ final class SpaceCoordinatesTests: XCTestCase {
   }
 
   func testActiveCoordinateSpaceUpdate() {
-    var context = CoordinateSpaceContext()
+    let context = CoordinateSpaceContext()
     let origin = CGPoint(x: 10, y: 20)
     context.activeCoordinateSpace[.global] = origin
 

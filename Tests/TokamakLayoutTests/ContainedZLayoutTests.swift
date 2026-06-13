@@ -21,6 +21,7 @@ import TokamakStaticHTML
 import XCTest
 
 @available(macOS 12.0, *)
+@MainActor
 final class ContainedZLayoutTests: XCTestCase {
   override func setUpWithError() throws { try requireReferenceBrowser() }
 

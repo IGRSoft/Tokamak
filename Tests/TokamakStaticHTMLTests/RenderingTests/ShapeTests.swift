@@ -26,7 +26,7 @@ final class ShapeRenderingTests: XCTestCase {
 
   func testContainerRelativeShape() {
     assertSnapshot(
-      matching: ZStack {
+      of: ZStack {
         ContainerRelativeShape()
           .fill(Color.blue)
           .frame(width: 100, height: 100, alignment: .center)
@@ -54,7 +54,7 @@ final class ShapeRenderingTests: XCTestCase {
     }
 
     assertSnapshot(
-      matching: Star().fill(Color(red: 1, green: 0.75, blue: 0.1, opacity: 1)),
+      of: Star().fill(Color(red: 1, green: 0.75, blue: 0.1, opacity: 1)),
       as: .image(size: .init(width: 100, height: 100)),
       timeout: defaultSnapshotTimeout
     )
@@ -62,7 +62,7 @@ final class ShapeRenderingTests: XCTestCase {
 
   func testStrokedCircle() {
     assertSnapshot(
-      matching: Circle().stroke(Color.green).frame(width: 100, height: 100, alignment: .center),
+      of: Circle().stroke(Color.green).frame(width: 100, height: 100, alignment: .center),
       as: .image(size: .init(width: 150, height: 150)),
       timeout: defaultSnapshotTimeout
     )

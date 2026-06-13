@@ -15,6 +15,7 @@
 //  Created by Jed Fox on 7/18/20.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 
 // MARK: Environment & State
@@ -267,3 +268,5 @@ public extension Text {
 }
 
 public typealias PreviewProvider = TokamakCore.PreviewProvider
+
+#endif

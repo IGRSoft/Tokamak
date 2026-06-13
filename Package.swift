@@ -63,9 +63,16 @@ let package = Package(
     // a module or a test suite.
     // Targets can depend on other targets in this package, and on products
     // in packages which this package depends on.
+    // Thin C module that forward-declares the `swift_getTypeByMangledNameInContext`
+    // runtime entry point so TokamakCore's reflection layer can call it through C
+    // interop instead of binding the reserved `swift_*` symbol from Swift directly.
+    .target(
+      name: "CRuntime"
+    ),
     .target(
       name: "TokamakCore",
       dependencies: [
+        "CRuntime",
         .product(
           name: "OpenCombineShim",
           package: "OpenCombine"
@@ -191,8 +198,8 @@ let package = Package(
       exclude: ["__Snapshots__", "RenderingTests/__Snapshots__"]
     ),
   ],
-  // Swift 6 strict concurrency. The token/box types are made Sendable; genuinely
+  // Swift 6 language mode. The token/box types are made Sendable; genuinely
   // mutable global state uses `nonisolated(unsafe)`, justified by the single-threaded
   // Wasm/DOM runtime.
-  swiftLanguageModes: [.v5]
+  swiftLanguageModes: [.v6]
 )

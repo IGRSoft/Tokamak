@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/3/20.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 import TokamakStaticHTML
 
@@ -91,3 +92,5 @@ extension DisclosureGroup: DOMPrimitive {
     })
   }
 }
+
+#endif

@@ -15,11 +15,13 @@
 //  Created by Carson Katri on 7/20/20.
 //
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import OpenCombineShim
 import TokamakCore
 
-private let sessionStorage = JSObject.global.sessionStorage.object!
+// Single-threaded JS event loop (WASM): web storage is only accessed on the main JS thread.
+nonisolated(unsafe) private let sessionStorage = JSObject.global.sessionStorage.object!
 
 public class SessionStorage: WebStorage, _StorageProvider {
   let storage = sessionStorage
@@ -32,3 +34,5 @@ public class SessionStorage: WebStorage, _StorageProvider {
 
   public let publisher = ObservableObjectPublisher()
 }
+
+#endif

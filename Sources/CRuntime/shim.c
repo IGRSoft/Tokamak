@@ -1,4 +1,4 @@
-// Copyright 2021 Tokamak contributors
+// Copyright 2024 Tokamak contributors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if canImport(JavaScriptKit)
-import TokamakCore
-
-extension _HoverActionModifier: DOMActionModifier {
-  public var listeners: [String: Listener] {
-    [
-      "mouseover":
-        { _ in hover?(true) },
-      "mouseout":
-        { _ in hover?(false) },
-    ]
-  }
-}
-
-#endif
+// This target only forward-declares a Swift runtime symbol for use through C interop;
+// the implementation lives in libswiftCore, which every Swift program links against.
+// The translation unit exists solely so SwiftPM treats `CRuntime` as a buildable module.
+#include "CRuntime.h"

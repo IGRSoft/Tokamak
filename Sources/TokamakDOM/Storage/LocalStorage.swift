@@ -15,15 +15,18 @@
 //  Created by Carson Katri on 7/20/20.
 //
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import OpenCombineShim
 import TokamakCore
 
-private let rootPublisher = ObservableObjectPublisher()
-private let localStorage = JSObject.global.localStorage.object!
+// Single-threaded JS event loop (WASM): web storage is only accessed on the main JS
+// thread, so this module-level state is never touched concurrently.
+nonisolated(unsafe) private let rootPublisher = ObservableObjectPublisher()
+nonisolated(unsafe) private let localStorage = JSObject.global.localStorage.object!
 
 public class LocalStorage: WebStorage, _StorageProvider {
-  static let closure = JSClosure { _ in
+  nonisolated(unsafe) static let closure = JSClosure { _ in
     rootPublisher.send()
     return .undefined
   }
@@ -41,3 +44,5 @@ public class LocalStorage: WebStorage, _StorageProvider {
 
   public let publisher: ObservableObjectPublisher
 }
+
+#endif

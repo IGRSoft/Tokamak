@@ -35,7 +35,7 @@ struct EnvironmentObjectDemo: View {
   }
 }
 
-extension ColorScheme: CustomStringConvertible {
+extension ColorScheme: @retroactive CustomStringConvertible {
   public var description: String {
     switch self {
     case .dark: return "dark"

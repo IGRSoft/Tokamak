@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/16/20.
 //
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import OpenCombineShim
 import TokamakCore
@@ -78,3 +79,5 @@ public extension App {
     ColorSchemeObserver.publisher.eraseToAnyPublisher()
   }
 }
+
+#endif

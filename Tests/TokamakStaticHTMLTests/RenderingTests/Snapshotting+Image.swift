@@ -66,6 +66,10 @@ public extension Snapshotting where Value: View, Format == NSImage {
   static func image(precision: Float = 1, size: CGSize? = nil) -> Snapshotting {
     SimplySnapshotting.image(precision: precision).asyncPullback { view in
       Async { callback in
+        // `Async`'s callback is delivered from the browser process's termination
+        // handler (a non-main thread); SnapshotTesting bridges it safely, so opt the
+        // non-`Sendable` closure out of the `@Sendable` capture check.
+        nonisolated(unsafe) let callback = callback
         let html = Data(StaticHTMLRenderer(view).render().utf8)
         let cwd = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
         let renderedPath = cwd.appendingPathComponent("rendered.html")

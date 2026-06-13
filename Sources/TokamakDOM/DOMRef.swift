@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 @_spi(TokamakCore) import TokamakCore
 
@@ -28,3 +29,5 @@ public extension View {
     return _targetRef(targetBinding)
   }
 }
+
+#endif

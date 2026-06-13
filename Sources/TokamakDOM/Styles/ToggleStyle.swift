@@ -15,6 +15,7 @@
 //  Created by Jed Fox on 07/04/2020.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 import TokamakStaticHTML
 
@@ -50,3 +51,5 @@ public struct SwitchToggleStyle: ToggleStyle {
     CheckboxToggleStyle().makeBody(configuration: configuration)
   }
 }
+
+#endif

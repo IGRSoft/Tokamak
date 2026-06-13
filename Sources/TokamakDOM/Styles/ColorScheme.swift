@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 
 extension ColorScheme {
@@ -19,3 +20,5 @@ extension ColorScheme {
     self = matchMediaDarkScheme.matches.boolean == true ? .dark : .light
   }
 }
+
+#endif

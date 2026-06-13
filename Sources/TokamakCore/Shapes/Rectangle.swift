@@ -14,7 +14,7 @@
 
 import Foundation
 
-public struct Rectangle: Shape {
+public struct Rectangle: Shape, Sendable {
   public func path(in rect: CGRect) -> Path {
     .init(storage: .rect(rect), sizing: .flexible)
   }
