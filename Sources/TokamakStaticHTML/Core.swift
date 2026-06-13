@@ -32,6 +32,25 @@ public typealias InsetListStyle = TokamakCore.InsetListStyle
 public typealias GroupedListStyle = TokamakCore.GroupedListStyle
 public typealias InsetGroupedListStyle = TokamakCore.InsetGroupedListStyle
 
+public typealias LabelStyle = TokamakCore.LabelStyle
+public typealias LabelStyleConfiguration = TokamakCore.LabelStyleConfiguration
+public typealias DefaultLabelStyle = TokamakCore.DefaultLabelStyle
+public typealias TitleAndIconLabelStyle = TokamakCore.TitleAndIconLabelStyle
+public typealias TitleOnlyLabelStyle = TokamakCore.TitleOnlyLabelStyle
+public typealias IconOnlyLabelStyle = TokamakCore.IconOnlyLabelStyle
+
+public typealias GroupBoxStyle = TokamakCore.GroupBoxStyle
+public typealias GroupBoxStyleConfiguration = TokamakCore.GroupBoxStyleConfiguration
+public typealias DefaultGroupBoxStyle = TokamakCore.DefaultGroupBoxStyle
+public typealias AutomaticGroupBoxStyle = TokamakCore.AutomaticGroupBoxStyle
+
+public typealias GaugeStyle = TokamakCore.GaugeStyle
+public typealias GaugeStyleConfiguration = TokamakCore.GaugeStyleConfiguration
+public typealias DefaultGaugeStyle = TokamakCore.DefaultGaugeStyle
+public typealias LinearGaugeStyle = TokamakCore.LinearGaugeStyle
+public typealias AccessoryLinearGaugeStyle = TokamakCore.AccessoryLinearGaugeStyle
+public typealias AccessoryCircularGaugeStyle = TokamakCore.AccessoryCircularGaugeStyle
+
 // MARK: Shapes
 
 public typealias Shape = TokamakCore.Shape
@@ -78,12 +97,19 @@ public typealias CGAffineTransform = TokamakCore.CGAffineTransform
 // MARK: Views
 
 public typealias Divider = TokamakCore.Divider
+public typealias EquatableView = TokamakCore.EquatableView
 public typealias ForEach = TokamakCore.ForEach
+public typealias Form = TokamakCore.Form
+public typealias Gauge = TokamakCore.Gauge
 public typealias GridItem = TokamakCore.GridItem
 public typealias Group = TokamakCore.Group
+public typealias GroupBox = TokamakCore.GroupBox
 public typealias HStack = TokamakCore.HStack
+public typealias Label = TokamakCore.Label
 public typealias LazyHGrid = TokamakCore.LazyHGrid
+public typealias LazyHStack = TokamakCore.LazyHStack
 public typealias LazyVGrid = TokamakCore.LazyVGrid
+public typealias LazyVStack = TokamakCore.LazyVStack
 public typealias List = TokamakCore.List
 public typealias ProgressView = TokamakCore.ProgressView
 public typealias ScrollView = TokamakCore.ScrollView

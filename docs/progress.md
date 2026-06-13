@@ -46,16 +46,16 @@ Table columns:
 | 🚧  | [Picker](https://developer.apple.com/documentation/swiftui/picker)           |     |
 | 🚧  | [DatePicker](https://developer.apple.com/documentation/swiftui/datepicker)   |     |
 | 🚧  | [Slider](https://developer.apple.com/documentation/swiftui/slider)           |     |
-|     | [Stepper](https://developer.apple.com/documentation/swiftui/stepper)         |     |
-|     | [ColorPicker](https://developer.apple.com/documentation/swiftui/colorpicker) |     |
+| 🚧  | [Stepper](https://developer.apple.com/documentation/swiftui/stepper)         |     |
+| 🚧  | [ColorPicker](https://developer.apple.com/documentation/swiftui/colorpicker) |     |
 
 ### Value Indicators
 
 |     |                                                                                |     |
 | --- | ------------------------------------------------------------------------------ | :-: |
 | 🚧  | [ProgressView](https://developer.apple.com/documentation/swiftui/progressview) |     |
-|     | [Gauge](https://developer.apple.com/documentation/swiftui/gauge)               |     |
-|     | [Label](https://developer.apple.com/documentation/swiftui/label)               |     |
+| 🚧  | [Gauge](https://developer.apple.com/documentation/swiftui/gauge)               |     |
+| 🚧  | [Label](https://developer.apple.com/documentation/swiftui/label)               |     |
 | ✅  | [Link](https://developer.apple.com/documentation/swiftui/link)                 |     |
 
 ## View Layout and Presentation
@@ -67,8 +67,8 @@ Table columns:
 | 🚧  | [HStack](https://developer.apple.com/documentation/swiftui/hstack)         |     |
 | 🚧  | [VStack](https://developer.apple.com/documentation/swiftui/vstack)         |     |
 | 🚧  | [ZStack](https://developer.apple.com/documentation/swiftui/zstack)         |     |
-|     | [LazyHStack](https://developer.apple.com/documentation/swiftui/lazyhstack) |     |
-|     | [LazyVStack](https://developer.apple.com/documentation/swiftui/lazyvstack) |     |
+| 🚧  | [LazyHStack](https://developer.apple.com/documentation/swiftui/lazyhstack) |     |
+| 🚧  | [LazyVStack](https://developer.apple.com/documentation/swiftui/lazyvstack) |     |
 
 ### Grids
 
@@ -93,9 +93,9 @@ Table columns:
 
 |     |                                                                        |     |
 | --- | ---------------------------------------------------------------------- | :-: |
-|     | [Form](https://developer.apple.com/documentation/swiftui/form)         |     |
+| 🚧  | [Form](https://developer.apple.com/documentation/swiftui/form)         |     |
 | ✅  | [Group](https://developer.apple.com/documentation/swiftui/group)       |     |
-|     | [GroupBox](https://developer.apple.com/documentation/swiftui/groupbox) |     |
+| 🚧  | [GroupBox](https://developer.apple.com/documentation/swiftui/groupbox) |     |
 | 🚧  | [Section](https://developer.apple.com/documentation/swiftui/section)   |     |
 
 ### Hierarchical Views
@@ -110,7 +110,7 @@ Table columns:
 |     |                                                                      |     |
 | --- | -------------------------------------------------------------------- | :-: |
 | ✅  | [Spacer](https://developer.apple.com/documentation/swiftui/spacer)   |     |
-|     | [Divider](https://developer.apple.com/documentation/swiftui/divider) |     |
+| 🚧  | [Divider](https://developer.apple.com/documentation/swiftui/divider) |     |
 
 ### Architectural Views
 
@@ -126,7 +126,7 @@ Table columns:
 |     |                                                                                  |     |
 | --- | -------------------------------------------------------------------------------- | :-: |
 | ✅  | [EmptyView](https://developer.apple.com/documentation/swiftui/emptyview)         |     |
-|     | [EquatableView](https://developer.apple.com/documentation/swiftui/equatableview) |     |
+| 🚧  | [EquatableView](https://developer.apple.com/documentation/swiftui/equatableview) |     |
 
 ### Infrequently Used Views
 

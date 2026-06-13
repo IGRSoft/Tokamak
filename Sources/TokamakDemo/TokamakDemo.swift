@@ -89,6 +89,7 @@ struct TokamakDemoView: View {
         }
         Section(header: Text("Containers")) {
           NavItem("ForEach", destination: ForEachDemo())
+          NavItem("Form & GroupBox", destination: FormDemo())
           if #available(iOS 14.0, *) {
             #if os(macOS)
               NavItem("List", destination: ListDemo())
@@ -121,6 +122,7 @@ struct TokamakDemoView: View {
         }
         Section(header: Text("Layout")) {
           NavItem("HStack/VStack", destination: StackDemo())
+          NavItem("LazyVStack/LazyHStack", destination: LazyStackDemo())
           if #available(OSX 10.16, iOS 14.0, *) {
             NavItem("Grid", destination: GridDemo())
           } else {
@@ -150,12 +152,15 @@ struct TokamakDemoView: View {
           NavItem("Gesture & CoordinateSpace", destination: GestureCoordinateSpaceDemo())
         }
         Section(header: Text("Selectors")) {
+          NavItem("ColorPicker", destination: ColorPickerDemo())
           NavItem("DatePicker", destination: DatePickerDemo())
           NavItem("Picker", destination: PickerDemo())
           NavItem("Slider", destination: SliderDemo())
+          NavItem("Stepper", destination: StepperDemo())
           NavItem("Toggle", destination: ToggleDemo())
         }
         Section(header: Text("Text")) {
+          NavItem("Label", destination: LabelDemo())
           NavItem("Text", destination: TextDemo())
           NavItem("TextField", destination: TextFieldDemo())
           NavItem("TextEditor", destination: TextEditorDemo())
@@ -165,6 +170,7 @@ struct TokamakDemoView: View {
             NavItem("Animation", destination: AnimationDemo())
             NavItem("Transitions", destination: TransitionDemo())
             NavItem("ProgressView", destination: ProgressViewDemo())
+            NavItem("Gauge", destination: GaugeDemo())
             NavItem("Environment", destination: EnvironmentDemo().font(.system(size: 8)))
             if #available(macOS 11.0, iOS 14.0, *) {
               NavItem("Preferences", destination: PreferenceKeyDemo())

@@ -12,6 +12,18 @@
 		85ED18C124AD46340085DFA1 /* TokamakDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */; };
 		85ED18C224AD46340085DFA1 /* TokamakDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */; };
 		D107874E274BD1E5003E787B /* SpacerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078726274BD1E5003E787B /* SpacerDemo.swift */; };
+		FEDA0000000000000000B001 /* LabelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F001 /* LabelDemo.swift */; };
+		FEDA0000000000000000B002 /* LabelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F001 /* LabelDemo.swift */; };
+		FEDA0000000000000000B003 /* LazyStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F002 /* LazyStackDemo.swift */; };
+		FEDA0000000000000000B004 /* LazyStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F002 /* LazyStackDemo.swift */; };
+		FEDA0000000000000000B005 /* FormDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F003 /* FormDemo.swift */; };
+		FEDA0000000000000000B006 /* FormDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F003 /* FormDemo.swift */; };
+		FEDA0000000000000000B007 /* StepperDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F004 /* StepperDemo.swift */; };
+		FEDA0000000000000000B008 /* StepperDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F004 /* StepperDemo.swift */; };
+		FEDA0000000000000000B009 /* ColorPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F005 /* ColorPickerDemo.swift */; };
+		FEDA0000000000000000B00A /* ColorPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F005 /* ColorPickerDemo.swift */; };
+		FEDA0000000000000000B00B /* GaugeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F006 /* GaugeDemo.swift */; };
+		FEDA0000000000000000B00C /* GaugeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F006 /* GaugeDemo.swift */; };
 		D107874F274BD1E5003E787B /* SpacerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078726274BD1E5003E787B /* SpacerDemo.swift */; };
 		D1078750274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */; };
 		D1078751274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */; };
@@ -118,6 +130,12 @@
 		85ED18BF24AD464B0085DFA0 /* iOS Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iOS Info.plist"; sourceTree = "<group>"; };
 		85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokamakDemoApp.swift; sourceTree = "<group>"; };
 		D1078726274BD1E5003E787B /* SpacerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpacerDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F001 /* LabelDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F002 /* LazyStackDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LazyStackDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F003 /* FormDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F004 /* StepperDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepperDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F005 /* ColorPickerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F006 /* GaugeDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GaugeDemo.swift; sourceTree = "<group>"; };
 		D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeometryReaderDemo.swift; sourceTree = "<group>"; };
 		D1078728274BD1E5003E787B /* GridDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridDemo.swift; sourceTree = "<group>"; };
 		D1078729274BD1E5003E787B /* StackDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackDemo.swift; sourceTree = "<group>"; };
@@ -229,6 +247,7 @@
 				D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */,
 				D1078728274BD1E5003E787B /* GridDemo.swift */,
 				D1078729274BD1E5003E787B /* StackDemo.swift */,
+				FEDA0000000000000000F002 /* LazyStackDemo.swift */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -240,6 +259,8 @@
 				D107872C274BD1E5003E787B /* SliderDemo.swift */,
 				D107872D274BD1E5003E787B /* PickerDemo.swift */,
 				D107872E274BD1E5003E787B /* ToggleDemo.swift */,
+				FEDA0000000000000000F005 /* ColorPickerDemo.swift */,
+				FEDA0000000000000000F004 /* StepperDemo.swift */,
 			);
 			path = Selectors;
 			sourceTree = "<group>";
@@ -251,6 +272,7 @@
 				D1078731274BD1E5003E787B /* ForEachDemo.swift */,
 				D1078732274BD1E5003E787B /* ListDemo.swift */,
 				D1078733274BD1E5003E787B /* SidebarDemo.swift */,
+				FEDA0000000000000000F003 /* FormDemo.swift */,
 			);
 			path = Containers;
 			sourceTree = "<group>";
@@ -285,6 +307,7 @@
 				D1078744274BD1E5003E787B /* AppStorageDemo.swift */,
 				D1078745274BD1E5003E787B /* EnvironmentDemo.swift */,
 				D1078746274BD1E5003E787B /* RedactDemo.swift */,
+				FEDA0000000000000000F006 /* GaugeDemo.swift */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -295,6 +318,7 @@
 				D1078748274BD1E5003E787B /* TextDemo.swift */,
 				D1078749274BD1E5003E787B /* TextEditorDemo.swift */,
 				D107874A274BD1E5003E787B /* TextFieldDemo.swift */,
+				FEDA0000000000000000F001 /* LabelDemo.swift */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -479,6 +503,12 @@
 				D1078754274BD1E5003E787B /* StackDemo.swift in Sources */,
 				D1078778274BD1E5003E787B /* PreferenceKeyDemo.swift in Sources */,
 				D107874E274BD1E5003E787B /* SpacerDemo.swift in Sources */,
+				FEDA0000000000000000B001 /* LabelDemo.swift in Sources */,
+				FEDA0000000000000000B003 /* LazyStackDemo.swift in Sources */,
+				FEDA0000000000000000B005 /* FormDemo.swift in Sources */,
+				FEDA0000000000000000B007 /* StepperDemo.swift in Sources */,
+				FEDA0000000000000000B009 /* ColorPickerDemo.swift in Sources */,
+				FEDA0000000000000000B00B /* GaugeDemo.swift in Sources */,
 				D1078766274BD1E5003E787B /* TaskDemo.swift in Sources */,
 				D1078760274BD1E5003E787B /* ForEachDemo.swift in Sources */,
 				D1078750274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */,
@@ -520,6 +550,12 @@
 				D1078755274BD1E5003E787B /* StackDemo.swift in Sources */,
 				D1078779274BD1E5003E787B /* PreferenceKeyDemo.swift in Sources */,
 				D107874F274BD1E5003E787B /* SpacerDemo.swift in Sources */,
+				FEDA0000000000000000B002 /* LabelDemo.swift in Sources */,
+				FEDA0000000000000000B004 /* LazyStackDemo.swift in Sources */,
+				FEDA0000000000000000B006 /* FormDemo.swift in Sources */,
+				FEDA0000000000000000B008 /* StepperDemo.swift in Sources */,
+				FEDA0000000000000000B00A /* ColorPickerDemo.swift in Sources */,
+				FEDA0000000000000000B00C /* GaugeDemo.swift in Sources */,
 				D1078767274BD1E5003E787B /* TaskDemo.swift in Sources */,
 				D1078761274BD1E5003E787B /* ForEachDemo.swift in Sources */,
 				D1078751274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */,
