@@ -16,7 +16,8 @@
 import SnapshotTesting
 
 public extension Snapshotting where Value == String, Format == String {
-  static let html = Snapshotting(pathExtension: "html", diffing: .lines)
+  // `Snapshotting` is not `Sendable`; snapshot tests run single-threaded.
+  nonisolated(unsafe) static let html = Snapshotting(pathExtension: "html", diffing: .lines)
 }
 
 #endif

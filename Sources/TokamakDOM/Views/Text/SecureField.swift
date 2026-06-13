@@ -15,6 +15,7 @@
 //  Created by Jed Fox on 06/28/2020.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 
 extension SecureField: DOMPrimitive where Label == Text {
@@ -35,3 +36,5 @@ extension SecureField: DOMPrimitive where Label == Text {
     ]))
   }
 }
+
+#endif

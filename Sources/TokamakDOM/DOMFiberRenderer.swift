@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 2/7/22.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptEventLoop
 import JavaScriptKit
@@ -366,3 +367,5 @@ extension _PrimitiveButtonStyleBody: DOMNodeConvertible {
     ["pointerup": { _ in self.action() }]
   }
 }
+
+#endif

@@ -15,6 +15,7 @@
 //  Created by Szymon on 23/8/2023.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptKit
 import OpenCombineShim
@@ -103,3 +104,5 @@ enum GestureEventsObserver {
     Self.pointercancel = pointercancel
   }
 }
+
+#endif

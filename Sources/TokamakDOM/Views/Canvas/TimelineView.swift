@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 9/18/21.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptKit
 import TokamakCore
@@ -125,3 +126,5 @@ extension TimelineView: DOMPrimitive where Content: View {
     AnyView(_TimelineView(parent: self))
   }
 }
+
+#endif

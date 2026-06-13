@@ -21,10 +21,12 @@ import XCTest
 import TokamakTestRenderer
 
 final class AppearanceActionTests: XCTestCase {
-  static var appearACalled = 0
-  static var appearBCalled = 0
-  static var disappearACalled = 0
-  static var disappearBCalled = 0
+  // Single-threaded test runtime: the reconciler drives appear/disappear callbacks
+  // synchronously, so these counters are never touched concurrently.
+  nonisolated(unsafe) static var appearACalled = 0
+  nonisolated(unsafe) static var appearBCalled = 0
+  nonisolated(unsafe) static var disappearACalled = 0
+  nonisolated(unsafe) static var disappearBCalled = 0
 
   override func setUp() {
     Self.appearACalled = 0

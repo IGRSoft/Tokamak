@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import TokamakCore
 import TokamakStaticHTML
@@ -48,3 +49,5 @@ extension _PickerElement: DOMPrimitive {
     })
   }
 }
+
+#endif

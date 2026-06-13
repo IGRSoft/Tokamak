@@ -79,7 +79,8 @@ public struct _AnyProgressViewStyle: ProgressViewStyle {
 
 extension EnvironmentValues {
   private enum ProgressViewStyleKey: EnvironmentKey {
-    static let defaultValue = _AnyProgressViewStyle(DefaultProgressViewStyle())
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+    nonisolated(unsafe) static let defaultValue = _AnyProgressViewStyle(DefaultProgressViewStyle())
   }
 
   var progressViewStyle: _AnyProgressViewStyle {

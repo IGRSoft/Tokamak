@@ -20,17 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#if canImport(CRuntime)
+// `swift_getTypeByMangledNameInContext` is declared in the `CRuntime` C module rather
+// than bound here via `@_silgen_name`: referencing reserved `swift_*` runtime symbols
+// directly from Swift is now diagnosed by the compiler and slated to become an error.
+// Going through C interop links against libswiftCore's stable C-ABI export instead.
 import CRuntime
-#endif
-
-@_silgen_name("swift_getTypeByMangledNameInContext")
-func _getTypeByMangledNameInContext(
-  _ name: UnsafePointer<UInt8>,
-  _ nameLength: UInt,
-  _ genericContext: UnsafeRawPointer?,
-  _ genericArguments: UnsafeRawPointer?
-) -> Any.Type?
 
 // swiftlint:disable:next line_length
 /// https://github.com/apple/swift/blob/f2c42509628bed66bf5b8ee02fae778a2ba747a1/include/swift/Reflection/Records.h#L160
@@ -57,16 +51,20 @@ extension UnsafePointer where Pointee == FieldRecord {
     genericArguments: UnsafeRawPointer?
   ) -> Any.Type {
     let typeName = advance(offset: \._mangledTypeName)
-    return _getTypeByMangledNameInContext(
+    guard let metadata = swift_getTypeByMangledNameInContext(
       typeName,
       getSymbolicMangledNameLength(typeName),
       genericContext,
       genericArguments?.assumingMemoryBound(to: UnsafeRawPointer?.self)
-    )!
+    ) else {
+      fatalError("swift_getTypeByMangledNameInContext unavailable at runtime")
+    }
+    // The runtime returns a `const Metadata *`, which is bit-compatible with `Any.Type`.
+    return unsafeBitCast(metadata, to: Any.Type.self)
   }
 }
 
-private func getSymbolicMangledNameLength(_ base: UnsafeRawPointer) -> UInt {
+private func getSymbolicMangledNameLength(_ base: UnsafeRawPointer) -> Int {
   var end = base
   while let current = Optional(end.load(as: UInt8.self)), current != 0 {
     end += 1
@@ -77,7 +75,7 @@ private func getSymbolicMangledNameLength(_ base: UnsafeRawPointer) -> UInt {
     }
   }
 
-  return UInt(end - base)
+  return end - base
 }
 
 struct FieldRecord {

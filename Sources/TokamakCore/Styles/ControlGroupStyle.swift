@@ -82,7 +82,8 @@ public struct _AnyControlGroupStyle: ControlGroupStyle {
 
 extension EnvironmentValues {
   private enum ControlGroupStyleKey: EnvironmentKey {
-    static let defaultValue = _AnyControlGroupStyle(AutomaticControlGroupStyle())
+    // Single-threaded (Wasm/DOM) runtime: no concurrent access to this constant.
+    nonisolated(unsafe) static let defaultValue = _AnyControlGroupStyle(AutomaticControlGroupStyle())
   }
 
   var controlGroupStyle: _AnyControlGroupStyle {

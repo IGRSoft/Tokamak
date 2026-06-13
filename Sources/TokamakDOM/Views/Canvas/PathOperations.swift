@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 9/23/21.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptKit
 import TokamakCore
@@ -171,3 +172,5 @@ private extension FixedRoundedRect {
     )
   }
 }
+
+#endif

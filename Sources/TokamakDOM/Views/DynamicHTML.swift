@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/31/20.
 //
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import TokamakCore
 
@@ -105,3 +106,5 @@ extension DynamicHTML: HTMLConvertible {
     attributes
   }
 }
+
+#endif

@@ -67,8 +67,13 @@ struct TextDemo: View {
         Text("THICK TEXT")
           .kerning(0.5)
       }
-      (Text("This text has been ") + Text("concatenated").bold())
-        .italic()
+      Text({ () -> AttributedString in
+        var s = AttributedString("This text has been ")
+        var boldPart = AttributedString("concatenated")
+        boldPart.inlinePresentationIntent = .stronglyEmphasized
+        s += boldPart
+        return s
+      }())
       ForEach(TextAlignment.allCases, id: \.hashValue) { alignment in
         Text(
           """
@@ -88,3 +93,4 @@ struct TextDemo: View {
     }
   }
 }
+

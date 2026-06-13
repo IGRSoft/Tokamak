@@ -52,12 +52,13 @@ func requireReferenceBrowser(file: StaticString = #filePath, line: UInt = #line)
   }
 }
 
+@MainActor
 func compare<A: SwiftUI.View, B: TokamakStaticHTML.View>(
   size: CGSize,
-  @SwiftUI.ViewBuilder _ native: () -> A,
-  @TokamakStaticHTML.ViewBuilder to tokamak: () -> B
+  @SwiftUI.ViewBuilder _ native: @MainActor () -> A,
+  @TokamakStaticHTML.ViewBuilder to tokamak: @MainActor () -> B
 ) async {
-  let nativePNG = await render(size: size) {
+  let nativePNG = render(size: size) {
     native()
   }
   let tokamakPNG = await render(size: size) {
@@ -80,7 +81,7 @@ func compare<A: SwiftUI.View, B: TokamakStaticHTML.View>(
 @MainActor
 private func render<V: SwiftUI.View>(
   size: CGSize,
-  @SwiftUI.ViewBuilder _ view: () -> V
+  @SwiftUI.ViewBuilder _ view: @MainActor () -> V
 ) -> Data {
   let bounds = CGRect(origin: .zero, size: .init(width: size.width, height: size.height))
 
@@ -100,9 +101,10 @@ private func render<V: SwiftUI.View>(
   )!
 }
 
+@MainActor
 private func render<V: TokamakStaticHTML.View>(
   size: CGSize,
-  @TokamakStaticHTML.ViewBuilder _ view: () -> V
+  @TokamakStaticHTML.ViewBuilder _ view: @MainActor () -> V
 ) async -> Data {
   await withCheckedContinuation { (continuation: CheckedContinuation<Data, Never>) in
     let renderer = StaticHTMLFiberRenderer(useDynamicLayout: true, sceneSize: size)

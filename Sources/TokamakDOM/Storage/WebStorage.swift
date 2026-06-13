@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/21/20.
 //
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import OpenCombineShim
 import TokamakCore
@@ -76,3 +77,5 @@ extension WebStorage {
     getItem(key: key) { $0 }
   }
 }
+
+#endif

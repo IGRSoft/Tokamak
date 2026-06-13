@@ -18,7 +18,7 @@
 import Foundation
 
 public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
-  final class Coordinator<G: Gesture>: ObservableObject {
+  final class Coordinator: ObservableObject {
     var gesture: G
     var gestureId: String = UUID().uuidString
     var eventId: String? = nil
@@ -35,7 +35,7 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
   @Environment(\._gestureListener)
   var gestureListener
   @StateObject
-  private var coordinator: Coordinator<G>
+  private var coordinator: Coordinator
 
   let mask: GestureMask
   let priority: _GesturePriority
@@ -116,13 +116,15 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
 
   private func startDelay() {
     guard let minimumDuration else { return }
-    Task {
+    // Single-threaded (Wasm/DOM) runtime: the gesture view is only ever touched on
+    // the main event loop, so capturing it across the delay Task is race-free. The
+    // generic `Content`/`G` metatypes are otherwise non-`Sendable` under Swift 6.
+    nonisolated(unsafe) let view = self
+    Task { @MainActor in
       do {
         try await Task.sleep(for: .seconds(minimumDuration))
-        if let eventId = coordinator.eventId {
-          await MainActor.run {
-            onPhaseChange(.changed(_GesturePhaseContext(eventId: eventId)))
-          }
+        if let eventId = view.coordinator.eventId {
+          view.onPhaseChange(.changed(_GesturePhaseContext(eventId: eventId)))
         }
       } catch {}
     }

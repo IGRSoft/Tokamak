@@ -26,7 +26,7 @@ final class LayoutRenderingTests: XCTestCase {
 
   func testAnchoredModifiers() {
     assertSnapshot(
-      matching: ZStack {
+      of: ZStack {
         Circle()
           .fill(Color.red)
           .frame(width: 50, height: 50)
@@ -56,7 +56,7 @@ final class LayoutRenderingTests: XCTestCase {
 
   func testAspectRatio() {
     assertSnapshot(
-      matching: Ellipse()
+      of: Ellipse()
         .fill(Color.purple)
         .aspectRatio(0.75, contentMode: .fit)
         .frame(width: 100, height: 100)
@@ -66,7 +66,7 @@ final class LayoutRenderingTests: XCTestCase {
     )
 
     assertSnapshot(
-      matching: Ellipse()
+      of: Ellipse()
         .fill(Color.purple)
         .aspectRatio(0.75, contentMode: .fill)
         .frame(width: 100, height: 100)
@@ -78,7 +78,7 @@ final class LayoutRenderingTests: XCTestCase {
 
   func testBackground() {
     assertSnapshot(
-      matching: Rectangle()
+      of: Rectangle()
         .fill(Color.blue)
         .opacity(0.5)
         .frame(width: 80, height: 80)
@@ -89,7 +89,7 @@ final class LayoutRenderingTests: XCTestCase {
     )
 
     assertSnapshot(
-      matching: Rectangle()
+      of: Rectangle()
         .fill(Color.blue)
         .opacity(0.5)
         .frame(width: 80, height: 80)
@@ -105,7 +105,7 @@ final class LayoutRenderingTests: XCTestCase {
 
   func testFrames() {
     assertSnapshot(
-      matching: Color.red
+      of: Color.red
         .frame(width: 20, height: 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing),
       as: .image(size: .init(width: 50, height: 50)),
@@ -115,7 +115,7 @@ final class LayoutRenderingTests: XCTestCase {
 
   func testOverlay() {
     assertSnapshot(
-      matching: Rectangle()
+      of: Rectangle()
         .fill(Color.blue)
         .frame(width: 80, height: 80)
         .overlay(
@@ -126,7 +126,7 @@ final class LayoutRenderingTests: XCTestCase {
     )
 
     assertSnapshot(
-      matching: Rectangle()
+      of: Rectangle()
         .fill(Color.blue)
         .frame(width: 80, height: 80)
         .overlay(
@@ -169,13 +169,13 @@ final class LayoutRenderingTests: XCTestCase {
     }
 
     assertSnapshot(
-      matching: Stacks(spacing: 10),
+      of: Stacks(spacing: 10),
       as: .image(size: .init(width: 210, height: 210)),
       timeout: defaultSnapshotTimeout
     )
 
     assertSnapshot(
-      matching: Stacks(spacing: 20),
+      of: Stacks(spacing: 20),
       as: .image(size: .init(width: 220, height: 220)),
       timeout: defaultSnapshotTimeout
     )

@@ -15,12 +15,15 @@
 //  Created by Carson Katri on 9/23/21.
 //
 
+#if canImport(JavaScriptKit)
 import Foundation
 import JavaScriptKit
 import TokamakCore
 
 private enum ImageCache {
-  private static var values = [String: JSObject]()
+  // Single-threaded JS event loop (WASM): the canvas image cache is only touched on
+  // the main JS thread during rendering.
+  nonisolated(unsafe) private static var values = [String: JSObject]()
 
   static subscript(_ path: String) -> JSObject? {
     get { values[path] }
@@ -97,3 +100,5 @@ extension _Canvas {
     }
   }
 }
+
+#endif

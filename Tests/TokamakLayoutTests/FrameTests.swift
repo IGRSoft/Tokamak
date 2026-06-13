@@ -20,6 +20,7 @@ import SwiftUI
 import TokamakStaticHTML
 import XCTest
 
+@MainActor
 final class FrameTests: XCTestCase {
   override func setUpWithError() throws { try requireReferenceBrowser() }
 

@@ -15,6 +15,7 @@
 //  Created by Max Desiatov on 11/04/2020.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 import TokamakStaticHTML
 import JavaScriptKit
@@ -90,3 +91,5 @@ extension _PrimitiveButtonStyleBody: DOMPrimitive {
     }.font(font))
   }
 }
+
+#endif

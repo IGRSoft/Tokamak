@@ -12,16 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import JavaScriptKit
 import OpenCombineShim
 
 enum ColorSchemeObserver {
-  static var publisher = CurrentValueSubject<ColorScheme, Never>(
+  // Single-threaded JS event loop (WASM): media-query events are delivered serially on
+  // the main JS thread; no concurrent access to this shared publisher/closure storage.
+  nonisolated(unsafe) static var publisher = CurrentValueSubject<ColorScheme, Never>(
     .init(matchMediaDarkScheme: matchMediaDarkScheme)
   )
 
-  private static var closure: JSClosure?
-  private static var cancellable: AnyCancellable?
+  nonisolated(unsafe) private static var closure: JSClosure?
+  nonisolated(unsafe) private static var cancellable: AnyCancellable?
 
   static func observe(_ rootElement: JSObject) {
     let closure = JSClosure {
@@ -40,3 +43,5 @@ enum ColorSchemeObserver {
     }
   }
 }
+
+#endif

@@ -15,6 +15,7 @@
 //  Created by Emil Pedersen on 2021-03-26.
 //
 
+#if canImport(JavaScriptKit)
 import struct Foundation.Date
 import JavaScriptKit
 import TokamakCore
@@ -125,3 +126,5 @@ extension DatePickerComponents {
     }
   }
 }
+
+#endif

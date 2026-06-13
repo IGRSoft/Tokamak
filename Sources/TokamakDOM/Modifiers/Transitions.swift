@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/13/21.
 //
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 import TokamakStaticHTML
 
@@ -33,3 +34,5 @@ extension _MoveTransition: DOMViewModifier {
     ]
   }
 }
+
+#endif

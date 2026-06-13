@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if canImport(JavaScriptKit)
 import TokamakCore
 
 // TOOD: Add _AnyModifiedActionContent similar to TokamakStaticHTML/ModifiedContent.swift?
@@ -23,3 +24,5 @@ extension ModifiedContent: DOMPrimitive where Content: View, Modifier: DOMAction
     })
   }
 }
+
+#endif
