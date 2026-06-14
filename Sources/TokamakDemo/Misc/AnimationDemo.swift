@@ -49,12 +49,25 @@ struct AnimationDemo: View {
       Circle()
         .fill(on ? Color.green : .red)
         .frame(width: on ? 100 : 50, height: on ? 100 : 50)
+      // DV2: `CaptureAwareSlider` renders a real `Slider` everywhere except the
+      // iOS screenshot capture path, where it substitutes a static mock (the
+      // UIKit-backed slider rasterizes as a "nosign" glyph offscreen on the iOS
+      // Simulator). mac/web/live-iOS are unchanged.
+      #if canImport(SwiftUI) && (os(macOS) || os(iOS))
+      CaptureAwareSlider(value: $delay, in: 0...3) {
+        Text("Delay")
+      }
+      CaptureAwareSlider(value: $speed, in: 1...2) {
+        Text("Speed")
+      }
+      #else
       Slider(value: $delay, in: 0...3) {
         Text("Delay")
       }
       Slider(value: $speed, in: 1...2) {
         Text("Speed")
       }
+      #endif
       Button("Toggle with Animation") {
         withAnimation(
           Animation.default.delay(delay).speed(speed)

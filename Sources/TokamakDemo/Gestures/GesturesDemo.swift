@@ -39,7 +39,13 @@ struct GesturesDemo: View {
   private var countDragLongPress = 0
 
   var body: some View {
-    HStack(alignment: .top, spacing: 8) {
+    // T10: the three gesture groups are ~300pt wide each; a horizontal `HStack`
+    // is ~900pt and overflowed the 390pt capture proposal, squeezing labels to
+    // 1 char per line and clipping the right column. A vertical stack lets each
+    // group keep horizontal labels and fit the width (RC-1/RC-2 supply the
+    // open-height frame). Identical layout on-screen and in capture, and more
+    // legible at narrow live-window widths.
+    VStack(alignment: .leading, spacing: 16) {
       tapGestures
       longPressGestures
       dragGestures

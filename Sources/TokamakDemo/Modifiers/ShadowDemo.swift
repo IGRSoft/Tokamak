@@ -16,7 +16,14 @@ import TokamakShim
 
 struct ShadowDemo: View {
   var body: some View {
-    Color.red.frame(width: 60, height: 60, alignment: .center)
+    // T9: a bare `Color` fills its container edge-to-edge, so the demo showed a
+    // flat fill with no visible square or shadow. Bound the swatch to a fixed
+    // square and place it on a white backdrop with padding so the drop shadow
+    // has room to render against contrasting pixels.
+    Color.red
+      .frame(width: 60, height: 60, alignment: .center)
       .shadow(color: .black, radius: 5, x: 0, y: 10)
+      .padding(40)
+      .background(Color.white)
   }
 }

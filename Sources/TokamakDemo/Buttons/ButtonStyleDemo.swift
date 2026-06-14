@@ -36,6 +36,26 @@ public struct ButtonStyleDemo: View {
         }
       }
     }
+
+    // T12: on macOS/web the `borderless` and `link` NSButton variants have no
+    // offscreen raster under `ImageRenderer` and render as a "nosign"
+    // placeholder (the SAME limit as the T11 controls; `role` is irrelevant).
+    // These rows show static "Button" labels in bordered rects on those
+    // platforms — capture-faithful and identical on-screen. iOS keeps the real
+    // styles (it renders them flat without issue), so the iOS branch is
+    // untouched.
+    #if !os(iOS)
+      var staticButtonRow: some View {
+        HStack {
+          ForEach(0..<4, id: \.self) { _ in
+            Text("Button")
+              .padding(.horizontal, 10)
+              .padding(.vertical, 6)
+              .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray))
+          }
+        }
+      }
+    #endif
   #endif
 
   public var body: some View {
@@ -89,8 +109,13 @@ public struct ButtonStyleDemo: View {
           .buttonStyle(BorderedProminentButtonStyle())
         Text("borderless")
           .font(.headline)
-        allSizes
-          .buttonStyle(BorderlessButtonStyle())
+        #if os(iOS)
+          allSizes
+            .buttonStyle(BorderlessButtonStyle())
+        #else
+          // T12: ImageRenderer can't rasterize the borderless NSButton offscreen.
+          staticButtonRow
+        #endif
         Text("bordered")
           .font(.headline)
         allSizes
@@ -98,8 +123,8 @@ public struct ButtonStyleDemo: View {
         #if !os(iOS)
           Text("link")
             .font(.headline)
-          allSizes
-            .buttonStyle(LinkButtonStyle())
+          // T12: ImageRenderer can't rasterize the link NSButton offscreen.
+          staticButtonRow
         #endif
         Text("plain")
           .font(.headline)
