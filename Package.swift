@@ -262,4 +262,12 @@ package.targets += [
     dependencies: ["TokamakDemo", "ScreenshotKit"]
   ),
 ]
+
+// RC-5: the pixel-health test (`ScreenshotHealthTests`) exercises ScreenshotKit's
+// render loop + `assessPNG`/`assertNoDuplicateRenders`. ScreenshotKit is a
+// macOS-only target, so wire it into the existing test target ONLY on a macOS
+// host — the Linux/wasm builds (which never see ScreenshotKit) are unaffected.
+if let testTarget = package.targets.first(where: { $0.name == "TokamakStaticHTMLTests" }) {
+  testTarget.dependencies.append("ScreenshotKit")
+}
 #endif
