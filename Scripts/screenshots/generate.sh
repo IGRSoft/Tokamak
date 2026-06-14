@@ -28,14 +28,14 @@ record() { SUMMARY_ROWS="${SUMMARY_ROWS}${1} ${2} ${3}\n"; }
 
 run_web() {
   echo "== web =="
-  swift run ScreenshotHTML
+  swift run ScreenshotHTML || true
   local n; n=$(png_count screenshots/web)
   record web "$([ "$n" -gt 0 ] && echo PASS || echo FAIL)" "$n"
 }
 
 run_mac() {
   echo "== mac =="
-  swift run ScreenshotNative
+  swift run ScreenshotNative || true
   local n; n=$(png_count screenshots/mac)
   record mac "$([ "$n" -gt 0 ] && echo PASS || echo FAIL)" "$n"
 }
@@ -91,8 +91,6 @@ run_gtk() {
   local n; n=$(png_count screenshots/gtk)
   record gtk "$([ "$n" -gt 0 ] && echo PARTIAL || echo SKIP)" "$n"
 }
-
-run_one() { ( "run_$1" ); }   # subshell isolation per platform
 
 [ $# -ge 1 ] || { echo "usage: $0 <web|mac|ios|wasm|gtk|all>..."; exit 64; }
 

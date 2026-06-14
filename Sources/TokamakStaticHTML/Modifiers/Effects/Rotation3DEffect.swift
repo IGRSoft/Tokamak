@@ -25,7 +25,7 @@ extension _Rotation3DEffect: DOMViewModifier {
     return [
       "style": "transform: perspective(\(perspectivePx)px) "
         + "rotate3d(\(axisX), \(axisY), \(axisZ), \(angle.degrees)deg); "
-        + "transform-origin: \(anchor.cssValue); ",
+        + "transform-origin: \(anchor.cssValue) \(anchorZ)px; ",
     ]
   }
 }

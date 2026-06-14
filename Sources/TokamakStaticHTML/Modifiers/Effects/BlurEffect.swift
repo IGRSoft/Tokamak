@@ -19,6 +19,8 @@ extension _BlurEffect: DOMViewModifier {
   // instead of being flattened into a single (clobbering) `filter:` style.
   public var isOrderDependent: Bool { true }
   public var attributes: [HTMLAttribute: String] {
-    ["style": "filter: blur(\(radius)px); "]
+    var style = "filter: blur(\(radius)px); "
+    if opaque { style += "background-color: white; " }
+    return ["style": style]
   }
 }

@@ -16,9 +16,11 @@ import Foundation
 
 public struct _BlurEffect: Animatable, ViewModifier, Equatable {
   public var radius: CGFloat
+  public var opaque: Bool
 
-  public init(radius: CGFloat) {
+  public init(radius: CGFloat, opaque: Bool = false) {
     self.radius = radius
+    self.opaque = opaque
   }
 
   public func body(content: Content) -> some View {
@@ -33,6 +35,6 @@ public struct _BlurEffect: Animatable, ViewModifier, Equatable {
 
 public extension View {
   func blur(radius: CGFloat, opaque: Bool = false) -> some View {
-    modifier(_BlurEffect(radius: radius))
+    modifier(_BlurEffect(radius: radius, opaque: opaque))
   }
 }
