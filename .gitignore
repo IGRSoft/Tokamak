@@ -51,3 +51,6 @@ Pods/
 # Generated test/demo render artifact
 rendered.html
 .claude/hooks
+
+# Screenshot harness intermediates (generated HTML wrappers; PNGs ARE committed)
+screenshots/web/_html/

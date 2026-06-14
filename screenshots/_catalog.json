@@ -1,0 +1,230 @@
+[
+  {
+    "file" : "Counter.png",
+    "id" : "Buttons\/Counter",
+    "name" : "Counter",
+    "section" : "Buttons"
+  },
+  {
+    "file" : "ButtonStyle.png",
+    "id" : "Buttons\/ButtonStyle",
+    "name" : "ButtonStyle",
+    "section" : "Buttons"
+  },
+  {
+    "file" : "ForEach.png",
+    "id" : "Containers\/ForEach",
+    "name" : "ForEach",
+    "section" : "Containers"
+  },
+  {
+    "file" : "Form-&-GroupBox.png",
+    "id" : "Containers\/Form & GroupBox",
+    "name" : "Form & GroupBox",
+    "section" : "Containers"
+  },
+  {
+    "file" : "List.png",
+    "id" : "Containers\/List",
+    "name" : "List",
+    "section" : "Containers"
+  },
+  {
+    "file" : "Sidebar.png",
+    "id" : "Containers\/Sidebar",
+    "name" : "Sidebar",
+    "section" : "Containers"
+  },
+  {
+    "file" : "OutlineGroup.png",
+    "id" : "Containers\/OutlineGroup",
+    "name" : "OutlineGroup",
+    "section" : "Containers"
+  },
+  {
+    "file" : "Canvas.png",
+    "id" : "Drawing\/Canvas",
+    "name" : "Canvas",
+    "section" : "Drawing"
+  },
+  {
+    "file" : "Color.png",
+    "id" : "Drawing\/Color",
+    "name" : "Color",
+    "section" : "Drawing"
+  },
+  {
+    "file" : "Path.png",
+    "id" : "Drawing\/Path",
+    "name" : "Path",
+    "section" : "Drawing"
+  },
+  {
+    "file" : "Shape-Styles.png",
+    "id" : "Drawing\/Shape Styles",
+    "name" : "Shape Styles",
+    "section" : "Drawing"
+  },
+  {
+    "file" : "HStack-VStack.png",
+    "id" : "Layout\/HStack\/VStack",
+    "name" : "HStack\/VStack",
+    "section" : "Layout"
+  },
+  {
+    "file" : "LazyVStack-LazyHStack.png",
+    "id" : "Layout\/LazyVStack\/LazyHStack",
+    "name" : "LazyVStack\/LazyHStack",
+    "section" : "Layout"
+  },
+  {
+    "file" : "Grid.png",
+    "id" : "Layout\/Grid",
+    "name" : "Grid",
+    "section" : "Layout"
+  },
+  {
+    "file" : "Spacer.png",
+    "id" : "Layout\/Spacer",
+    "name" : "Spacer",
+    "section" : "Layout"
+  },
+  {
+    "file" : "ZStack.png",
+    "id" : "Layout\/ZStack",
+    "name" : "ZStack",
+    "section" : "Layout"
+  },
+  {
+    "file" : "GeometryReader.png",
+    "id" : "Layout\/GeometryReader",
+    "name" : "GeometryReader",
+    "section" : "Layout"
+  },
+  {
+    "file" : "Shadow.png",
+    "id" : "Modifiers\/Shadow",
+    "name" : "Shadow",
+    "section" : "Modifiers"
+  },
+  {
+    "file" : "Gestures.png",
+    "id" : "Gestures\/Gestures",
+    "name" : "Gestures",
+    "section" : "Gestures"
+  },
+  {
+    "file" : "Gesture-&-CoordinateSpace.png",
+    "id" : "Gestures\/Gesture & CoordinateSpace",
+    "name" : "Gesture & CoordinateSpace",
+    "section" : "Gestures"
+  },
+  {
+    "file" : "ColorPicker.png",
+    "id" : "Selectors\/ColorPicker",
+    "name" : "ColorPicker",
+    "section" : "Selectors"
+  },
+  {
+    "file" : "DatePicker.png",
+    "id" : "Selectors\/DatePicker",
+    "name" : "DatePicker",
+    "section" : "Selectors"
+  },
+  {
+    "file" : "Picker.png",
+    "id" : "Selectors\/Picker",
+    "name" : "Picker",
+    "section" : "Selectors"
+  },
+  {
+    "file" : "Slider.png",
+    "id" : "Selectors\/Slider",
+    "name" : "Slider",
+    "section" : "Selectors"
+  },
+  {
+    "file" : "Stepper.png",
+    "id" : "Selectors\/Stepper",
+    "name" : "Stepper",
+    "section" : "Selectors"
+  },
+  {
+    "file" : "Toggle.png",
+    "id" : "Selectors\/Toggle",
+    "name" : "Toggle",
+    "section" : "Selectors"
+  },
+  {
+    "file" : "Label.png",
+    "id" : "Text\/Label",
+    "name" : "Label",
+    "section" : "Text"
+  },
+  {
+    "file" : "Text.png",
+    "id" : "Text\/Text",
+    "name" : "Text",
+    "section" : "Text"
+  },
+  {
+    "file" : "TextField.png",
+    "id" : "Text\/TextField",
+    "name" : "TextField",
+    "section" : "Text"
+  },
+  {
+    "file" : "TextEditor.png",
+    "id" : "Text\/TextEditor",
+    "name" : "TextEditor",
+    "section" : "Text"
+  },
+  {
+    "file" : "Animation.png",
+    "id" : "Misc\/Animation",
+    "name" : "Animation",
+    "section" : "Misc"
+  },
+  {
+    "file" : "Transitions.png",
+    "id" : "Misc\/Transitions",
+    "name" : "Transitions",
+    "section" : "Misc"
+  },
+  {
+    "file" : "ProgressView.png",
+    "id" : "Misc\/ProgressView",
+    "name" : "ProgressView",
+    "section" : "Misc"
+  },
+  {
+    "file" : "Gauge.png",
+    "id" : "Misc\/Gauge",
+    "name" : "Gauge",
+    "section" : "Misc"
+  },
+  {
+    "file" : "Environment.png",
+    "id" : "Misc\/Environment",
+    "name" : "Environment",
+    "section" : "Misc"
+  },
+  {
+    "file" : "Preferences.png",
+    "id" : "Misc\/Preferences",
+    "name" : "Preferences",
+    "section" : "Misc"
+  },
+  {
+    "file" : "AppStorage.png",
+    "id" : "Misc\/AppStorage",
+    "name" : "AppStorage",
+    "section" : "Misc"
+  },
+  {
+    "file" : "Redaction.png",
+    "id" : "Misc\/Redaction",
+    "name" : "Redaction",
+    "section" : "Misc"
+  }
+]

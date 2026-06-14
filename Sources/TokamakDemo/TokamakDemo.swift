@@ -68,131 +68,64 @@ struct NavItem<Label: View>: View {
   }
 }
 
-struct TokamakDemoView: View {
-  var body: some View {
+public struct TokamakDemoView: View {
+  public init() {}
+
+  // Preserve the original visual section order, derived once from the catalog.
+  private var sectionOrder: [String] {
+    var seen = [String]()
+    for entry in demoCatalog where !seen.contains(entry.section) {
+      seen.append(entry.section)
+    }
+    return seen
+  }
+
+  // The hand-written `Section { NavItem … }` block is now derived from `demoCatalog`,
+  // grouped by section in the catalog's authoritative order. All other List chrome
+  // (header image, frame, title modifier, sidebar/toolbar branch, environmentObject)
+  // is preserved verbatim below.
+  @ViewBuilder
+  private var catalogSections: some View {
+    ForEach(sectionOrder, id: \.self) { section in
+      Section(header: Text(section)) {
+        ForEach(demoCatalog.filter { $0.section == section }) { entry in
+          NavItem(entry.name, destination: entry.view)
+        }
+        // Re-emit the platform-specific unavailable placeholders for this section
+        // using the SAME guards as the original List. On the declared targets
+        // (macOS 26 / iOS 26) these are all empty (no-op), but they preserve
+        // byte-for-byte structural parity if the deployment target is ever lowered.
+        unavailablePlaceholders(for: section)
+      }
+    }
+  }
+
+  // The original `else { NavItem(unavailable: "X") }` branches, kept as app chrome
+  // (NOT catalog data — a disabled placeholder is not a capturable demo). Guarded
+  // identically to the original List.
+  @ViewBuilder
+  private func unavailablePlaceholders(for section: String) -> some View {
+    switch section {
+    case "Containers":
+      if #available(iOS 14.0, *) {} else { NavItem(unavailable: "Sidebar") }
+      if #available(OSX 10.16, iOS 14.0, *) {} else { NavItem(unavailable: "OutlineGroup") }
+    case "Layout":
+      if #available(OSX 10.16, iOS 14.0, *) {} else { NavItem(unavailable: "Grid") }
+    case "Misc":
+      if #available(OSX 11.0, iOS 14.0, *) {} else { NavItem(unavailable: "AppStorage") }
+      if #available(OSX 11.0, iOS 14.0, *) {} else { NavItem(unavailable: "Redaction") }
+    default:
+      EmptyView()
+    }
+  }
+
+  public var body: some View {
     NavigationView {
       let list = List {
         Image("logo-header.png", label: Text("Tokamak Demo"))
           .frame(height: 50)
           .padding(.bottom, 20)
-        Section(header: Text("Buttons")) {
-          NavItem(
-            "Counter",
-            destination:
-              Counter(count: Count(value: 5), limit: 15)
-              .padding()
-              .background(Color(red: 0.9, green: 0.9, blue: 0.9, opacity: 1.0))
-              .border(Color.red, width: 3)
-              .foregroundColor(.black)
-          )
-          NavItem("ButtonStyle", destination: ButtonStyleDemo())
-        }
-        Section(header: Text("Containers")) {
-          NavItem("ForEach", destination: ForEachDemo())
-          NavItem("Form & GroupBox", destination: FormDemo())
-          if #available(iOS 14.0, *) {
-            #if os(macOS)
-              NavItem("List", destination: ListDemo())
-            #else
-              NavItem("List", destination: ListDemo().listStyle(InsetGroupedListStyle()))
-            #endif
-          } else {
-            NavItem("List", destination: ListDemo())
-          }
-          if #available(iOS 14.0, *) {
-            NavItem("Sidebar", destination: SidebarListDemo().listStyle(SidebarListStyle()))
-          } else {
-            NavItem(unavailable: "Sidebar")
-          }
-          if #available(OSX 10.16, iOS 14.0, *) {
-            NavItem("OutlineGroup", destination: OutlineGroupDemo())
-          } else {
-            NavItem(unavailable: "OutlineGroup")
-          }
-        }
-        Section(header: Text("Drawing")) {
-          if #available(macOS 12.0, iOS 15.0, *) {
-            NavItem("Canvas", destination: CanvasDemo())
-          }
-          NavItem("Color", destination: ColorDemo())
-          NavItem("Path", destination: PathDemo())
-          if #available(macOS 12.0, iOS 15.0, *) {
-            NavItem("Shape Styles", destination: ShapeStyleDemo())
-          }
-        }
-        Section(header: Text("Layout")) {
-          NavItem("HStack/VStack", destination: StackDemo())
-          NavItem("LazyVStack/LazyHStack", destination: LazyStackDemo())
-          if #available(OSX 10.16, iOS 14.0, *) {
-            NavItem("Grid", destination: GridDemo())
-          } else {
-            NavItem(unavailable: "Grid")
-          }
-          NavItem("Spacer", destination: SpacerDemo())
-          NavItem(
-            "ZStack",
-            destination: ZStack {
-              Text("I'm on bottom")
-              Text("I'm forced to the top")
-                .zIndex(1)
-              Text("I'm on top")
-            }.padding(20)
-          )
-          NavItem("GeometryReader", destination: GeometryReaderDemo())
-        }
-        Section(header: Text("Modifiers")) {
-          NavItem("Shadow", destination: ShadowDemo())
-          #if os(WASI) && compiler(>=5.5) && (canImport(Concurrency) || canImport(_Concurrency))
-            NavItem("Receive Change", destination: ReceiveChangeDemo())
-            NavItem("Task", destination: TaskDemo())
-          #endif
-        }
-        Section(header: Text("Gestures")) {
-          NavItem("Gestures", destination: GesturesDemo())
-          NavItem("Gesture & CoordinateSpace", destination: GestureCoordinateSpaceDemo())
-        }
-        Section(header: Text("Selectors")) {
-          NavItem("ColorPicker", destination: ColorPickerDemo())
-          NavItem("DatePicker", destination: DatePickerDemo())
-          NavItem("Picker", destination: PickerDemo())
-          NavItem("Slider", destination: SliderDemo())
-          NavItem("Stepper", destination: StepperDemo())
-          NavItem("Toggle", destination: ToggleDemo())
-        }
-        Section(header: Text("Text")) {
-          NavItem("Label", destination: LabelDemo())
-          NavItem("Text", destination: TextDemo())
-          NavItem("TextField", destination: TextFieldDemo())
-          NavItem("TextEditor", destination: TextEditorDemo())
-        }
-        Group {
-          Section(header: Text("Misc")) {
-            NavItem("Animation", destination: AnimationDemo())
-            NavItem("Transitions", destination: TransitionDemo())
-            NavItem("ProgressView", destination: ProgressViewDemo())
-            NavItem("Gauge", destination: GaugeDemo())
-            NavItem("Environment", destination: EnvironmentDemo().font(.system(size: 8)))
-            if #available(macOS 11.0, iOS 14.0, *) {
-              NavItem("Preferences", destination: PreferenceKeyDemo())
-            }
-            if #available(OSX 11.0, iOS 14.0, *) {
-              NavItem("AppStorage", destination: AppStorageDemo())
-            } else {
-              NavItem(unavailable: "AppStorage")
-            }
-            if #available(OSX 11.0, iOS 14.0, *) {
-              NavItem("Redaction", destination: RedactionDemo())
-            } else {
-              NavItem(unavailable: "Redaction")
-            }
-          }
-          #if os(WASI)
-            Section(header: Text("TokamakDOM")) {
-              NavItem("DOM reference", destination: DOMRefDemo())
-              NavItem("URL hash changes", destination: URLHashDemo())
-            }
-          #endif
-        }
+        catalogSections
       }
       .frame(minHeight: 300)
       .modifier(TitleViewModifier(title: "Demos"))

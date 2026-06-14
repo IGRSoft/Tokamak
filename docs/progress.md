@@ -1,6 +1,12 @@
 # Progress
 
-This currently only lists views.
+## Project Milestones
+
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog to PNG galleries on macOS (38), web (36), and iOS (38). Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `scripts/screenshots/generate.sh` and `screenshots/README.md`.
+
+## Views and Controls
+
+This section lists views.
 
 Table columns:
 
@@ -9,8 +15,6 @@ Table columns:
   - 🚧: some features work
   - ✅: feature-complete
 - Name of view
-
-## Views and Controls
 
 ### Text
 
