@@ -38,6 +38,27 @@ public extension View {
   }
 }
 
+struct TintKey: EnvironmentKey {
+  static let defaultValue: Color? = nil
+}
+
+public extension EnvironmentValues {
+  var tint: Color? {
+    get {
+      self[TintKey.self]
+    }
+    set {
+      self[TintKey.self] = newValue
+    }
+  }
+}
+
+public extension View {
+  func tint(_ tint: Color?) -> some View {
+    environment(\.tint, tint)
+  }
+}
+
 struct ForegroundColorKey: EnvironmentKey {
   static let defaultValue: Color? = nil
 }

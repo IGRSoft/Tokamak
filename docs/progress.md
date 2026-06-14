@@ -135,6 +135,45 @@ Table columns:
 | ✅  | [AnyView](https://developer.apple.com/documentation/swiftui/anyview)     |     |
 | ✅  | [TupleView](https://developer.apple.com/documentation/swiftui/tupleview) |     |
 
+## View Modifiers
+
+### Visual Effects
+
+CSS-faithful modifiers render to equivalent CSS filters on DOM/StaticHTML. GTK4 renders modifiers as inert no-ops (no native filter API available).
+
+|     |                                                                                                |     |
+| --- | ---------------------------------------------------------------------------------------------- | :-: |
+| ✅  | [blur(radius:opaque:)](https://developer.apple.com/documentation/swiftui/view/blur)           |     |
+| ✅  | [grayscale(_:)](https://developer.apple.com/documentation/swiftui/view/grayscale)             |     |
+| ✅  | [brightness(_:)](https://developer.apple.com/documentation/swiftui/view/brightness)           |     |
+| ✅  | [contrast(_:)](https://developer.apple.com/documentation/swiftui/view/contrast)               |     |
+| ✅  | [saturation(_:)](https://developer.apple.com/documentation/swiftui/view/saturation)           |     |
+| ✅  | [hueRotation(_:)](https://developer.apple.com/documentation/swiftui/view/huerotation)         |     |
+| ✅  | [colorInvert()](https://developer.apple.com/documentation/swiftui/view/colorinvert)           |     |
+| 🚧  | [colorMultiply(_:)](https://developer.apple.com/documentation/swiftui/view/colormultiply)    |     |
+
+### Blending and Interaction
+
+|     |                                                                                                  |     |
+| --- | ------------------------------------------------------------------------------------------------ | :-: |
+| ✅  | [blendMode(_:)](https://developer.apple.com/documentation/swiftui/view/blendmode)               |     |
+| ✅  | [allowsHitTesting(_:)](https://developer.apple.com/documentation/swiftui/view/allowshittesting) |     |
+| ✅  | [help(_:)](https://developer.apple.com/documentation/swiftui/view/help)                         |     |
+
+### State and Appearance
+
+|     |                                                                                                |     |
+| --- | ---------------------------------------------------------------------------------------------- | :-: |
+| ✅  | [disabled(_:)](https://developer.apple.com/documentation/swiftui/view/disabled)                |     |
+| ✅  | [tint(_:)](https://developer.apple.com/documentation/swiftui/view/tint)                        |     |
+| ✅  | [rotation3DEffect(_:axis:anchor:anchorZ:perspective:)](https://developer.apple.com/documentation/swiftui/view/rotation3deffect) |     |
+| ✅  | [fixedSize()](https://developer.apple.com/documentation/swiftui/view/fixedsize) / [fixedSize(horizontal:vertical:)](https://developer.apple.com/documentation/swiftui/view/fixedsize(horizontal:vertical:)) |     |
+
+**Notes:**
+- 🚧 `colorMultiply`: DOM/StaticHTML rendering is best-effort (no direct CSS equivalent); GTK4 renders inert
+- ✅ CSS-faithful: All other modifiers map directly to CSS properties and render identically on DOM/StaticHTML
+- GTK4: All modifiers listed above are inert no-ops on GTK4 (framework limitation; document user expectations)
+
 ## Shapes, Paths, and Styles
 
 ### Shapes

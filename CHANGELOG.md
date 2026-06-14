@@ -1,3 +1,13 @@
+# Unreleased
+
+**Added:**
+
+- View modifiers for visual effects: `blur`, `grayscale`, `brightness`, `contrast`, `saturation`, `hueRotation`, `colorInvert`
+- Blending and interaction modifiers: `blendMode`, `allowsHitTesting`, `help`
+- State and appearance modifiers: `disabled`, `tint`, `rotation3DEffect`, `fixedSize`
+
+---
+
 # 0.10.1 (20 May 2022)
 
 This is a small bugfix release, which updates JavaScriptKit dependency to 0.15 and required version of `carton` to 0.15.
