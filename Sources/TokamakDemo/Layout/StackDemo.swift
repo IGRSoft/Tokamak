@@ -25,10 +25,21 @@ struct StackDemo: View {
   var body: some View {
     VStack(spacing: verticalSpacing) {
       Text("Horizontal Spacing")
+      // DV2: `CaptureAwareSlider` renders a real `Slider` everywhere except the
+      // iOS screenshot capture path, where it substitutes a static mock (the
+      // UIKit-backed slider rasterizes as a "nosign" glyph offscreen on the iOS
+      // Simulator). mac/web/live-iOS are unchanged.
+      #if canImport(SwiftUI) && (os(macOS) || os(iOS))
+      CaptureAwareSlider(value: $horizontalSpacing, in: 0...100)
+
+      Text("Vertical Spacing")
+      CaptureAwareSlider(value: $verticalSpacing, in: 0...100)
+      #else
       Slider(value: $horizontalSpacing, in: 0...100)
 
       Text("Vertical Spacing")
       Slider(value: $verticalSpacing, in: 0...100)
+      #endif
       HStack(spacing: horizontalSpacing) {
         Rectangle()
           .fill(Color.red)

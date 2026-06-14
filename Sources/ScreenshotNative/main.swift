@@ -21,9 +21,16 @@
 
 #if canImport(SwiftUI) && os(macOS)
 import AppKit
+import CryptoKit
 import Foundation
 import ScreenshotKit
 import SwiftUI
+import TokamakDemo
+
+/// Hex md5 of PNG bytes — the dedupe key for `assertNoDuplicateRenders` (RC-5).
+private func md5Hex(_ data: Data) -> String {
+  Insecure.MD5.hash(data: data).map { String(format: "%02x", $0) }.joined()
+}
 
 @available(macOS 13.0, *)
 @MainActor
@@ -52,7 +59,27 @@ func run() -> Int32 {
       FileHandle.standardError.write(Data("[skip] \(s.entry.id): \(reason)\n".utf8))
     }
   }
-  return written > 0 ? 0 : 1
+
+  // RC-5 must-pass gate (defense in depth, mirroring the SwiftPM health test):
+  // every entry that is NOT a by-design skip must have produced an `.ok` PNG,
+  // and no two distinct demos may share an md5.
+  let bydesignSkips = demoCatalog
+    .filter { $0.needsWindowContext || !$0.isStaticallyRenderable }
+    .count
+  let expected = demoCatalog.count - bydesignSkips
+  let dupes = assertNoDuplicateRenders(results, md5Hex: md5Hex)
+  let noBlanks = written == expected
+  if !noBlanks {
+    FileHandle.standardError.write(
+      Data("[fail] mac: written \(written) != expected \(expected) (blank/degenerate downgraded)\n".utf8)
+    )
+  }
+  if !dupes.isEmpty {
+    FileHandle.standardError.write(
+      Data("[fail] mac: unexpected duplicate renders: \(dupes)\n".utf8)
+    )
+  }
+  return (noBlanks && dupes.isEmpty) ? 0 : 1
 }
 
 let code: Int32 = {

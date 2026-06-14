@@ -34,6 +34,10 @@ public struct GridDemo: View {
       }
       VStack {
         Text("Simple LazyHGrid")
+        // T14: an unconstrained `ScrollView(.horizontal)` proposes ~0 height to
+        // its LazyHGrid offscreen, so the lazy rows never materialize and the
+        // section captured blank. A fixed frame height gives the 3-row grid
+        // (3×50pt + spacing) a viewport so the rows lay out and render.
         ScrollView(.horizontal) {
           LazyHGrid(rows: [
             GridItem(.fixed(50)),
@@ -47,6 +51,7 @@ public struct GridDemo: View {
             }
           }
         }
+        .frame(height: 170)
       }
     }
   }

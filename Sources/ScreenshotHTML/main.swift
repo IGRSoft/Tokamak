@@ -89,13 +89,43 @@ func run() -> Int32 {
     return 2
   }
 
+  // RC-3: a bounded capture size matching the ScreenshotKit native default so
+  // the two paths cannot drift, plus a clamp on the Chrome --window-size so a
+  // degenerate intrinsic dimension can't blow up (or collapse) the capture.
+  let webCanvasSize = CGSize(width: 390, height: defaultCaptureFrameHeight)
+  let maxChromeWindow = (width: 2000, height: 4000)
+  // Native/web parity lock (RC-3 / item 6): the web canvas width must equal the
+  // ScreenshotKit proposal width so the same tree renders at the same width on
+  // both paths. A mismatch is a build-time wiring error — fail loudly.
+  precondition(
+    Int(webCanvasSize.width) == Int(defaultCaptureProposal.width ?? -1),
+    "web/native capture width drift: webCanvasSize.width must equal defaultCaptureProposal.width"
+  )
+
   var written = 0
   var skipped = 0
   for entry in demoCatalog {
     let base = sanitize(entry.name)
 
-    // 1) render the view to PNG bytes (SwiftUI ImageRenderer).
-    let renderer = ImageRenderer(content: demoRootEnvironment(entry.view))
+    // RC-4 / RC-1: honor the same per-entry skip flags as the native path so
+    // List/Sidebar (window context) and Canvas (no static display list) are
+    // intentionally skipped, not emitted as degenerate web PNGs.
+    if entry.needsWindowContext {
+      logErr("[skip] \(entry.id): needs window/scroll context — captured via wasm")
+      skipped += 1
+      continue
+    }
+    if !entry.isStaticallyRenderable {
+      logErr("[skip] \(entry.id): no static display list: TimelineView/Canvas")
+      skipped += 1
+      continue
+    }
+
+    // 1) render the view to PNG bytes (SwiftUI ImageRenderer). Route through the
+    //    SAME `demoCaptureWrapped` (RC-1 bounded frame + Group-B T11 control
+    //    fallback) and set the RC-3 proposal so web matches native.
+    let renderer = ImageRenderer(content: demoCaptureWrapped(entry, size: webCanvasSize))
+    renderer.proposedSize = defaultCaptureProposal
     renderer.scale = 2
     guard
       let nsImage = renderer.nsImage,
@@ -104,6 +134,13 @@ func run() -> Int32 {
       let png = rep.representation(using: .png, properties: [:])
     else {
       logErr("[skip] \(entry.id): ImageRenderer produced no PNG")
+      skipped += 1
+      continue
+    }
+
+    // RC-5: drop blank/degenerate web renders too (defense in depth).
+    if case let .blank(colors) = assessPNG(png) {
+      logErr("[skip] \(entry.id): blank/degenerate render: \(colors) distinct color(s)")
       skipped += 1
       continue
     }
@@ -140,7 +177,11 @@ func run() -> Int32 {
     let pngPath = "\(webDir)/\(base).png"
     // Size the Chrome window to the rendered image so headless --screenshot captures the
     // whole view (the default 800x600-ish viewport clipped/blanked tall or wide demos — QA D1).
-    let (imgW, imgH) = pngDimensions(png) ?? (900, 1400)
+    // RC-3: clamp the Chrome window to a sane range so a degenerate dimension
+    // (a 20×20 collapse or a multi-thousand-px runaway) can't break capture.
+    let (rawW, rawH) = pngDimensions(png) ?? (900, 1400)
+    let imgW = min(max(rawW, 1), maxChromeWindow.width)
+    let imgH = min(max(rawH, 1), maxChromeWindow.height)
     let proc = Process()
     proc.executableURL = URL(fileURLWithPath: chrome)
     proc.arguments = [
@@ -174,6 +215,17 @@ func run() -> Int32 {
   }
 
   logErr("[summary] web: \(written) written, \(skipped) skipped, \(demoCatalog.count) total")
+
+  // RC-5 must-pass gate (defense in depth): every non-by-design-skip entry must
+  // have produced a web PNG. By-design skips = window-context + non-static.
+  let bydesignSkips = demoCatalog
+    .filter { $0.needsWindowContext || !$0.isStaticallyRenderable }
+    .count
+  let expected = demoCatalog.count - bydesignSkips
+  if written != expected {
+    logErr("[fail] web: written \(written) != expected \(expected)")
+    return 1
+  }
   return written > 0 ? 0 : 1
 }
 
