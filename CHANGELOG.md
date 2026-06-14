@@ -1,3 +1,15 @@
+# Unreleased
+
+**Added:**
+
+- Multi-platform screenshot harness: `Scripts/screenshots/generate.sh` renders the shared `TokamakDemo` catalog to PNG galleries on macOS (38 PNGs via `ScreenshotNative`), web (36 PNGs via `ScreenshotHTML` + Chrome headless), and iOS (38 PNGs via XCTest). Best-effort support for wasm and GTK. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `screenshots/README.md`.
+- Demo catalog refactored into `DemoCatalog.swift` with `@MainActor public let demoCatalog: [DemoEntry]` for shared access by all platform generators. `TokamakDemo` split into library + thin `TokamakDemoRun` executable to support imports by screenshot harness while preserving product name stability.
+- View modifiers for visual effects: `blur`, `grayscale`, `brightness`, `contrast`, `saturation`, `hueRotation`, `colorInvert`
+- Blending and interaction modifiers: `blendMode`, `allowsHitTesting`, `help`
+- State and appearance modifiers: `disabled`, `tint`, `rotation3DEffect`, `fixedSize`
+
+---
+
 # 0.10.1 (20 May 2022)
 
 This is a small bugfix release, which updates JavaScriptKit dependency to 0.15 and required version of `carton` to 0.15.

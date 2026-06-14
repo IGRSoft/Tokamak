@@ -7,23 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C7B0FE85F1A5BDAE0C04EB0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BD42C217367D1077C143E13 /* Foundation.framework */; };
+		3FAA7D73499134BB036D1212 /* CatalogRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462C5826B4C00F7981747A83 /* CatalogRender.swift */; };
 		85ED18A924AD425E0085DFA0 /* TokamakDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED189D24AD425E0085DFA0 /* TokamakDemo.swift */; };
 		85ED18AA24AD425E0085DFA0 /* TokamakDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED189D24AD425E0085DFA0 /* TokamakDemo.swift */; };
 		85ED18C124AD46340085DFA1 /* TokamakDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */; };
 		85ED18C224AD46340085DFA1 /* TokamakDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */; };
+		8F990F22BB0A55B05E5735FC /* DemoCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7B0D8F691E4F48AF2A0D2C /* DemoCatalog.swift */; };
+		C392733EB2E0F736D5FF848F /* CatalogRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462C5826B4C00F7981747A83 /* CatalogRender.swift */; };
 		D107874E274BD1E5003E787B /* SpacerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078726274BD1E5003E787B /* SpacerDemo.swift */; };
-		FEDA0000000000000000B001 /* LabelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F001 /* LabelDemo.swift */; };
-		FEDA0000000000000000B002 /* LabelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F001 /* LabelDemo.swift */; };
-		FEDA0000000000000000B003 /* LazyStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F002 /* LazyStackDemo.swift */; };
-		FEDA0000000000000000B004 /* LazyStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F002 /* LazyStackDemo.swift */; };
-		FEDA0000000000000000B005 /* FormDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F003 /* FormDemo.swift */; };
-		FEDA0000000000000000B006 /* FormDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F003 /* FormDemo.swift */; };
-		FEDA0000000000000000B007 /* StepperDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F004 /* StepperDemo.swift */; };
-		FEDA0000000000000000B008 /* StepperDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F004 /* StepperDemo.swift */; };
-		FEDA0000000000000000B009 /* ColorPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F005 /* ColorPickerDemo.swift */; };
-		FEDA0000000000000000B00A /* ColorPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F005 /* ColorPickerDemo.swift */; };
-		FEDA0000000000000000B00B /* GaugeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F006 /* GaugeDemo.swift */; };
-		FEDA0000000000000000B00C /* GaugeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F006 /* GaugeDemo.swift */; };
 		D107874F274BD1E5003E787B /* SpacerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078726274BD1E5003E787B /* SpacerDemo.swift */; };
 		D1078750274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */; };
 		D1078751274BD1E5003E787B /* GeometryReaderDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */; };
@@ -86,10 +78,24 @@
 		D1E5FDAD24C1D57000E7485E /* TokamakShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1E5FDAC24C1D57000E7485E /* TokamakShim.swift */; };
 		D1E5FDAF24C1D58E00E7485E /* libTokamakShim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */; };
 		D1E5FDB224C1D59400E7485E /* libTokamakShim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */; };
+		EF97C6069F2DFCEE69BADA05 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D34E005BABCB56F252F2481B /* ScreenshotTests.swift */; };
 		FE00000000000000000000A3 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
 		FE00000000000000000000A4 /* GesturesDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A1 /* GesturesDemo.swift */; };
 		FE00000000000000000000A5 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
 		FE00000000000000000000A6 /* GestureCoordinateSpaceDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */; };
+		FEA4AE6CAEB6B46B4625C8EE /* DemoCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7B0D8F691E4F48AF2A0D2C /* DemoCatalog.swift */; };
+		FEDA0000000000000000B001 /* LabelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F001 /* LabelDemo.swift */; };
+		FEDA0000000000000000B002 /* LabelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F001 /* LabelDemo.swift */; };
+		FEDA0000000000000000B003 /* LazyStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F002 /* LazyStackDemo.swift */; };
+		FEDA0000000000000000B004 /* LazyStackDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F002 /* LazyStackDemo.swift */; };
+		FEDA0000000000000000B005 /* FormDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F003 /* FormDemo.swift */; };
+		FEDA0000000000000000B006 /* FormDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F003 /* FormDemo.swift */; };
+		FEDA0000000000000000B007 /* StepperDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F004 /* StepperDemo.swift */; };
+		FEDA0000000000000000B008 /* StepperDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F004 /* StepperDemo.swift */; };
+		FEDA0000000000000000B009 /* ColorPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F005 /* ColorPickerDemo.swift */; };
+		FEDA0000000000000000B00A /* ColorPickerDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F005 /* ColorPickerDemo.swift */; };
+		FEDA0000000000000000B00B /* GaugeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F006 /* GaugeDemo.swift */; };
+		FEDA0000000000000000B00C /* GaugeDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDA0000000000000000F006 /* GaugeDemo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +113,13 @@
 			remoteGlobalIDString = D1E5FDA324C1D54B00E7485E;
 			remoteInfo = TokamakShim;
 		};
+		EC967D719A4C3A9147BC1638 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85ED183E24AD37970085DFA0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 85ED184924AD379A0085DFA0;
+			remoteInfo = iOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -122,6 +135,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2BD42C217367D1077C143E13 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		2FB6482CD2434629FEF07969 /* ScreenshotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = ScreenshotTests.xctest; path = ScreenshotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		462C5826B4C00F7981747A83 /* CatalogRender.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CatalogRender.swift; sourceTree = "<group>"; };
+		7F7B0D8F691E4F48AF2A0D2C /* DemoCatalog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DemoCatalog.swift; sourceTree = "<group>"; };
 		8587DF5524D4B9A40033EF43 /* TokamakDemo Native.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TokamakDemo Native.entitlements"; sourceTree = "<group>"; };
 		85ED184A24AD379A0085DFA0 /* TokamakDemo Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TokamakDemo Native.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		85ED185224AD379A0085DFA0 /* TokamakDemo Native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TokamakDemo Native.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,12 +147,6 @@
 		85ED18BF24AD464B0085DFA0 /* iOS Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iOS Info.plist"; sourceTree = "<group>"; };
 		85ED18C024AD46340085DFA1 /* TokamakDemoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokamakDemoApp.swift; sourceTree = "<group>"; };
 		D1078726274BD1E5003E787B /* SpacerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpacerDemo.swift; sourceTree = "<group>"; };
-		FEDA0000000000000000F001 /* LabelDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelDemo.swift; sourceTree = "<group>"; };
-		FEDA0000000000000000F002 /* LazyStackDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LazyStackDemo.swift; sourceTree = "<group>"; };
-		FEDA0000000000000000F003 /* FormDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormDemo.swift; sourceTree = "<group>"; };
-		FEDA0000000000000000F004 /* StepperDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepperDemo.swift; sourceTree = "<group>"; };
-		FEDA0000000000000000F005 /* ColorPickerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerDemo.swift; sourceTree = "<group>"; };
-		FEDA0000000000000000F006 /* GaugeDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GaugeDemo.swift; sourceTree = "<group>"; };
 		D1078727274BD1E5003E787B /* GeometryReaderDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeometryReaderDemo.swift; sourceTree = "<group>"; };
 		D1078728274BD1E5003E787B /* GridDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridDemo.swift; sourceTree = "<group>"; };
 		D1078729274BD1E5003E787B /* StackDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackDemo.swift; sourceTree = "<group>"; };
@@ -167,8 +178,15 @@
 		D107874D274BD1E5003E787B /* ButtonStyleDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonStyleDemo.swift; sourceTree = "<group>"; };
 		D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTokamakShim.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1E5FDAC24C1D57000E7485E /* TokamakShim.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokamakShim.swift; sourceTree = "<group>"; };
+		D34E005BABCB56F252F2481B /* ScreenshotTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		FE00000000000000000000A1 /* GesturesDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GesturesDemo.swift; sourceTree = "<group>"; };
 		FE00000000000000000000A2 /* GestureCoordinateSpaceDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestureCoordinateSpaceDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F001 /* LabelDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F002 /* LazyStackDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LazyStackDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F003 /* FormDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F004 /* StepperDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StepperDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F005 /* ColorPickerDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorPickerDemo.swift; sourceTree = "<group>"; };
+		FEDA0000000000000000F006 /* GaugeDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GaugeDemo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +206,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D1B0564C479E619FA1E098E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2C7B0FE85F1A5BDAE0C04EB0 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D1E5FDA124C1D54B00E7485E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -198,6 +224,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4B9E9371BAD07A4F933E3DCB /* ScreenshotKit */ = {
+			isa = PBXGroup;
+			children = (
+				462C5826B4C00F7981747A83 /* CatalogRender.swift */,
+			);
+			name = ScreenshotKit;
+			path = ../Sources/ScreenshotKit;
+			sourceTree = "<group>";
+		};
+		847F64A65EFC3CE4115DE8EF /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				2BD42C217367D1077C143E13 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		85ED183D24AD37970085DFA0 = {
 			isa = PBXGroup;
 			children = (
@@ -209,6 +252,8 @@
 				85ED189924AD425E0085DFA0 /* TokamakDemo */,
 				85ED184B24AD379A0085DFA0 /* Products */,
 				D1E5FDAE24C1D58E00E7485E /* Frameworks */,
+				B70DDDD4996A0D06217C13D5 /* ScreenshotTests */,
+				4B9E9371BAD07A4F933E3DCB /* ScreenshotKit */,
 			);
 			sourceTree = "<group>";
 		};
@@ -218,6 +263,7 @@
 				85ED184A24AD379A0085DFA0 /* TokamakDemo Native.app */,
 				85ED185224AD379A0085DFA0 /* TokamakDemo Native.app */,
 				D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */,
+				2FB6482CD2434629FEF07969 /* ScreenshotTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -235,9 +281,19 @@
 				D107872A274BD1E5003E787B /* Selectors */,
 				D1078747274BD1E5003E787B /* Text */,
 				85ED189D24AD425E0085DFA0 /* TokamakDemo.swift */,
+				7F7B0D8F691E4F48AF2A0D2C /* DemoCatalog.swift */,
 			);
 			name = TokamakDemo;
 			path = ../Sources/TokamakDemo;
+			sourceTree = "<group>";
+		};
+		B70DDDD4996A0D06217C13D5 /* ScreenshotTests */ = {
+			isa = PBXGroup;
+			children = (
+				D34E005BABCB56F252F2481B /* ScreenshotTests.swift */,
+			);
+			name = ScreenshotTests;
+			path = ScreenshotTests;
 			sourceTree = "<group>";
 		};
 		D1078725274BD1E5003E787B /* Layout */ = {
@@ -344,6 +400,7 @@
 		D1E5FDAE24C1D58E00E7485E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				847F64A65EFC3CE4115DE8EF /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -413,6 +470,24 @@
 			productReference = D1E5FDA424C1D54B00E7485E /* libTokamakShim.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		D9F7140C23CF73C46C413AA2 /* ScreenshotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E7CB86D2209CBAA9F45C6B0A /* Build configuration list for PBXNativeTarget "ScreenshotTests" */;
+			buildPhases = (
+				9AE94AE092001646AAB116DD /* Sources */,
+				D1B0564C479E619FA1E098E9 /* Frameworks */,
+				DC43F7091837C83D7C02EAB0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7740937E97F5095710865CF9 /* PBXTargetDependency */,
+			);
+			name = ScreenshotTests;
+			productName = ScreenshotTests;
+			productReference = 2FB6482CD2434629FEF07969 /* ScreenshotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -451,6 +526,7 @@
 				85ED184924AD379A0085DFA0 /* iOS */,
 				85ED185124AD379A0085DFA0 /* macOS */,
 				D1E5FDA324C1D54B00E7485E /* TokamakShim */,
+				D9F7140C23CF73C46C413AA2 /* ScreenshotTests */,
 			);
 		};
 /* End PBXProject section */
@@ -464,6 +540,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		85ED185024AD379A0085DFA0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC43F7091837C83D7C02EAB0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -517,6 +600,8 @@
 				D107878C274BD1E5003E787B /* ButtonStyleDemo.swift in Sources */,
 				D1078762274BD1E5003E787B /* ListDemo.swift in Sources */,
 				D107877C274BD1E5003E787B /* ProgressViewDemo.swift in Sources */,
+				FEA4AE6CAEB6B46B4625C8EE /* DemoCatalog.swift in Sources */,
+				3FAA7D73499134BB036D1212 /* CatalogRender.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -564,6 +649,16 @@
 				D107878D274BD1E5003E787B /* ButtonStyleDemo.swift in Sources */,
 				D1078763274BD1E5003E787B /* ListDemo.swift in Sources */,
 				D107877D274BD1E5003E787B /* ProgressViewDemo.swift in Sources */,
+				8F990F22BB0A55B05E5735FC /* DemoCatalog.swift in Sources */,
+				C392733EB2E0F736D5FF848F /* CatalogRender.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AE94AE092001646AAB116DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EF97C6069F2DFCEE69BADA05 /* ScreenshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -578,6 +673,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		7740937E97F5095710865CF9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = iOS;
+			target = 85ED184924AD379A0085DFA0 /* iOS */;
+			targetProxy = EC967D719A4C3A9147BC1638 /* PBXContainerItemProxy */;
+		};
 		D1E5FDB124C1D58E00E7485E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D1E5FDA324C1D54B00E7485E /* TokamakShim */;
@@ -591,6 +692,41 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		314CD38E021A09094175720F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tokamak.ScreenshotTests;
+				PRODUCT_MODULE_NAME = ScreenshotTests;
+				PRODUCT_NAME = ScreenshotTests;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SCREENSHOT_INLINE";
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TokamakDemo Native.app/TokamakDemo Native";
+			};
+			name = Debug;
+		};
+		33138B977C38EB5A77015017 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tokamak.ScreenshotTests;
+				PRODUCT_MODULE_NAME = ScreenshotTests;
+				PRODUCT_NAME = ScreenshotTests;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SCREENSHOT_INLINE";
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TokamakDemo Native.app/TokamakDemo Native";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		85ED185C24AD379B0085DFA0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -733,6 +869,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SCREENSHOT_INLINE";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -758,6 +895,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SCREENSHOT_INLINE";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -785,6 +923,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SCREENSHOT_INLINE";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -811,6 +950,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SCREENSHOT_INLINE";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -879,6 +1019,15 @@
 			buildConfigurations = (
 				D1E5FDA924C1D54B00E7485E /* Debug */,
 				D1E5FDAA24C1D54B00E7485E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E7CB86D2209CBAA9F45C6B0A /* Build configuration list for PBXNativeTarget "ScreenshotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33138B977C38EB5A77015017 /* Release */,
+				314CD38E021A09094175720F /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import TokamakDemo
 import TokamakShim
 
 @available(OSX 10.16, iOS 14.0, *)

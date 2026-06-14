@@ -17,11 +17,11 @@
 
 import TokamakShim
 
-class TestEnvironment: ObservableObject {
+public class TestEnvironment: ObservableObject {
   @Published
-  var envTest = "Hello, world!"
+  public var envTest = "Hello, world!"
 
-  init() {}
+  public init() {}
 }
 
 struct EnvironmentObjectDemo: View {

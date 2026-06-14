@@ -13,7 +13,7 @@ let package = Package(
     // and make them visible to other packages.
     .executable(
       name: "TokamakDemo",
-      targets: ["TokamakDemo"]
+      targets: ["TokamakDemoRun"]
     ),
     .library(
       name: "TokamakDOM",
@@ -133,7 +133,12 @@ let package = Package(
         ),
       ]
     ),
-    .executableTarget(
+    // TokamakDemo is now a LIBRARY target (no main.swift) so it can be imported by the
+    // thin run executable and by the macOS-gated screenshot generators. main.swift moved
+    // to Sources/TokamakDemoRun. The external product name "TokamakDemo" stays stable
+    // (mapped to the TokamakDemoRun target) so `swift run TokamakDemo`, the wasm
+    // `--product TokamakDemo` bundle, and CI are unaffected.
+    .target(
       name: "TokamakDemo",
       dependencies: [
         "TokamakShim",
@@ -149,6 +154,23 @@ let package = Package(
         // make the Swift runtime's recursive type-name demangler blow the default ~1MB wasm
         // stack, corrupting the heap (crashes in free during Demangle::NodePrinter::print).
         // Raise the wasm stack to 16MB.
+        .unsafeFlags(["-Xlinker", "-z", "-Xlinker", "stack-size=16777216"], .when(platforms: [.wasi])),
+      ]
+    ),
+    .executableTarget(
+      name: "TokamakDemoRun",
+      dependencies: [
+        "TokamakDemo",
+        "TokamakShim",
+        .product(
+          name: "JavaScriptKit",
+          package: "JavaScriptKit",
+          condition: .when(platforms: [.wasi])
+        ),
+      ],
+      linkerSettings: [
+        // The wasm entry-point executable links the same deeply-nested generic view types;
+        // keep the raised stack size here too.
         .unsafeFlags(["-Xlinker", "-z", "-Xlinker", "stack-size=16777216"], .when(platforms: [.wasi])),
       ]
     ),
@@ -189,6 +211,9 @@ let package = Package(
       name: "TokamakStaticHTMLTests",
       dependencies: [
         "TokamakStaticHTML",
+        // Demo library (now importable after the lib/exec split) so the catalog
+        // count/unique-id smoke assertions can guard against dropped demos (AC-1).
+        "TokamakDemo",
         .product(
           name: "SnapshotTesting",
           package: "swift-snapshot-testing",
@@ -203,3 +228,38 @@ let package = Package(
   // Wasm/DOM runtime.
   swiftLanguageModes: [.v6]
 )
+
+// MARK: - Screenshot harness (macOS-only)
+//
+// The screenshot generators (`ScreenshotHTML`, `ScreenshotNative`) and their shared
+// render helper (`ScreenshotKit`) are declared ONLY on a macOS host. The manifest runs
+// on the host, so this `#if os(macOS)` guard means the Linux `swift:6.x` CI container and
+// the wasm cross-compile (`--swift-sdk …`) never even see these targets — non-Apple builds
+// are completely untouched. A second, source-level `#if canImport(SwiftUI)` guard inside
+// ScreenshotKit/ScreenshotNative is the belt-and-braces fallback.
+#if os(macOS)
+package.products += [
+  .executable(name: "ScreenshotHTML", targets: ["ScreenshotHTML"]),
+  .executable(name: "ScreenshotNative", targets: ["ScreenshotNative"]),
+]
+package.targets += [
+  // Shared render helper: ImageRenderer-based catalog -> PNG loop with an injected
+  // platform PNG encoder (NSImage on mac, UIImage on iOS) and per-entry fault isolation.
+  .target(
+    name: "ScreenshotKit",
+    dependencies: ["TokamakDemo"]
+  ),
+  // Web generator: ImageRenderer -> HTML -> Chrome headless -> screenshots/web/*.png.
+  // (On macOS host, catalog compiles as SwiftUI, not TokamakCore, so StaticHTML SSR is not available;
+  // instead each view is rendered via ImageRenderer and served through Chrome headless.)
+  .executableTarget(
+    name: "ScreenshotHTML",
+    dependencies: ["TokamakDemo", "ScreenshotKit"]
+  ),
+  // mac generator: ImageRenderer().nsImage -> screenshots/mac/*.png.
+  .executableTarget(
+    name: "ScreenshotNative",
+    dependencies: ["TokamakDemo", "ScreenshotKit"]
+  ),
+]
+#endif
