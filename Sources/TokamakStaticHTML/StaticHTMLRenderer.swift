@@ -24,6 +24,12 @@ extension EnvironmentValues {
     var environment = EnvironmentValues()
     environment[_ColorSchemeKey.self] = .light
 
+    // `_ToggleStyleKey.defaultValue` traps with a fatalError demanding a renderer-provided
+    // default; supply the JS-free SSR checkbox style so `Toggle` renders under SSR. The
+    // `.toggleStyle` env property is internal to TokamakCore, so set the key directly
+    // (mirrors `TokamakDOM.EnvironmentValues.defaultEnvironment`).
+    environment[_ToggleStyleKey.self] = _AnyToggleStyle(StaticHTMLToggleStyle())
+
     return environment
   }
 }

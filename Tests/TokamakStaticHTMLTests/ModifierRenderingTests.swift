@@ -65,12 +65,58 @@ final class ModifierRenderingTests: XCTestCase {
     XCTAssertTrue(html.contains("filter: invert(1)"))
   }
 
-  func testColorMultiplyCompilesAndRenders() {
-    // colorMultiply is structurally present but visually inert for run 0
-    // (no 1:1 CSS function; needs environment to resolve Color.cssValue).
-    // Assert it renders without crashing and emits the content.
+  func testColorMultiplyEmitsFeColorMatrixFilter() {
+    // colorMultiply(c) multiplies each channel by c's components. We render it as an
+    // inline-SVG feColorMatrix data-URI filter, so the output is a real per-channel
+    // multiply (not an inert no-op).
     let html = render(Color.red.colorMultiply(.blue))
-    XCTAssertFalse(html.isEmpty)
+    XCTAssertTrue(
+      html.contains("filter: url(\"data:image/svg+xml,"),
+      "colorMultiply emits an inline-SVG data-URI filter"
+    )
+    XCTAssertTrue(
+      html.contains("feColorMatrix"),
+      "the filter is expressed as an feColorMatrix"
+    )
+    XCTAssertTrue(
+      html.contains("type='matrix'"),
+      "the feColorMatrix uses an explicit per-channel multiply matrix"
+    )
+    // The fragment selector must survive un-encoded so the filter resolves; the
+    // surrounding markup is percent-encoded (`>` -> %3E).
+    XCTAssertTrue(html.contains("%3E#m\""), "the #m filter-fragment selector is preserved")
+  }
+
+  func testColorMultiplyWhiteIsIdentityMatrix() {
+    // Multiplying by white (1,1,1,1) is the identity — every diagonal entry is 1, so
+    // the encoded matrix is `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0` (spaces -> %20).
+    let html = render(Color.red.colorMultiply(.white))
+    XCTAssertTrue(
+      html.contains(
+        "values='1%200%200%200%200%200%201%200%200%200%200%200%201%200%200%200%200%200%201%200'"
+      ),
+      "colorMultiply(.white) yields an identity feColorMatrix"
+    )
+  }
+
+  func testColorMultiplyResolvesSystemColorChannels() {
+    // System `.blue` resolves to sRGB ≈ (0.01, 0.48, 1.0, 1.0); the diagonal must carry
+    // those exact channel multipliers (not a pure 0/0/1 primary).
+    let html = render(Color.red.colorMultiply(.blue))
+    XCTAssertTrue(
+      html.contains(
+        "values='0.01%200%200%200%200%200%200.48%200%200%200%200%200%201%200%200%200%200%200%201%200'"
+      ),
+      "the feColorMatrix diagonal carries .blue's resolved sRGB channels"
+    )
+  }
+
+  func testColorMultiplyStacksWithOtherFilters() {
+    // colorMultiply emits a `filter:` like blur/grayscale; the stacked-filter merge
+    // must keep both declarations rather than clobbering one.
+    let html = render(Color.red.colorMultiply(.blue).grayscale(1))
+    XCTAssertTrue(html.contains("feColorMatrix"), "colorMultiply survives stacking")
+    XCTAssertTrue(html.contains("grayscale(1.0)"), "grayscale survives stacking")
   }
 
   // MARK: - Stacked-filter regression (P0a gate — load-bearing)

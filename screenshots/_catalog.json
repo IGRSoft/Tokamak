@@ -42,6 +42,18 @@
     "section" : "Containers"
   },
   {
+    "file" : "DisclosureGroup.png",
+    "id" : "Containers\/DisclosureGroup",
+    "name" : "DisclosureGroup",
+    "section" : "Containers"
+  },
+  {
+    "file" : "Shapes.png",
+    "id" : "Drawing\/Shapes",
+    "name" : "Shapes",
+    "section" : "Drawing"
+  },
+  {
     "file" : "Canvas.png",
     "id" : "Drawing\/Canvas",
     "name" : "Canvas",
@@ -171,6 +183,12 @@
     "file" : "TextField.png",
     "id" : "Text\/TextField",
     "name" : "TextField",
+    "section" : "Text"
+  },
+  {
+    "file" : "SecureField.png",
+    "id" : "Text\/SecureField",
+    "name" : "SecureField",
     "section" : "Text"
   },
   {
