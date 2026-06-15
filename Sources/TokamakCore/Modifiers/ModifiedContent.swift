@@ -16,7 +16,10 @@ protocol ModifierContainer {
   var environmentModifier: _EnvironmentModifier? { get }
 }
 
-protocol ModifiedContentProtocol {}
+protocol ModifiedContentProtocol {
+  /// The wrapped content, type-erased, for walking a modifier chain.
+  var _anyContent: Any { get }
+}
 
 /// A value with a modifier applied to it.
 public struct ModifiedContent<Content, Modifier>: ModifiedContentProtocol {
@@ -31,6 +34,8 @@ public struct ModifiedContent<Content, Modifier>: ModifiedContentProtocol {
     self.content = content
     self.modifier = modifier
   }
+
+  var _anyContent: Any { content }
 }
 
 extension ModifiedContent: ModifierContainer {

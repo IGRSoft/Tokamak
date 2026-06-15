@@ -232,6 +232,46 @@ public struct DemoEntry: Identifiable {
     c.append(DemoEntry(section: "TokamakDOM", name: "URL hash changes", view: URLHashDemo()))
   #endif
 
+  // MARK: Buttons — new views (EditButton, Menu)
+
+  c.append(DemoEntry(section: "Buttons", name: "EditButton", view: EditButtonDemo()))
+  // Menu lowers to an AppKit-backed pop-out (`NSPopUpButton`-class machinery) that
+  // `ImageRenderer` paints as the "nosign" placeholder offscreen — same limitation as
+  // Picker/Stepper. Use a pure-SwiftUI capture fallback (Group-B T11) so the native/web
+  // screenshot paths still produce a real PNG; the live app renders the real Menu.
+  c.append(DemoEntry(
+    section: "Buttons",
+    name: "Menu",
+    view: MenuDemo(),
+    usesStaticControlFallback: true
+  ))
+
+  // MARK: Containers — new views (ScrollViewReader)
+
+  // ScrollViewReader wraps a root ScrollView — unrasterizable offscreen by the
+  // native ImageRenderer (same limitation as other ScrollView-rooted demos).
+  // Flagged needsWindowContext: true; authoritative capture is the wasm path.
+  // See architecture-0.md §R5 / teamlead-0.md §R5 constraint.
+  c.append(DemoEntry(
+    section: "Containers",
+    name: "ScrollViewReader",
+    view: ScrollViewReaderDemo(),
+    needsWindowContext: true
+  ))
+
+  // MARK: Architectural — new section (TabView)
+
+  // TabView's tab strip lowers to interactive tab buttons that `ImageRenderer` paints as
+  // the "nosign" placeholder offscreen. Use a pure-SwiftUI capture fallback (Group-B T11)
+  // so the native/web screenshot paths produce a real PNG; the live app renders the real
+  // TabView.
+  c.append(DemoEntry(
+    section: "Architectural",
+    name: "TabView",
+    view: TabViewDemo(),
+    usesStaticControlFallback: true
+  ))
+
   return c
 }
 
@@ -440,6 +480,10 @@ func staticControlFallbackView(for entry: DemoEntry) -> some View {
     FallbackTextFieldDemo()
   case "Text/TextEditor":
     FallbackTextEditorDemo()
+  case "Buttons/Menu":
+    FallbackMenuDemo()
+  case "Architectural/TabView":
+    FallbackTabViewDemo()
   default:
     EmptyView()
   }
@@ -726,6 +770,72 @@ struct FallbackProgressViewDemo: View {
         FallbackProgressBar(fraction: progress / 2)
       }
       Button("Make Progress") {}
+    }
+    .padding()
+  }
+}
+
+// MARK: DV-new: Menu / TabView fallbacks
+//
+// Menu and TabView lower to interactive machinery (pop-out menu, tab-button strip)
+// that `ImageRenderer` paints as the "nosign" placeholder offscreen. These pure-SwiftUI
+// mocks mirror each demo's informational structure so the capture reads as the right
+// demo. Reachable ONLY through `demoCaptureWrapped`; the live app renders the real views.
+
+/// Mirrors `MenuDemo`: a labelled pop-out affordance (chevron-down arrow in a
+/// rounded rect) plus the "Last action" status text below it.
+struct FallbackMenuDemo: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      // Static stand-in for the Menu button: label + chevron in a bordered pill.
+      HStack(spacing: 6) {
+        Text("Actions")
+        Text("▾")
+          .foregroundColor(.secondary)
+      }
+      .padding(.horizontal, 12)
+      .padding(.vertical, 6)
+      .background(RoundedRectangle(cornerRadius: 6).stroke(Color.gray))
+      Text("Last action: None")
+        .foregroundColor(.secondary)
+    }
+    .padding()
+  }
+}
+
+/// Mirrors `TabViewDemo`: a tab strip (two labelled tab cells) above a content
+/// area showing the first tab's body text.
+struct FallbackTabViewDemo: View {
+  var body: some View {
+    VStack(spacing: 0) {
+      // Static tab strip — two bordered tab cells, first "selected" (filled).
+      HStack(spacing: 0) {
+        Text("Tab One")
+          .padding(.horizontal, 16)
+          .padding(.vertical, 8)
+          .background(Color(white: 0.92))
+          .overlay(
+            Rectangle()
+              .frame(height: 2)
+              .foregroundColor(.blue),
+            alignment: .bottom
+          )
+        Text("Tab Two")
+          .padding(.horizontal, 16)
+          .padding(.vertical, 8)
+          .foregroundColor(.secondary)
+      }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background(Color(white: 0.97))
+      Divider()
+      // First tab's content area.
+      VStack(spacing: 8) {
+        Text("Content of Tab One")
+        Text("Selection: 0")
+          .foregroundColor(.secondary)
+      }
+      .padding()
+      .frame(maxWidth: .infinity)
     }
     .padding()
   }

@@ -111,18 +111,22 @@ public protocol _AnyIDView {
   var anyContent: AnyView { get }
 }
 
-struct IDView<Content, ID>: View, _AnyIDView where Content: View, ID: Hashable {
-  let content: Content
-  let id: ID
-  var anyId: AnyHashable { AnyHashable(id) }
-  var anyContent: AnyView { AnyView(content) }
+public struct IDView<Content, ID>: View, _AnyIDView where Content: View, ID: Hashable {
+  @_spi(TokamakCore)
+  public let content: Content
+  @_spi(TokamakCore)
+  public let id: ID
+  public var anyId: AnyHashable { AnyHashable(id) }
+  public var anyContent: AnyView { AnyView(content) }
 
-  init(_ content: Content, id: ID) {
+  @_spi(TokamakCore)
+  public init(_ content: Content, id: ID) {
     self.content = content
     self.id = id
   }
 
-  var body: some View {
+  @_spi(TokamakCore)
+  public var body: some View {
     content
       .environment(\._id, AnyHashable(id))
   }

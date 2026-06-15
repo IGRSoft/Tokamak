@@ -37,10 +37,10 @@ Table columns:
 | --- | ------------------------------------------------------------------------------------------------ | :-: |
 | 🚧  | [Button](https://developer.apple.com/documentation/swiftui/button)                               |     |
 | 🚧  | [NavigationLink](https://developer.apple.com/documentation/swiftui/navigationlink)               |     |
-|     | [EditButton](https://developer.apple.com/documentation/swiftui/editbutton)                       |     |
+| ✅  | [EditButton](https://developer.apple.com/documentation/swiftui/editbutton)                       |     |
 |     | [PasteButton](https://developer.apple.com/documentation/swiftui/pastebutton)                     |     |
 |     | [SignInWithAppleButton](https://developer.apple.com/documentation/swiftui/signinwithapplebutton) |     |
-|     | [Menu](https://developer.apple.com/documentation/swiftui/menu)                                   |     |
+| 🚧  | [Menu](https://developer.apple.com/documentation/swiftui/menu)                                   |     |
 
 ### Value Selectors
 
@@ -89,8 +89,8 @@ Table columns:
 | 🚧  | [List](https://developer.apple.com/documentation/swiftui/list)                             |     |
 | 🚧  | [ForEach](https://developer.apple.com/documentation/swiftui/foreach)                       |     |
 | 🚧  | [ScrollView](https://developer.apple.com/documentation/swiftui/scrollview)                 |     |
-|     | [ScrollViewReader](https://developer.apple.com/documentation/swiftui/scrollviewreader)     |     |
-|     | [ScrollViewProxy](https://developer.apple.com/documentation/swiftui/scrollviewproxy)       |     |
+| 🚧  | [ScrollViewReader](https://developer.apple.com/documentation/swiftui/scrollviewreader)     |     |
+| 🚧  | [ScrollViewProxy](https://developer.apple.com/documentation/swiftui/scrollviewproxy)       |     |
 |     | [DynamicViewContent](https://developer.apple.com/documentation/swiftui/dynamicviewcontent) |     |
 
 ### Container Views
@@ -121,9 +121,15 @@ Table columns:
 |     |                                                                                    |     |
 | --- | ---------------------------------------------------------------------------------- | :-: |
 | 🚧  | [NavigationView](https://developer.apple.com/documentation/swiftui/navigationview) |     |
-|     | [TabView](https://developer.apple.com/documentation/swiftui/tabview)               |     |
+| 🚧  | [TabView](https://developer.apple.com/documentation/swiftui/tabview)               |     |
 |     | [HSplitView](https://developer.apple.com/documentation/swiftui/hsplitview)         |     |
 |     | [VSplitView](https://developer.apple.com/documentation/swiftui/vsplitview)         |     |
+
+**Notes on new views (EditButton, Menu, ScrollViewReader, TabView):**
+- ✅ **EditButton** — Core-only, renders via Button; fully cross-platform (DOM/StaticHTML/GTK4)
+- 🚧 **Menu** — DOM/StaticHTML complete; GTK4 best-effort (untested on this host; requires Linux/GTK4 environment)
+- 🚧 **ScrollViewReader/Proxy** — DOM/StaticHTML complete; GTK4 inert proxy (untested; requires Linux/GTK4 environment)
+- 🚧 **TabView** — DOM/StaticHTML complete; GTK4 not buildable on this host (no system GTK4 libs); requires Linux/GTK4 environment for verification
 
 ### Conditionally Visible Items
 

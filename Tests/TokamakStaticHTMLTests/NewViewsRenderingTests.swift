@@ -21,6 +21,7 @@
 #if canImport(SnapshotTesting)
 
 @_spi(TokamakStaticHTML) import TokamakStaticHTML
+import TokamakCore
 import XCTest
 
 final class NewViewsRenderingTests: XCTestCase {
@@ -312,6 +313,154 @@ final class NewViewsRenderingTests: XCTestCase {
     XCTAssertTrue(
       html.contains("min-width: 20.0px"),
       "Spacer(minLength:) must emit a px-unit min-width on the Fiber path"
+    )
+  }
+
+  // MARK: - EditButton
+  // All references use TokamakCore. qualification to avoid ambiguity with
+  // SwiftUI.EditButton (iOS-only on macOS) and SwiftUI.Button.
+  //
+  // EditButton composes `Button`, whose rendered leaf is `_PrimitiveButtonStyleBody`.
+  // TokamakDOM maps that leaf to a `<button>` element via
+  // `_PrimitiveButtonStyleBody: DOMNodeConvertible` (DOMFiberRenderer.swift), but
+  // TokamakStaticHTML had NO Button representation on EITHER SSR path — neither the
+  // legacy `_HTMLPrimitive` (`StaticHTMLRenderer`, the SSR oracle) nor the Fiber path.
+  // The DV fix adds `_PrimitiveButtonStyleBody: HTMLConvertible` in
+  // `TokamakStaticHTML/Views/Buttons/Button.swift` (tag = "button"), so the
+  // dynamic-layout Fiber path now emits `<button>` for SSR — paralleling the
+  // `Divider`/`Spacer` `HTMLConvertible` conformances (REQ-10). Button-dependent
+  // assertions therefore render via `renderFiber(_:)`.
+
+  func testEditButtonRendersButtonElement() {
+    // AC-1a: SSR output contains a <button element.
+    let html = renderFiber(TokamakCore.EditButton())
+    XCTAssertTrue(html.contains("<button"), "EditButton must emit a <button element")
+  }
+
+  func testEditButtonInactiveStateShowsEditLabel() {
+    // AC-1b / AC-1a: the initial (inactive) label is "Edit".
+    let html = renderFiber(TokamakCore.EditButton())
+    XCTAssertTrue(html.contains("Edit"), "EditButton in inactive state must show 'Edit'")
+    XCTAssertFalse(html.contains("Done"), "EditButton in inactive state must not show 'Done'")
+  }
+
+  func testEditButtonRendersViaButtonMachinery() {
+    // AC-2b: EditButton renders through Button — no per-platform files.
+    // Rendering an equivalent TokamakCore.Button must also emit <button.
+    let editButtonHTML = renderFiber(TokamakCore.EditButton())
+    let buttonHTML = renderFiber(TokamakCore.Button("Edit") {})
+    XCTAssertTrue(
+      editButtonHTML.contains("<button"),
+      "EditButton must share Button's structural element"
+    )
+    XCTAssertTrue(
+      buttonHTML.contains("<button"),
+      "TokamakCore.Button must emit <button"
+    )
+  }
+
+  // MARK: - Menu
+
+  func testMenuLabelPresentInSSR() {
+    // AC-3a: the label text is present in the output.
+    let html = render(TokamakCore.Menu("File") { TokamakCore.Button("Save") {} })
+    XCTAssertTrue(html.contains("File"), "Menu label 'File' must be present in SSR output")
+  }
+
+  func testMenuItemsPresentInSSR() {
+    // AC-3a: all item markup is present in expanded SSR output.
+    // Menu items are `Button`s, whose `<button>` emission is Fiber-path only,
+    // so this assertion renders via `renderFiber(_:)` (see EditButton note above).
+    let html = renderFiber(TokamakCore.Menu("File") { TokamakCore.Button("Save") {} })
+    XCTAssertTrue(html.contains("Save"), "Menu item 'Save' must be present in SSR output")
+  }
+
+  func testMenuLabelBeforeItemsInSSR() {
+    // AC-3b: label appears before items in the output string.
+    // Renders via Fiber path because the item is a `Button` (Fiber-only primitive).
+    let html = renderFiber(TokamakCore.Menu("Actions") { TokamakCore.Button("Delete") {} })
+    let labelIndex = html.range(of: "Actions")?.lowerBound
+    let itemIndex = html.range(of: "Delete")?.lowerBound
+    XCTAssertNotNil(labelIndex, "Menu label must be present")
+    XCTAssertNotNil(itemIndex, "Menu item must be present")
+    if let l = labelIndex, let i = itemIndex {
+      XCTAssertLessThan(l, i, "Menu label must appear before menu items")
+    }
+  }
+
+  func testMenuContainerCarriesRoleMenu() {
+    // AC-3c structural: the container div carries role="menu".
+    let html = render(TokamakCore.Menu("Edit") { TokamakCore.Button("Cut") {} })
+    XCTAssertTrue(html.contains("role=\"menu\""), "Menu container must carry role=\"menu\"")
+  }
+
+  // MARK: - ScrollViewReader
+
+  func testScrollViewReaderRendersContent() {
+    // AC-4a: wrapped content is present in the output.
+    let html = render(TokamakCore.ScrollViewReader { _ in TokamakCore.Text("hello") })
+    XCTAssertTrue(html.contains("hello"), "ScrollViewReader must render its content")
+  }
+
+  func testScrollViewReaderWrapperClassPresent() {
+    // AC-4b: the wrapper <div> carries the tokamak class.
+    let html = render(TokamakCore.ScrollViewReader { _ in TokamakCore.Text("test") })
+    XCTAssertTrue(
+      html.contains("_tokamak-scrollviewreader"),
+      "ScrollViewReader must emit a <div class=\"_tokamak-scrollviewreader\">"
+    )
+  }
+
+  func testScrollViewReaderProxyIsInert() {
+    // AC-4c: SSR proxy is inert — calling scrollTo does not crash.
+    var proxyCaptured: TokamakCore.ScrollViewProxy?
+    let html = render(TokamakCore.ScrollViewReader { proxy in
+      proxyCaptured = proxy
+      return TokamakCore.Text("captured")
+    })
+    XCTAssertNotNil(proxyCaptured, "ScrollViewReader must provide a proxy to the closure")
+    proxyCaptured?.scrollTo(42)
+    proxyCaptured?.scrollTo("id", anchor: .top)
+    XCTAssertTrue(html.contains("captured"), "content passed to proxy closure must render")
+  }
+
+  // MARK: - TabView
+
+  func testTabViewBothLabelsPresent() {
+    // AC-5a: both tab labels appear in the SSR output.
+    let html = render(
+      TokamakCore.TabView(selection: .constant(0)) {
+        TokamakCore.Text("Panel One").tabItem { TokamakCore.Text("Tab One") }.tag(0)
+        TokamakCore.Text("Panel Two").tabItem { TokamakCore.Text("Tab Two") }.tag(1)
+      }
+    )
+    XCTAssertTrue(html.contains("Tab One"), "TabView must render first tab label")
+    XCTAssertTrue(html.contains("Tab Two"), "TabView must render second tab label")
+  }
+
+  func testTabViewStripCarriesRoleTablist() {
+    // AC-5b: the tab strip carries role="tablist".
+    let html = render(
+      TokamakCore.TabView(selection: .constant(0)) {
+        TokamakCore.Text("A").tabItem { TokamakCore.Text("First") }.tag(0)
+        TokamakCore.Text("B").tabItem { TokamakCore.Text("Second") }.tag(1)
+      }
+    )
+    XCTAssertTrue(html.contains("role=\"tablist\""), "TabView must emit role=\"tablist\"")
+    XCTAssertTrue(html.contains("role=\"tab\""), "TabView must emit role=\"tab\" on each tab button")
+  }
+
+  func testTabViewSelectedPanelContentPresent() {
+    // AC-5c: the initially-selected panel's content is present.
+    let html = render(
+      TokamakCore.TabView(selection: .constant(0)) {
+        TokamakCore.Text("FirstPanelContent").tabItem { TokamakCore.Text("One") }.tag(0)
+        TokamakCore.Text("SecondPanelContent").tabItem { TokamakCore.Text("Two") }.tag(1)
+      }
+    )
+    XCTAssertTrue(
+      html.contains("FirstPanelContent"),
+      "TabView must render the selected tab's panel content"
     )
   }
 }
