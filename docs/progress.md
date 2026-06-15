@@ -42,7 +42,7 @@ Table columns:
 
 |     |                                                                                                  |     |
 | --- | ------------------------------------------------------------------------------------------------ | :-: |
-| 🚧  | [Button](https://developer.apple.com/documentation/swiftui/button)                               |     |
+| ✅  | [Button](https://developer.apple.com/documentation/swiftui/button)                               |     |
 | 🚧  | [NavigationLink](https://developer.apple.com/documentation/swiftui/navigationlink)               |     |
 | ✅  | [EditButton](https://developer.apple.com/documentation/swiftui/editbutton)                       |     |
 | 🚧  | [PasteButton](https://developer.apple.com/documentation/swiftui/pastebutton)                     |     |
@@ -112,11 +112,11 @@ Table columns:
 
 |     |                                                                            |     |
 | --- | -------------------------------------------------------------------------- | :-: |
-| 🚧  | [HStack](https://developer.apple.com/documentation/swiftui/hstack)         |     |
-| 🚧  | [VStack](https://developer.apple.com/documentation/swiftui/vstack)         |     |
-| 🚧  | [ZStack](https://developer.apple.com/documentation/swiftui/zstack)         |     |
-| 🚧  | [LazyHStack](https://developer.apple.com/documentation/swiftui/lazyhstack) |     |
-| 🚧  | [LazyVStack](https://developer.apple.com/documentation/swiftui/lazyvstack) |     |
+| ✅  | [HStack](https://developer.apple.com/documentation/swiftui/hstack)         |     |
+| ✅  | [VStack](https://developer.apple.com/documentation/swiftui/vstack)         |     |
+| ✅  | [ZStack](https://developer.apple.com/documentation/swiftui/zstack)         |     |
+| ✅  | [LazyHStack](https://developer.apple.com/documentation/swiftui/lazyhstack) |     |
+| ✅  | [LazyVStack](https://developer.apple.com/documentation/swiftui/lazyvstack) |     |
 
 ### Grids
 
@@ -130,9 +130,9 @@ Table columns:
 
 |     |                                                                                            |     |
 | --- | ------------------------------------------------------------------------------------------ | :-: |
-| 🚧  | [List](https://developer.apple.com/documentation/swiftui/list)                             |     |
-| 🚧  | [ForEach](https://developer.apple.com/documentation/swiftui/foreach)                       |     |
-| 🚧  | [ScrollView](https://developer.apple.com/documentation/swiftui/scrollview)                 |     |
+| ✅  | [List](https://developer.apple.com/documentation/swiftui/list)                             |     |
+| ✅  | [ForEach](https://developer.apple.com/documentation/swiftui/foreach)                       |     |
+| ✅  | [ScrollView](https://developer.apple.com/documentation/swiftui/scrollview)                 |     |
 | 🚧  | [ScrollViewReader](https://developer.apple.com/documentation/swiftui/scrollviewreader)     |     |
 | 🚧  | [ScrollViewProxy](https://developer.apple.com/documentation/swiftui/scrollviewproxy)       |     |
 |     | [DynamicViewContent](https://developer.apple.com/documentation/swiftui/dynamicviewcontent) |     | <!-- not started: protocol absent from TokamakCore — see Notes -->
@@ -180,12 +180,64 @@ Table columns:
 | 🚧  | [HSplitView](https://developer.apple.com/documentation/swiftui/hsplitview)         |     |
 | 🚧  | [VSplitView](https://developer.apple.com/documentation/swiftui/vsplitview)         |     |
 
-**Notes on new views (EditButton, Menu, ScrollViewReader, TabView):**
-- ✅ **EditButton** — Core-only, renders via Button; fully cross-platform (DOM/StaticHTML/GTK4)
-- 🚧 **Menu** — DOM/StaticHTML complete; GTK4 best-effort (untested on this host; requires Linux/GTK4 environment)
-- 🚧 **ScrollViewReader/Proxy** — DOM/StaticHTML complete; GTK4 inert proxy (untested; requires Linux/GTK4 environment)
-- 🚧 **TabView** — DOM/StaticHTML complete; GTK4 not buildable on this host (no system GTK4 libs); requires Linux/GTK4 environment for verification
-- 🚧 **HSplitView / VSplitView** — Core (`_HSplitContainer`/`_VSplitContainer`) + DOM/StaticHTML complete (flex panes with static dividers); GTK4 best-effort via HStack/VStack + Divider (untested on this host). Draggable resize handles out of scope (TODO: GtkPaned)
+**Foundational-views audit (DOM + StaticHTML SSR verified on macOS host; GTK4 = best-effort/untested):**
+
+Every ✅ below is scoped to the two must-pass renderers (DOM + StaticHTML SSR), each pinned
+by a deterministic SSR string-assertion test in
+`Tests/TokamakStaticHTMLTests/NewViewsRenderingTests.swift`. GTK4 is untested on this host and
+does not gate these flips.
+
+- ✅ **HStack / VStack** — `_HTMLPrimitive` (legacy SSR) + `HTMLConvertible` (DOM + dynamic-layout
+  Fiber). Emit `_tokamak-stack` + `_tokamak-hstack`/`_tokamak-vstack`, preserve child order, and
+  emit `--tokamak-stack-gap` for custom spacing.
+- ✅ **ZStack** — `_HTMLPrimitive` lowering to a single-cell CSS grid (`display: grid`, children
+  share `grid-area: a`) so children overlap; renders on DOM via the generic `LayoutView`
+  Fiber path.
+- ✅ **LazyHStack / LazyVStack** — structurally equivalent to HStack/VStack (same stack classes +
+  gap variable); `HTMLConvertible` on both renderers.
+- ✅ **List** — composed `View` (not a primitive); lowers to stacks + rows and renders all rows in
+  order identically on DOM and StaticHTML SSR.
+- ✅ **ForEach** — structural view; children render through their own primitives. Array-id and
+  `Range` forms both render every element in order.
+- ✅ **ScrollView** — `_HTMLPrimitive` + `HTMLConvertible`; emits a `_tokamak-scrollview` container
+  with correct overflow axis (`overflow-y: auto` default, `overflow-x: auto` horizontal). Static
+  scroll markup is complete on both renderers; only *programmatic* scrolling is JS-only (see
+  ScrollViewReader/Proxy below).
+- ✅ **Button** — `_PrimitiveButtonStyleBody: HTMLConvertible` (tag `button`, Fiber path) mirroring
+  the DOM `DOMNodeConvertible` mapping; emits `<button>` + `_tokamak-buttonstyle-reset` + label on
+  DOM and the dynamic-layout SSR path.
+- ✅ **EquatableView** — transparent pass-through; renders byte-identically to its wrapped content.
+- ✅ **EditButton** — Core-only, renders via Button; fully cross-platform (DOM/StaticHTML/GTK4).
+
+**Stayed 🚧 — honest, renderer-specific reasons (not GTK4-only):**
+
+- 🚧 **ScrollViewReader / ScrollViewProxy** — wrapped content renders on DOM/StaticHTML
+  (`_tokamak-scrollviewreader` wrapper) and the SSR proxy is inert-safe (`scrollTo` is a no-op,
+  does not crash). Programmatic scrolling (`ScrollViewProxy.scrollTo`) requires JS and does
+  nothing under SSR — the JS-dependent behavior is why these stay 🚧.
+- 🚧 **NavigationView** — STATEFUL (owns the navigation selection). The legacy `StaticHTMLRenderer`
+  oracle traps for stateful views ("Stateful apps cannot be created with TokamakStaticHTML"), and
+  the dynamic-layout `StaticHTMLFiberRenderer` emits an empty `<!doctype html></html>` with no
+  chrome and none of the wrapped content (verified empirically this pass). Navigation chrome +
+  stack behavior is a DOM/runtime feature, not static SSR. Test
+  `testNavigationViewIsRejectedByLegacyStaticRenderer` pins this so it cannot silently regress.
+- 🚧 **NavigationLink** — only a JavaScriptKit-gated `DOMPrimitive` conformance (no StaticHTML
+  conformance); push/pop activation is JS-dependent and inert under SSR.
+
+**Architectural / interactive controls (DOM + StaticHTML SSR complete; stay 🚧 for GTK4 / draggable-handle reasons):**
+
+- 🚧 **Menu** — DOM/StaticHTML complete (`_MenuContainer: HTMLConvertible`, `role="menu"`, label
+  before items, items as `<button>` on the Fiber path); GTK4 best-effort (untested on this host;
+  requires Linux/GTK4 environment).
+- 🚧 **TabView** — DOM/StaticHTML complete (`role="tablist"`/`role="tab"`, both tab labels +
+  selected panel content render); GTK4 not buildable on this host (no system GTK4 libs); requires
+  Linux/GTK4 environment for verification.
+- 🚧 **HSplitView / VSplitView** — Core (`_HSplitContainer`/`_VSplitContainer`) + DOM/StaticHTML
+  complete on BOTH SSR paths (`_HTMLPrimitive` + `HTMLConvertible`): flex panes
+  (`flex-direction: row`/`column`) with static `_tokamak-splitview-divider`s, verified via the
+  legacy oracle and the Fiber path. GTK4 best-effort via HStack/VStack + Divider (untested on this
+  host). Draggable resize handles out of scope (TODO: GtkPaned) — that interactive gap is why these
+  stay 🚧.
 - 🚧 **PasteButton** — `PasteButton(payloadAction:)` plain-text variant (no UTType/Transferable). DOM reads `navigator.clipboard.readText()` via `JSPromise`; StaticHTML/GTK4 render the button with no-payload (clipboard TODO)
 - 🚧 **SignInWithAppleButton** — Visual stand-in (no AuthenticationServices): standard black rounded button on DOM/StaticHTML, labelled button on GTK4. `onTap` fires but produces no credential (documented)
 
@@ -235,7 +287,7 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
 |     |                                                                                  |     |
 | --- | -------------------------------------------------------------------------------- | :-: |
 | ✅  | [EmptyView](https://developer.apple.com/documentation/swiftui/emptyview)         |     |
-| 🚧  | [EquatableView](https://developer.apple.com/documentation/swiftui/equatableview) |     |
+| ✅  | [EquatableView](https://developer.apple.com/documentation/swiftui/equatableview) |     |
 
 ### Infrequently Used Views
 

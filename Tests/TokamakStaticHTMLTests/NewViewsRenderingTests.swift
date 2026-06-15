@@ -503,6 +503,240 @@ final class NewViewsRenderingTests: XCTestCase {
       "TabView must render the selected tab's panel content"
     )
   }
+
+  // MARK: - Foundational stacks (audit pass: HStack / VStack / ZStack)
+  //
+  // HStack/VStack/ZStack already shipped `_HTMLPrimitive` (legacy SSR oracle) and,
+  // for HStack/VStack, `HTMLConvertible` (DOM + dynamic-layout Fiber). They were
+  // marked 🚧 only because GTK4 is untested on this host; these deterministic
+  // assertions pin the DOM/StaticHTML rendering truth so the rows can flip ✅.
+
+  func testHStackEmitsStackClasses() {
+    let html = render(HStack { Text("l"); Text("r") })
+    XCTAssertTrue(html.contains("_tokamak-stack"), "HStack uses the shared stack container class")
+    XCTAssertTrue(html.contains("_tokamak-hstack"), "HStack carries the hstack class")
+    let l = html.range(of: "l")?.lowerBound
+    let r = html.range(of: "r")?.lowerBound
+    if let l = l, let r = r { XCTAssertLessThan(l, r, "HStack preserves child order") }
+  }
+
+  func testVStackEmitsStackClasses() {
+    let html = render(VStack { Text("top"); Text("bottom") })
+    XCTAssertTrue(html.contains("_tokamak-stack"), "VStack uses the shared stack container class")
+    XCTAssertTrue(html.contains("_tokamak-vstack"), "VStack carries the vstack class")
+  }
+
+  func testStackCustomSpacingEmitsGapVariable() {
+    let html = render(HStack(spacing: 24) { Text("a") })
+    XCTAssertTrue(
+      html.contains("--tokamak-stack-gap: 24"),
+      "custom HStack spacing emits the gap CSS variable"
+    )
+  }
+
+  func testZStackEmitsGridDisplay() {
+    // ZStack lowers to a single-cell CSS grid so children overlap.
+    let html = render(ZStack { Text("back"); Text("front") })
+    XCTAssertTrue(html.contains("display: grid"), "ZStack renders as a CSS grid")
+    XCTAssertTrue(html.contains("back"), "ZStack renders its first child")
+    XCTAssertTrue(html.contains("front"), "ZStack renders its second child")
+  }
+
+  func testZStackChildrenShareGridArea() {
+    // Every ZStack child is placed in the same `grid-area: a` so they stack.
+    let html = render(ZStack { Text("x"); Text("y") })
+    XCTAssertTrue(html.contains("grid-area: a"), "ZStack children share a single grid area")
+  }
+
+  // MARK: - List / ForEach (audit pass)
+  //
+  // List is a composed `View` (not a primitive) that lowers to stacks + rows; it
+  // renders identically on DOM and StaticHTML. ForEach is a structural view whose
+  // children render through their own primitives — order preservation is the
+  // observable contract.
+
+  func testListRendersAllRows() {
+    let html = render(
+      List {
+        Text("row-one")
+        Text("row-two")
+      }
+    )
+    XCTAssertTrue(html.contains("row-one"), "List renders its first row")
+    XCTAssertTrue(html.contains("row-two"), "List renders its second row")
+    let a = html.range(of: "row-one")?.lowerBound
+    let b = html.range(of: "row-two")?.lowerBound
+    if let a = a, let b = b { XCTAssertLessThan(a, b, "List preserves row order") }
+  }
+
+  func testForEachRendersEachElementInOrder() {
+    let html = render(
+      VStack {
+        ForEach(["alpha", "beta", "gamma"], id: \.self) { Text($0) }
+      }
+    )
+    XCTAssertTrue(html.contains("alpha"))
+    XCTAssertTrue(html.contains("beta"))
+    XCTAssertTrue(html.contains("gamma"))
+    let a = html.range(of: "alpha")?.lowerBound
+    let b = html.range(of: "beta")?.lowerBound
+    let g = html.range(of: "gamma")?.lowerBound
+    if let a = a, let b = b, let g = g {
+      XCTAssertLessThan(a, b, "ForEach preserves element order (alpha before beta)")
+      XCTAssertLessThan(b, g, "ForEach preserves element order (beta before gamma)")
+    }
+  }
+
+  func testForEachRangeRendersAllItems() {
+    let html = render(
+      VStack {
+        ForEach(0..<3) { Text("item-\($0)") }
+      }
+    )
+    XCTAssertTrue(html.contains("item-0"))
+    XCTAssertTrue(html.contains("item-1"))
+    XCTAssertTrue(html.contains("item-2"))
+  }
+
+  // MARK: - ScrollView (audit pass)
+  //
+  // ScrollView renders a scroll-container div on both DOM and StaticHTML SSR
+  // (`_tokamak-scrollview` + overflow CSS). The static markup is complete; only
+  // programmatic scrolling (ScrollViewProxy.scrollTo) needs JS and is inert under
+  // SSR — that limitation lives in the ScrollViewReader tests above and the note.
+
+  func testScrollViewEmitsScrollContainer() {
+    let html = render(ScrollView { Text("scrolled-content") })
+    XCTAssertTrue(html.contains("_tokamak-scrollview"), "ScrollView emits the scrollview class")
+    XCTAssertTrue(html.contains("scrolled-content"), "ScrollView renders its content")
+  }
+
+  func testScrollViewVerticalOverflow() {
+    // Default ScrollView is vertical: overflow-y auto.
+    let html = render(ScrollView { Text("v") })
+    XCTAssertTrue(html.contains("overflow-y: auto"), "vertical ScrollView sets overflow-y: auto")
+  }
+
+  func testScrollViewHorizontalOverflow() {
+    let html = render(ScrollView(.horizontal) { Text("h") })
+    XCTAssertTrue(
+      html.contains("overflow-x: auto"),
+      "horizontal ScrollView sets overflow-x: auto"
+    )
+  }
+
+  // MARK: - Standalone Button (audit pass)
+  //
+  // `_PrimitiveButtonStyleBody: HTMLConvertible` (tag = "button") is Fiber-path
+  // only, mirroring the DOM `DOMNodeConvertible` mapping; the legacy oracle has no
+  // Button primitive. Renders via `renderFiber(_:)` (see the EditButton note).
+
+  func testButtonEmitsButtonElementViaFiber() {
+    let html = renderFiber(TokamakCore.Button("Tap me") {})
+    XCTAssertTrue(html.contains("<button"), "Button emits a <button element on the Fiber path")
+    XCTAssertTrue(html.contains("Tap me"), "Button renders its label")
+  }
+
+  func testButtonResetClassPresentViaFiber() {
+    let html = renderFiber(TokamakCore.Button("X") {})
+    XCTAssertTrue(
+      html.contains("_tokamak-buttonstyle-reset"),
+      "Button carries the buttonstyle-reset class"
+    )
+  }
+
+  // MARK: - HSplitView / VSplitView (audit pass)
+  //
+  // `_HSplitContainer`/`_VSplitContainer` ship both `_HTMLPrimitive` (legacy SSR)
+  // and `HTMLConvertible` (DOM + Fiber). They render flex panes with static
+  // dividers on both must-pass renderers; draggable resize handles are out of
+  // scope (GtkPaned TODO), which is why the rows stay 🚧 with a tightened note.
+
+  func testHSplitViewRendersPanesAndDivider() {
+    let html = render(
+      HSplitView {
+        Text("left-pane")
+        Text("right-pane")
+      }
+    )
+    XCTAssertTrue(html.contains("_tokamak-hsplitview"), "HSplitView emits its container class")
+    XCTAssertTrue(html.contains("flex-direction: row"), "HSplitView lays panes out in a row")
+    XCTAssertTrue(html.contains("left-pane"), "HSplitView renders its first pane")
+    XCTAssertTrue(html.contains("right-pane"), "HSplitView renders its second pane")
+    XCTAssertTrue(
+      html.contains("_tokamak-splitview-divider"),
+      "HSplitView emits a static divider between panes"
+    )
+  }
+
+  func testVSplitViewRendersPanesAndDivider() {
+    let html = render(
+      VSplitView {
+        Text("top-pane")
+        Text("bottom-pane")
+      }
+    )
+    XCTAssertTrue(html.contains("_tokamak-vsplitview"), "VSplitView emits its container class")
+    XCTAssertTrue(html.contains("flex-direction: column"), "VSplitView lays panes out in a column")
+    XCTAssertTrue(html.contains("top-pane"), "VSplitView renders its first pane")
+    XCTAssertTrue(html.contains("bottom-pane"), "VSplitView renders its second pane")
+    XCTAssertTrue(
+      html.contains("_tokamak-splitview-divider"),
+      "VSplitView emits a static divider between panes"
+    )
+  }
+
+  func testHSplitViewRendersViaFiber() {
+    // Exercises the `HTMLConvertible` (DOM/dynamic-layout) path, not just the oracle.
+    let html = renderFiber(
+      HSplitView {
+        Text("fiber-left")
+        Text("fiber-right")
+      }
+    )
+    XCTAssertTrue(
+      html.contains("_tokamak-hsplitview"),
+      "HSplitView's HTMLConvertible conformance emits the container on the Fiber path"
+    )
+    XCTAssertTrue(html.contains("fiber-left"), "HSplitView renders panes on the Fiber path")
+  }
+
+  // MARK: - NavigationView / NavigationLink (audit pass — STAYS 🚧)
+  //
+  // These two are intentionally NOT flipped. Documented truth, pinned by the test
+  // below so the limitation cannot silently regress to a false "works":
+  //
+  //  * NavigationView is STATEFUL (owns the navigation selection `@State`). The
+  //    legacy `StaticHTMLRenderer` oracle rejects it outright — that path traps with
+  //    "Stateful apps cannot be created with TokamakStaticHTML".
+  //  * The dynamic-layout `StaticHTMLFiberRenderer` does not mount it either: it
+  //    emits an empty `<!doctype html></html>` document with NO `_tokamak-
+  //    navigationview` chrome and NONE of the wrapped content (verified empirically
+  //    during this audit). So NavigationView does not server-render its content on
+  //    EITHER StaticHTML path.
+  //  * NavigationLink has only a JavaScriptKit-gated `DOMPrimitive` conformance and
+  //    no StaticHTML conformance at all; its push/pop activation is JS-dependent and
+  //    inert under SSR.
+  //
+  // Net: navigation chrome + stack behavior is a DOM/runtime feature, not a static
+  // SSR one. Both rows remain 🚧 with a tightened note.
+
+  func testNavigationViewIsRejectedByLegacyStaticRenderer() {
+    // Pins the stateful-rejection contract so a future change that "appears" to make
+    // NavigationView SSR-render through the legacy oracle is surfaced as a behavior
+    // change rather than passing silently. The legacy oracle traps for stateful
+    // views, so the rendered-string path is not a valid SSR claim for NavigationView.
+    // (We assert structural absence on the Fiber path, which is the observable truth.)
+    let html = renderFiber(NavigationView { Text("nav-content-marker") })
+    XCTAssertFalse(
+      html.contains("nav-content-marker"),
+      "NavigationView does NOT server-render its content on the Fiber path (stays 🚧)"
+    )
+    XCTAssertFalse(
+      html.contains("_tokamak-navigationview"),
+      "NavigationView does NOT emit its chrome under SSR (stays 🚧)"
+    )
+  }
 }
 
 #endif
