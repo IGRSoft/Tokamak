@@ -15,6 +15,8 @@
 //  Created by Carson Katri on 7/2/20.
 //
 
+import Foundation
+
 public struct List<SelectionValue, Content>: View
   where SelectionValue: Hashable, Content: View
 {
@@ -29,6 +31,9 @@ public struct List<SelectionValue, Content>: View
   @Environment(\.listStyle)
   var style
 
+  @Environment(\.editMode)
+  var editMode
+
   public init(selection: Binding<Set<SelectionValue>>?, @ViewBuilder content: () -> Content) {
     self.selection = .many(selection)
     self.content = content()
@@ -39,7 +44,32 @@ public struct List<SelectionValue, Content>: View
     self.content = content()
   }
 
+  /// Handles the case where the List's content is *itself* a single
+  /// `DynamicViewContent` (`List { ForEach(…).onDelete(…) }`). The generic
+  /// `ParentView` flattening in `stackContent()` would otherwise walk straight
+  /// past the wrapper to its rows, losing the editing actions, so this decorates
+  /// the dynamic rows directly. Returns `nil` when the fast path does not apply.
+  func editingStackContent() -> AnyView? {
+    guard isEditing,
+          let dynamic = content as? _DynamicViewContentProtocol,
+          let parent = content as? ParentView
+    else { return nil }
+    let rows = editRows(parent.children, dynamic)
+    return AnyView(_ListRow.buildItems([AnyView(Section {
+      ForEach(Array(rows.enumerated()), id: \.offset) { _, view in view }
+    })]) { view, isLast in
+      if let section = view.view as? SectionView {
+        section.listRow(style)
+      } else {
+        _ListRow.listRow(view, style, isLast: isLast)
+      }
+    })
+  }
+
   func stackContent() -> AnyView {
+    if let editing = editingStackContent() {
+      return editing
+    }
     if let contentContainer = content as? ParentView {
       var sections = [AnyView]()
       var currentSection = [AnyView]()
@@ -53,7 +83,14 @@ public struct List<SelectionValue, Content>: View
           }
           sections.append(child)
         } else {
-          if child.children.count > 0 {
+          if let dynamic = child.view as? _DynamicViewContentProtocol,
+             isEditing
+          {
+            // In edit mode, decorate each row of a `DynamicViewContent`
+            // (a `ForEach` carrying `.onDelete`/`.onMove`) with the editing
+            // affordances wired to that row's index.
+            currentSection.append(contentsOf: editRows(child.children, dynamic))
+          } else if child.children.count > 0 {
             currentSection.append(contentsOf: child.children)
           } else {
             currentSection.append(child)
@@ -74,6 +111,48 @@ public struct List<SelectionValue, Content>: View
       })
     } else {
       return AnyView(content)
+    }
+  }
+
+  /// Whether the enclosing edit context is active. Driven by `EditButton`
+  /// through the `\.editMode` environment binding.
+  var isEditing: Bool {
+    editMode?.wrappedValue.isEditing ?? false
+  }
+
+  /// Decorates each row produced by a `DynamicViewContent` with edit-mode
+  /// affordances. At minimum a per-row delete control wired to the `onDelete`
+  /// closure with that row's index; when an `onMove` handler is present, an
+  /// up/down reorder pair is rendered too (renderer-faithful, no JS required —
+  /// full pointer drag-to-move is deferred, see DynamicViewContent.swift).
+  func editRows(
+    _ rows: [AnyView],
+    _ dynamic: _DynamicViewContentProtocol
+  ) -> [AnyView] {
+    rows.enumerated().map { index, row in
+      AnyView(
+        HStack(spacing: 8) {
+          if let onDelete = dynamic._onDelete {
+            Button(action: { onDelete(IndexSet(integer: index)) }) {
+              Text("Delete")
+            }
+          }
+          row
+          if let onMove = dynamic._onMove {
+            Spacer()
+            Button(action: {
+              guard index > 0 else { return }
+              onMove(IndexSet(integer: index), index - 1)
+            }) { Text("Up") }
+            Button(action: {
+              guard index < rows.count - 1 else { return }
+              // SwiftUI's move destination is expressed as a pre-removal offset;
+              // moving down one slot targets `index + 2`.
+              onMove(IndexSet(integer: index), index + 2)
+            }) { Text("Down") }
+          }
+        }
+      )
     }
   }
 

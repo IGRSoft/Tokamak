@@ -127,6 +127,12 @@ public struct DemoEntry: Identifiable {
     c.append(DemoEntry(section: "Containers", name: "List", view: ListDemo(),
                        needsWindowContext: true))
   }
+  // DynamicViewContent: List + ForEach(.onDelete/.onMove) driven by editMode.
+  // Roots a `List` (and thus a `ScrollView`), so it gets the same
+  // `needsWindowContext` treatment as the List demos above.
+  c.append(DemoEntry(section: "Containers", name: "DynamicViewContent",
+                     view: DynamicListDemo(),
+                     needsWindowContext: true))
   if #available(iOS 14.0, *) {
     c.append(DemoEntry(section: "Containers", name: "Sidebar",
                        view: SidebarListDemo().listStyle(SidebarListStyle()),
@@ -148,6 +154,15 @@ public struct DemoEntry: Identifiable {
     c.append(DemoEntry(section: "Drawing", name: "Canvas", view: CanvasDemo(),
                        isStaticallyRenderable: false))
   }
+  // Image exercises the web-capable capability set (named/data-URI source, .resizable,
+  // .scaledToFit/.scaledToFill object-fit, decorative empty-alt, system-symbol placeholder).
+  // On the web every variant renders genuinely; under the offscreen native macOS
+  // `ImageRenderer` a data-URI `Image` paints blank, so a pure-SwiftUI shape mock
+  // (`FallbackImageDemo`) stands in for the gallery capture. The live web app shows the
+  // real images. SF Symbols are NOT real glyphs on the web (no SF Symbol pipeline) — the
+  // system variant is a labelled placeholder. See development §Decisions.
+  c.append(DemoEntry(section: "Drawing", name: "Image", view: ImageDemo(),
+                     usesStaticControlFallback: true))
   c.append(DemoEntry(section: "Drawing", name: "Color", view: ColorDemo(),
                      needsWindowContext: true)) // root ScrollView — see Form note
   c.append(DemoEntry(section: "Drawing", name: "Path", view: PathDemo()))
@@ -501,6 +516,8 @@ public func demoCaptureWrapped(_ entry: DemoEntry, size: CGSize) -> AnyView {
 @ViewBuilder
 func staticControlFallbackView(for entry: DemoEntry) -> some View {
   switch entry.id {
+  case "Drawing/Image":
+    FallbackImageDemo()
   case "Selectors/Picker":
     FallbackPicker(label: "Text style", selected: "largeTitle")
   case "Selectors/Toggle":
