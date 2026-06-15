@@ -240,6 +240,18 @@
     "section" : "Buttons"
   },
   {
+    "file" : "PasteButton.png",
+    "id" : "Buttons\/PasteButton",
+    "name" : "PasteButton",
+    "section" : "Buttons"
+  },
+  {
+    "file" : "SignInWithAppleButton.png",
+    "id" : "Buttons\/SignInWithAppleButton",
+    "name" : "SignInWithAppleButton",
+    "section" : "Buttons"
+  },
+  {
     "file" : "ScrollViewReader.png",
     "id" : "Containers\/ScrollViewReader",
     "name" : "ScrollViewReader",
@@ -249,6 +261,18 @@
     "file" : "TabView.png",
     "id" : "Architectural\/TabView",
     "name" : "TabView",
+    "section" : "Architectural"
+  },
+  {
+    "file" : "HSplitView.png",
+    "id" : "Architectural\/HSplitView",
+    "name" : "HSplitView",
+    "section" : "Architectural"
+  },
+  {
+    "file" : "VSplitView.png",
+    "id" : "Architectural\/VSplitView",
+    "name" : "VSplitView",
     "section" : "Architectural"
   }
 ]

@@ -29,6 +29,22 @@ only `TokamakStaticHTML`, single-page apps would use `TokamakDOM`, maybe in conj
 Android at some point, probably in a separate `TokamakAndroid` module, Android apps would use
 `TokamakAndroid` with no need to be aware of any of the web modules.
 
+### Screenshots
+
+Whenever you add a new view/control or change the rendered output of an existing one, you must
+regenerate the demo screenshot galleries and commit the updated PNGs in the same change. Register
+the view in `Sources/TokamakDemo/DemoCatalog.swift` (the single source of truth), then run:
+
+```sh
+Scripts/screenshots/generate.sh all          # every platform the host supports
+Scripts/screenshots/generate.sh mac web ios  # must-pass subset on a macOS host
+```
+
+`mac`/`web`/`ios` are must-pass; `wasm`/`gtk` are best-effort and self-skip when their toolchains
+are absent. Commit the regenerated `screenshots/<platform>/*.png` and `screenshots/_catalog.json`,
+and keep `docs/progress.md` flags and `screenshots/README.md` counts in sync with the catalog. See
+[screenshots/README.md](screenshots/README.md) for prerequisites.
+
 ### Testing
 
 Tokamak uses [SnapshotTesting](https://github.com/pointfreeco/swift-snapshot-testing) library to

@@ -245,6 +245,27 @@ public struct DemoEntry: Identifiable {
     view: MenuDemo(),
     usesStaticControlFallback: true
   ))
+  // PasteButton lowers to an interactive `<button>` wired to the browser
+  // Clipboard API; offscreen `ImageRenderer` paints AppKit-backed buttons as the
+  // "nosign" placeholder (same limitation as Menu). Use a pure-SwiftUI capture
+  // fallback so the native/web screenshot paths produce a real PNG; the live app
+  // renders the real PasteButton.
+  c.append(DemoEntry(
+    section: "Buttons",
+    name: "PasteButton",
+    view: PasteButtonDemo(),
+    usesStaticControlFallback: true
+  ))
+  // SignInWithAppleButton lowers to an interactive styled `<button>`; same
+  // offscreen "nosign" limitation as Menu/PasteButton. Use a pure-SwiftUI
+  // capture fallback so the screenshot paths produce a real PNG; the live app
+  // renders the real button.
+  c.append(DemoEntry(
+    section: "Buttons",
+    name: "SignInWithAppleButton",
+    view: SignInWithAppleButtonDemo(),
+    usesStaticControlFallback: true
+  ))
 
   // MARK: Containers — new views (ScrollViewReader)
 
@@ -269,6 +290,23 @@ public struct DemoEntry: Identifiable {
     section: "Architectural",
     name: "TabView",
     view: TabViewDemo(),
+    usesStaticControlFallback: true
+  ))
+
+  // HSplitView/VSplitView: on a macOS host the catalog compiles against real
+  // SwiftUI, whose split views require a window context and render blank under an
+  // offscreen `ImageRenderer` (same limitation as List/ScrollView). They therefore
+  // use a shape-based static fallback for the gallery, like TabView's tab strip.
+  c.append(DemoEntry(
+    section: "Architectural",
+    name: "HSplitView",
+    view: HSplitViewDemo(),
+    usesStaticControlFallback: true
+  ))
+  c.append(DemoEntry(
+    section: "Architectural",
+    name: "VSplitView",
+    view: VSplitViewDemo(),
     usesStaticControlFallback: true
   ))
 
@@ -482,8 +520,16 @@ func staticControlFallbackView(for entry: DemoEntry) -> some View {
     FallbackTextEditorDemo()
   case "Buttons/Menu":
     FallbackMenuDemo()
+  case "Buttons/PasteButton":
+    FallbackPasteButtonDemo()
+  case "Buttons/SignInWithAppleButton":
+    FallbackSignInWithAppleButtonDemo()
   case "Architectural/TabView":
     FallbackTabViewDemo()
+  case "Architectural/HSplitView":
+    FallbackHSplitViewDemo()
+  case "Architectural/VSplitView":
+    FallbackVSplitViewDemo()
   default:
     EmptyView()
   }
@@ -803,6 +849,39 @@ struct FallbackMenuDemo: View {
   }
 }
 
+/// Mirrors `PasteButtonDemo`: a static "Paste" button (bordered pill) plus the
+/// real "Pasted: None" status text below it.
+struct FallbackPasteButtonDemo: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Paste")
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(RoundedRectangle(cornerRadius: 6).stroke(Color.gray))
+      Text("Pasted: None")
+        .foregroundColor(.secondary)
+    }
+    .padding()
+  }
+}
+
+/// Mirrors `SignInWithAppleButtonDemo`: the standard black "Sign in with Apple"
+/// pill (title-only, white on black) plus the "Not tapped" status text.
+struct FallbackSignInWithAppleButtonDemo: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Sign in with Apple")
+        .foregroundColor(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.black))
+      Text("Not tapped")
+        .foregroundColor(.secondary)
+    }
+    .padding()
+  }
+}
+
 /// Mirrors `TabViewDemo`: a tab strip (two labelled tab cells) above a content
 /// area showing the first tab's body text.
 struct FallbackTabViewDemo: View {
@@ -837,6 +916,42 @@ struct FallbackTabViewDemo: View {
       .padding()
       .frame(maxWidth: .infinity)
     }
+    .padding()
+  }
+}
+
+struct FallbackHSplitViewDemo: View {
+  var body: some View {
+    // Two side-by-side panes separated by a vertical divider.
+    HStack(spacing: 0) {
+      Text("Left")
+        .frame(maxWidth: .infinity, minHeight: 80)
+        .background(Color(white: 0.95))
+      Divider()
+      Text("Right")
+        .frame(maxWidth: .infinity, minHeight: 80)
+        .background(Color(white: 0.90))
+    }
+    .frame(maxWidth: .infinity)
+    .overlay(Rectangle().stroke(Color.gray.opacity(0.4)))
+    .padding()
+  }
+}
+
+struct FallbackVSplitViewDemo: View {
+  var body: some View {
+    // Two stacked panes separated by a horizontal divider.
+    VStack(spacing: 0) {
+      Text("Top")
+        .frame(maxWidth: .infinity, minHeight: 50)
+        .background(Color(white: 0.95))
+      Divider()
+      Text("Bottom")
+        .frame(maxWidth: .infinity, minHeight: 50)
+        .background(Color(white: 0.90))
+    }
+    .frame(maxWidth: .infinity)
+    .overlay(Rectangle().stroke(Color.gray.opacity(0.4)))
     .padding()
   }
 }
