@@ -17,7 +17,7 @@ import TokamakCore
 import TokamakStaticHTML
 
 extension _MenuContainer: DOMPrimitive {
-  var label: some View {
+  var labelButton: some View {
     DynamicHTML(
       "button",
       [
@@ -51,7 +51,7 @@ extension _MenuContainer: DOMPrimitive {
       "role": "menu",
     ]) {
       VStack(alignment: .leading) {
-        label
+        labelButton
         items
       }
     })
