@@ -2,7 +2,7 @@
 
 ## Project Milestones
 
-- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog to PNG galleries on macOS (38), web (36), and iOS (38). Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `scripts/screenshots/generate.sh` and `screenshots/README.md`.
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (46 entries) to PNG galleries on macOS (36) and web (36); 10 window/scroll-context demos are captured via the wasm path. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery is stale pending [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode target missing demo files since #28).
 
 ## Views and Controls
 
@@ -38,8 +38,8 @@ Table columns:
 | 🚧  | [Button](https://developer.apple.com/documentation/swiftui/button)                               |     |
 | 🚧  | [NavigationLink](https://developer.apple.com/documentation/swiftui/navigationlink)               |     |
 | ✅  | [EditButton](https://developer.apple.com/documentation/swiftui/editbutton)                       |     |
-|     | [PasteButton](https://developer.apple.com/documentation/swiftui/pastebutton)                     |     |
-|     | [SignInWithAppleButton](https://developer.apple.com/documentation/swiftui/signinwithapplebutton) |     |
+| 🚧  | [PasteButton](https://developer.apple.com/documentation/swiftui/pastebutton)                     |     |
+| 🚧  | [SignInWithAppleButton](https://developer.apple.com/documentation/swiftui/signinwithapplebutton) |     |
 | 🚧  | [Menu](https://developer.apple.com/documentation/swiftui/menu)                                   |     |
 
 ### Value Selectors
@@ -122,14 +122,17 @@ Table columns:
 | --- | ---------------------------------------------------------------------------------- | :-: |
 | 🚧  | [NavigationView](https://developer.apple.com/documentation/swiftui/navigationview) |     |
 | 🚧  | [TabView](https://developer.apple.com/documentation/swiftui/tabview)               |     |
-|     | [HSplitView](https://developer.apple.com/documentation/swiftui/hsplitview)         |     |
-|     | [VSplitView](https://developer.apple.com/documentation/swiftui/vsplitview)         |     |
+| 🚧  | [HSplitView](https://developer.apple.com/documentation/swiftui/hsplitview)         |     |
+| 🚧  | [VSplitView](https://developer.apple.com/documentation/swiftui/vsplitview)         |     |
 
 **Notes on new views (EditButton, Menu, ScrollViewReader, TabView):**
 - ✅ **EditButton** — Core-only, renders via Button; fully cross-platform (DOM/StaticHTML/GTK4)
 - 🚧 **Menu** — DOM/StaticHTML complete; GTK4 best-effort (untested on this host; requires Linux/GTK4 environment)
 - 🚧 **ScrollViewReader/Proxy** — DOM/StaticHTML complete; GTK4 inert proxy (untested; requires Linux/GTK4 environment)
 - 🚧 **TabView** — DOM/StaticHTML complete; GTK4 not buildable on this host (no system GTK4 libs); requires Linux/GTK4 environment for verification
+- 🚧 **HSplitView / VSplitView** — Core (`_HSplitContainer`/`_VSplitContainer`) + DOM/StaticHTML complete (flex panes with static dividers); GTK4 best-effort via HStack/VStack + Divider (untested on this host). Draggable resize handles out of scope (TODO: GtkPaned)
+- 🚧 **PasteButton** — `PasteButton(payloadAction:)` plain-text variant (no UTType/Transferable). DOM reads `navigator.clipboard.readText()` via `JSPromise`; StaticHTML/GTK4 render the button with no-payload (clipboard TODO)
+- 🚧 **SignInWithAppleButton** — Visual stand-in (no AuthenticationServices): standard black rounded button on DOM/StaticHTML, labelled button on GTK4. `onTap` fires but produces no credential (documented)
 
 ### Conditionally Visible Items
 
