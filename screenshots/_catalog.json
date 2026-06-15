@@ -226,5 +226,29 @@
     "id" : "Misc\/Redaction",
     "name" : "Redaction",
     "section" : "Misc"
+  },
+  {
+    "file" : "EditButton.png",
+    "id" : "Buttons\/EditButton",
+    "name" : "EditButton",
+    "section" : "Buttons"
+  },
+  {
+    "file" : "Menu.png",
+    "id" : "Buttons\/Menu",
+    "name" : "Menu",
+    "section" : "Buttons"
+  },
+  {
+    "file" : "ScrollViewReader.png",
+    "id" : "Containers\/ScrollViewReader",
+    "name" : "ScrollViewReader",
+    "section" : "Containers"
+  },
+  {
+    "file" : "TabView.png",
+    "id" : "Architectural\/TabView",
+    "name" : "TabView",
+    "section" : "Architectural"
   }
 ]
