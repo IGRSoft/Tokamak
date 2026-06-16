@@ -55,3 +55,4 @@ rendered.html
 # Screenshot harness intermediates (generated HTML wrappers; PNGs ARE committed)
 screenshots/web/_html/
 node_modules
+.build-wasm-bundle
