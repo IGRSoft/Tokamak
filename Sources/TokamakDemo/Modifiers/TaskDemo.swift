@@ -16,7 +16,9 @@
   import JavaScriptKit
   import TokamakDOM
 
-  private let jsFetch = JSObject.global.fetch.function!
+  // Single-threaded WebAssembly: the JS `fetch` reference is effectively immutable
+  // and never crosses threads, so `nonisolated(unsafe)` is sound here.
+  nonisolated(unsafe) private let jsFetch = JSObject.global.fetch.function!
   private func fetch(_ url: String) -> JSPromise {
     JSPromise(jsFetch(url).object!)!
   }

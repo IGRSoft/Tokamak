@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Foundation // String(format:) for the WASI build (no Text(_:specifier:))
 import TokamakShim
 
 /// A small, `Equatable` subview wrapped in `EquatableView` below. It only re-renders
@@ -20,7 +21,7 @@ struct GaugeReadout: View, Equatable {
   let value: Double
 
   var body: some View {
-    Text("Current value: \(value, specifier: "%.2f")")
+    Text("Current value: \(String(format: "%.2f", value))")
       .font(.headline)
   }
 }
@@ -40,7 +41,7 @@ struct GaugeDemo: View {
         Gauge(value: value) {
           Text("Speed")
         } currentValueLabel: {
-          Text("\(value, specifier: "%.2f")")
+          Text(String(format: "%.2f", value))
         } minimumValueLabel: {
           Text("0")
         } maximumValueLabel: {

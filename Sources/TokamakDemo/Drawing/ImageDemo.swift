@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import Foundation // CGFloat on the WASI Foundation
 import TokamakShim
 
 /// A tiny, self-contained 2x2 PNG (a red/green/blue/yellow checker) encoded as a data-URI.
@@ -33,34 +34,39 @@ AyfgMBjB6JFwAAAABJRU5ErkJggg==
 /// pure-SwiftUI shape mock (see `FallbackImageDemo`); the live web app shows the real images.
 struct ImageDemo: View {
   var body: some View {
+    // Split into `Group`s so the `VStack` stays within `ViewBuilder`'s 10-child
+    // limit (this demo has 12 direct children).
     VStack(alignment: .leading, spacing: 16) {
-      Text("Named (data-URI) source").font(.headline)
-      Image(demoImageDataURI)
+      Group {
+        Text("Named (data-URI) source").font(.headline)
+        Image(demoImageDataURI)
 
-      Text(".resizable() filling a 96×48 frame").font(.headline)
-      Image(demoImageDataURI)
-        .resizable()
-        .frame(width: 96, height: 48)
+        Text(".resizable() filling a 96×48 frame").font(.headline)
+        Image(demoImageDataURI)
+          .resizable()
+          .frame(width: 96, height: 48)
 
-      Text(".scaledToFit() (object-fit: contain)").font(.headline)
-      Image(demoImageDataURI)
-        .resizable()
-        .scaledToFit()
-        .frame(width: 96, height: 48)
+        Text(".scaledToFit() (object-fit: contain)").font(.headline)
+        Image(demoImageDataURI)
+          .resizable()
+          .scaledToFit()
+          .frame(width: 96, height: 48)
+      }
+      Group {
+        Text(".scaledToFill() (object-fit)").font(.headline)
+        Image(demoImageDataURI)
+          .resizable()
+          .scaledToFill()
+          .frame(width: 96, height: 48)
 
-      Text(".scaledToFill() (object-fit)").font(.headline)
-      Image(demoImageDataURI)
-        .resizable()
-        .scaledToFill()
-        .frame(width: 96, height: 48)
+        Text("Decorative (empty alt)").font(.headline)
+        Image(decorative: demoImageDataURI)
+          .resizable()
+          .frame(width: 48, height: 48)
 
-      Text("Decorative (empty alt)").font(.headline)
-      Image(decorative: demoImageDataURI)
-        .resizable()
-        .frame(width: 48, height: 48)
-
-      Text("System symbol (web placeholder — no SF Symbol pipeline)").font(.headline)
-      Image(systemName: "heart.fill")
+        Text("System symbol (web placeholder — no SF Symbol pipeline)").font(.headline)
+        Image(systemName: "heart.fill")
+      }
     }
     .padding()
   }
@@ -82,26 +88,30 @@ struct FallbackImageDemo: View {
   }
 
   var body: some View {
+    // Split into `Group`s so the `VStack` stays within `ViewBuilder`'s 10-child limit.
     VStack(alignment: .leading, spacing: 16) {
-      Text("Named (data-URI) source").font(.headline)
-      swatch(width: 32, height: 32)
+      Group {
+        Text("Named (data-URI) source").font(.headline)
+        swatch(width: 32, height: 32)
 
-      Text(".resizable() filling a 96×48 frame").font(.headline)
-      swatch(width: 96, height: 48)
+        Text(".resizable() filling a 96×48 frame").font(.headline)
+        swatch(width: 96, height: 48)
 
-      Text(".scaledToFit() (object-fit: contain)").font(.headline)
-      swatch(width: 96, height: 48)
+        Text(".scaledToFit() (object-fit: contain)").font(.headline)
+        swatch(width: 96, height: 48)
+      }
+      Group {
+        Text(".scaledToFill() (object-fit)").font(.headline)
+        swatch(width: 96, height: 48)
 
-      Text(".scaledToFill() (object-fit)").font(.headline)
-      swatch(width: 96, height: 48)
+        Text("Decorative (empty alt)").font(.headline)
+        swatch(width: 48, height: 48)
 
-      Text("Decorative (empty alt)").font(.headline)
-      swatch(width: 48, height: 48)
-
-      Text("System symbol (web placeholder — no SF Symbol pipeline)").font(.headline)
-      HStack(spacing: 6) {
-        RoundedRectangle(cornerRadius: 3).stroke(Color.gray).frame(width: 20, height: 20)
-        Text("heart.fill").font(.caption)
+        Text("System symbol (web placeholder — no SF Symbol pipeline)").font(.headline)
+        HStack(spacing: 6) {
+          RoundedRectangle(cornerRadius: 3).stroke(Color.gray).frame(width: 20, height: 20)
+          Text("heart.fill").font(.caption)
+        }
       }
     }
     .padding()

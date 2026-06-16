@@ -35,6 +35,10 @@ struct EnvironmentObjectDemo: View {
   }
 }
 
+// On the macOS host `ColorScheme` is SwiftUI's (a different module), so the
+// conformance must be `@retroactive`; under WASI it is TokamakCore's own type
+// (same package), where `@retroactive` is rejected.
+#if canImport(SwiftUI)
 extension ColorScheme: @retroactive CustomStringConvertible {
   public var description: String {
     switch self {
@@ -44,6 +48,17 @@ extension ColorScheme: @retroactive CustomStringConvertible {
     }
   }
 }
+#else
+extension ColorScheme: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .dark: return "dark"
+    case .light: return "light"
+    @unknown default: return "unknown"
+    }
+  }
+}
+#endif
 
 struct EnvironmentDemo: View {
   @Environment(\.colorScheme)

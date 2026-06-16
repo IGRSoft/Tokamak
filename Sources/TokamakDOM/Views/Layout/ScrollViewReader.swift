@@ -25,7 +25,7 @@ extension ScrollViewReader: DOMPrimitive {
       guard let element = document.getElementById!(elementID).object else { return }
       // Map the SwiftUI `UnitPoint` anchor to `scrollIntoView`'s block/inline
       // alignment. `nil` falls back to the browser default ("nearest").
-      let block = ScrollViewReader.scrollBlock(for: anchor)
+      let block = Self.scrollBlock(for: anchor)
       let options = JSObject.global.Object.function!.new()
       options.behavior = "smooth"
       options.block = .string(block)
