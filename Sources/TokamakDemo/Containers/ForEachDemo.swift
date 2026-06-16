@@ -15,8 +15,11 @@
 import TokamakShim
 
 public struct ForEachDemo: View {
+  // Internal (not `public`): a `public` `@State` property synthesizes a public
+  // `wrappedValue` accessor that requires the wrapper's defining module to be
+  // imported, which fails on the WASI build where `State` arrives via re-export.
   @State
-  public var maxItem = 0
+  var maxItem = 0
 
   public var body: some View {
     VStack {

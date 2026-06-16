@@ -1,41 +1,66 @@
-# wasm screenshots — SKIPPED
+# wasm screenshots — BLOCKED (runtime reflection trap)
 
-**Status:** skipped (best-effort phase, AC-5).
-**Reason:** the SwiftWasm SDK is **not installed** in this environment
-(`swift sdk list` → "No Swift SDKs are currently installed"), and installing it
-plus bundling + serving + driving a headless browser exceeds the best-effort time
-budget for this run.
+**Status:** the SwiftWasm bundle now **builds, bundles, serves, and loads in
+Chromium**, but the live app **traps at startup**, so no PNGs are captured yet.
 
-## How to produce wasm screenshots
+## What works now
+The `Scripts/screenshots/generate.sh wasm` pipeline is fully wired and the demo
+bundle compiles. Restoring the build required (see branch
+`feature/wasm-screenshot-gallery`):
+- Completing the `TokamakDOM` re-export list (Menu, EditButton, TabView,
+  HSplitView, VSplitView, PasteButton, ScrollViewReader, SignInWithAppleButton,
+  EditMode) — they were defined in `TokamakCore` but never typealiased into
+  `TokamakDOM`, so demos were "cannot find in scope" on WASI.
+- A `ScrollViewReader` generic-inference fix and an `Image .system` Canvas
+  exhaustiveness fix.
+- WASI compatibility across several demos (AttributedString, `@retroactive`,
+  a public `@State`, `Text(_:specifier:)`, manual array `remove/move`, CGFloat
+  import, ViewBuilder 10-child splits).
+- Making `demoCatalog`/`buildDemoCatalog` `@MainActor` only under
+  `canImport(SwiftUI)` (`TokamakCore.View` is not `@MainActor`, so the WASI app
+  shell could not read a main-actor catalog).
+- A static-placeholder `TaskDemo` (its `fetch` async body cannot satisfy
+  `TokamakCore`'s `@Sendable` `.task` closure for a non-`@MainActor` stateful View).
 
-1. Install the SwiftWasm SDK (same artifact CI/Dockerfile use):
+To reproduce the bundle (requires Docker; Apple's Xcode clang lacks the wasm
+backend, so the host SDK alone cannot link wasm C targets):
 
-   ```sh
-   swift sdk install \
-     https://download.swift.org/swift-6.3.2-release/wasm-sdk/swift-6.3.2-RELEASE/swift-6.3.2-RELEASE_wasm.artifactbundle.tar.gz \
-     --checksum a61f0584c93283589f8b2f42db05c1f9a182b506c2957271402992655591dd7c
-   swift sdk list   # expect: swift-6.3.2-RELEASE_wasm
-   ```
+```sh
+docker build --target build -t tokamak-wasm-build .
+cid=$(docker create tokamak-wasm-build)
+docker cp "$cid:/src/.build/plugins/PackageToJS/outputs/Package/." ./bundle/
+docker rm "$cid"
+npx http-server ./bundle -p 8080 -c-1 &
+node Scripts/screenshots/playwright.mjs
+```
 
-2. Bundle the demo with PackageToJS (product name is stable after the S0 lib/exec split):
+## The blocker (runtime, not build)
+On first render the app traps with `RuntimeError: unreachable`. A debug-bundle
+stack trace pins it to **TokamakCore's runtime reflection**:
 
-   ```sh
-   swift package --swift-sdk swift-6.3.2-RELEASE_wasm --disable-sandbox js \
-     --product TokamakDemo -c release --use-cdn
-   cp docker/index.html .build/plugins/PackageToJS/outputs/Package/index.html
-   ```
+```
+swift_getTypeByMangledNameInContext  →  signature_mismatch   (wasm ABI trap)
+  ← TokamakCore.StructMetadata.properties / FieldRecord.type(genericContext:…)
+  ← TokamakCore.typeInfo(of:)
+  ← TokamakCore.EnvironmentValues.inject(into:)
+```
 
-3. Serve the static bundle and drive it with Playwright:
+`EnvironmentValues.inject(into:)` introspects view/environment property layout via
+`StructMetadata`/`FieldRecord`. Under the **swift-6.3.2 SwiftWasm runtime**,
+`swift_getTypeByMangledNameInContext` is reached through an indirect call whose
+wasm function signature does not match, trapping immediately. This is a known class
+of SwiftWasm reflection-metadata incompatibility — it fires on the very first
+environment injection, i.e. before any demo renders. It is **not** caused by the
+demos or the screenshot harness.
 
-   ```sh
-   npx http-server .build/plugins/PackageToJS/outputs/Package -p 8080 -c-1 &
-   SERVER_PID=$!
-   node Scripts/screenshots/playwright.mjs     # reads screenshots/_catalog.json
-   kill $SERVER_PID
-   ```
+## To unblock (framework / toolchain — out of scope for the gallery)
+One of:
+- Use a SwiftWasm toolchain/runtime version whose reflection metadata is
+  compatible with TokamakCore's `Runtime`-based introspection (the pinned 6.3.2
+  wasm SDK is not), or
+- Patch TokamakCore's reflection usage in `EnvironmentValues.inject` /
+  `typeInfo(of:)` for the 6.3.x wasm ABI.
 
-   Output → `screenshots/wasm/<sanitized-name>.png`.
-
-`Scripts/screenshots/generate.sh wasm` automates steps 2–3 once the SDK from step 1
-is installed; it pre-flights `swift sdk list` and writes this SKIPPED.md if the SDK
-is absent. `Scripts/screenshots/playwright.mjs` is committed and ready.
+Once the app renders, `playwright.mjs` (committed, ready) will capture every
+catalog entry — including the 11 window/scroll-context demos that the macOS
+`ImageRenderer` path cannot rasterize.

@@ -13,49 +13,21 @@
 // limitations under the License.
 
 #if os(WASI) && canImport(_Concurrency)
-  import JavaScriptKit
   import TokamakDOM
 
-  private let jsFetch = JSObject.global.fetch.function!
-  private func fetch(_ url: String) -> JSPromise {
-    JSPromise(jsFetch(url).object!)!
-  }
-
-  private struct Response: Decodable {
-    let uuid: String
-  }
-
+  // NOTE: The live `fetch`-driven version of this demo (see git history) cannot
+  // compile under the swift-6.3.2 wasm toolchain's strict concurrency: TokamakCore's
+  // `.task(_:)` takes an `@escaping @Sendable () async -> ()`, but `TokamakCore.View`
+  // is not `@MainActor`, so a stateful `View` cannot capture `self` in that
+  // `@Sendable` closure, and JavaScriptKit's `JSPromise`/`JSValue` are non-Sendable
+  // across the await. Reinstating the real fetch needs a strict-concurrency-friendly
+  // rewrite of the async story (framework-level). Until then this is a static
+  // placeholder so the demo still appears in the wasm gallery and the bundle builds.
   struct TaskDemo: View {
-    @State
-    private var response: Result<Response, Error>?
-
     var body: some View {
       VStack {
-        switch response {
-        case let .success(response):
-          Text("Fetched UUID is \(response.uuid)")
-        case let .failure(error):
-          Text("Error is \(error)")
-        default:
-          Text("Response not available yet")
-        }
-
-        Button("Fetch new UUID asynchronously") {
-          response = nil
-          Task { await fetchResponse() }
-        }
-      }.task {
-        await fetchResponse()
-      }
-    }
-
-    func fetchResponse() async {
-      do {
-        let fetchResult = try await fetch("https://httpbin.org/uuid").value
-        let json = try await JSPromise(fetchResult.json().object!)!.value
-        response = Result { try JSValueDecoder().decode(Response.self, from: json) }
-      } catch {
-        response = .failure(error)
+        Text("Async `.task` fetch demo")
+        Text("(disabled under strict concurrency — see TaskDemo.swift)")
       }
     }
   }

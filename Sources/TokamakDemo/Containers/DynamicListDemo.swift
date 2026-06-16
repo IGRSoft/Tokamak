@@ -60,11 +60,16 @@ struct DynamicListDemo: View {
         ForEach(fruits, id: \.self) { fruit in
           Text(fruit)
         }
+        // Manual array edits: SwiftUI's `RangeReplaceableCollection.remove(atOffsets:)`
+        // and `move(fromOffsets:toOffset:)` are SwiftUI-only and absent on the WASI build.
         .onDelete { offsets in
-          fruits.remove(atOffsets: offsets)
+          for index in offsets.sorted(by: >) { fruits.remove(at: index) }
         }
         .onMove { source, destination in
-          fruits.move(fromOffsets: source, toOffset: destination)
+          let moving = source.sorted().map { fruits[$0] }
+          for index in source.sorted(by: >) { fruits.remove(at: index) }
+          let insertAt = destination - source.filter { $0 < destination }.count
+          fruits.insert(contentsOf: moving, at: insertAt)
         }
       }
     }

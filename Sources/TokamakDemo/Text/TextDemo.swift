@@ -67,6 +67,11 @@ struct TextDemo: View {
         Text("THICK TEXT")
           .kerning(0.5)
       }
+      // `AttributedString` is part of Foundation's ICU-backed string layer, which
+      // is unavailable in the WASI Foundation; fall back to a plain `Text` there.
+      #if os(WASI)
+      Text("This text has been concatenated")
+      #else
       Text({ () -> AttributedString in
         var s = AttributedString("This text has been ")
         var boldPart = AttributedString("concatenated")
@@ -74,6 +79,7 @@ struct TextDemo: View {
         s += boldPart
         return s
       }())
+      #endif
       ForEach(TextAlignment.allCases, id: \.hashValue) { alignment in
         Text(
           """
