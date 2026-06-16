@@ -26,7 +26,7 @@ a PASS/PARTIAL/SKIP summary and exits 0 if any platform produced ≥1 PNG.
 | `mac`    | `swift run ScreenshotNative` (SwiftUI `ImageRenderer`, NSImage) | macOS 13+ | `screenshots/mac/` | 40 PNGs | must-pass |
 | `web`    | `swift run ScreenshotHTML` (ImageRenderer → HTML → Chrome headless) | Google Chrome (or `$CHROME_BIN`) | `screenshots/web/` + `_catalog.json` | 40 PNGs | must-pass |
 | `ios`    | `xcodebuild test` on iOS Simulator (iPhone 17 Pro) | Xcode 15+ | `screenshots/ios/` | 40 PNGs | must-pass |
-| `wasm`   | PackageToJS + static server + Playwright | SwiftWasm SDK + Node.js + Playwright | `screenshots/wasm/` | 51 PNGs (11 only via wasm) | best-effort (currently absent) |
+| `wasm`   | PackageToJS + static server + Playwright | SwiftWasm SDK + Node.js + Playwright | `screenshots/wasm/` | 51 PNGs (11 only via wasm) | best-effort (generated: 51 PNGs) |
 | `gtk`    | Docker + GTK4 + Xvfb + ImageMagick | Docker daemon + GTK4 image | `screenshots/gtk/` | best-effort | best-effort (currently absent) |
 
 ### Notes on the `web` path
@@ -38,7 +38,8 @@ on the host, and no Linux/wasm SDK is installed to build it as `TokamakCore`. Th
 generator therefore renders each view with SwiftUI `ImageRenderer` and captures it through
 **Chrome headless from a standalone HTML page** — a real browser capture, visually faithful to
 the view. The authoritative DOM/SSR render is the `wasm` path (shipped artifact in a real browser),
-which requires the SwiftWasm toolchain (see `wasm/SKIPPED.md`).
+which requires the SwiftWasm toolchain; the gallery is now generated (51 PNGs in
+`screenshots/wasm/`).
 
 Ten demos are skipped on native/web platforms and captured authoritatively via the `wasm` browser path:
 
@@ -79,6 +80,6 @@ screenshots/
   mac/      <Name>.png (40 PNGs: catalog − 11 skipped)
   web/      <Name>.png (40 PNGs: catalog − 11 skipped; _html/ intermediates git-ignored)
   ios/      <Name>.png (40 PNGs: catalog − 11 skipped)
-  wasm/     <Name>.png | SKIPPED.md | UNSUPPORTED.md (best-effort; SDK absent; would have 51 PNGs including the 11 skipped demos)
+  wasm/     <Name>.png (51 PNGs incl. the 11 demos skipped on native/web; best-effort, generated)
   gtk/      <Name>.png | SKIPPED.md | UNSUPPORTED.md (best-effort; Docker+GTK4 absent)
 ```

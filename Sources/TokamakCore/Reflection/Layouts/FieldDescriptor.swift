@@ -51,6 +51,35 @@ extension UnsafePointer where Pointee == FieldRecord {
     genericArguments: UnsafeRawPointer?
   ) -> Any.Type {
     let typeName = advance(offset: \._mangledTypeName)
+    #if arch(wasm32)
+    // wasm32-only path (DV0 option (a): ABI-correct binding).
+    //
+    // Tokamak's `CRuntime` shim declares `swift_getTypeByMangledNameInContext` with a
+    // hand-written 4-pointer C prototype. On `wasm32-unknown-wasip1` that prototype
+    // lowers to a `(i32, i32, i32, i32) -> i32` wasm function type, but libswiftCore's
+    // real Swift-CC export lowers to `(i32, i32, i32, i32, i32, i32) -> i32` (the
+    // `TypeLookupErrorOr<TypeInfo>` 2-word struct return adds an sret pointer + the
+    // Swift-CC self/error word). wasm-ld links the mismatch as a warning, but the
+    // `call_indirect` traps at runtime with `RuntimeError: unreachable` on the very
+    // first `EnvironmentValues.inject(into:)`, killing the whole demo bundle.
+    //
+    // The Swift standard library already binds this entry point with the correct
+    // Swift-CC lowering via its `public func _getTypeByMangledNameInContext`
+    // (`@_silgen_name("swift_getTypeByMangledNameInContext")`). Calling that wrapper on
+    // wasm uses the ABI-correct signature the runtime actually exports, so the indirect
+    // call no longer traps. Native targets keep the existing C-interop call below
+    // byte-for-byte (REQ-2 / AC-2).
+    guard let metadata = _getTypeByMangledNameInContext(
+      typeName,
+      UInt(getSymbolicMangledNameLength(typeName)),
+      genericContext: genericContext,
+      genericArguments: genericArguments
+    ) else {
+      fatalError("_getTypeByMangledNameInContext unavailable at runtime")
+    }
+    return metadata
+    #else
+    // --- native path: byte-for-byte unchanged ---
     guard let metadata = swift_getTypeByMangledNameInContext(
       typeName,
       getSymbolicMangledNameLength(typeName),
@@ -61,6 +90,7 @@ extension UnsafePointer where Pointee == FieldRecord {
     }
     // The runtime returns a `const Metadata *`, which is bit-compatible with `Any.Type`.
     return unsafeBitCast(metadata, to: Any.Type.self)
+    #endif
   }
 }
 
@@ -98,3 +128,10 @@ enum FieldDescriptorKind: UInt16 {
   case objcProtocol
   case objcClass
 }
+
+// MARK: - Test Info
+// @test-file: Tests/TokamakTests/MetadataTests.swift
+// @related-tests: Tests/TokamakTests/GetSetStructTests.swift, Tests/TokamakTests/ValueWitnessTableTests.swift
+// @test-coverage: Native FieldRecord.type symbolic-reference resolution (MetadataTests.testGenericStruct
+//   asserts props[0].type == Int.self). The wasm32 branch is verified by the live SwiftWasm render
+//   (EnvironmentValues.inject no longer traps); native parity proves the #if arch(wasm32) guard is inert.
