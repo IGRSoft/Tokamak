@@ -180,6 +180,10 @@ public struct StaticHTMLFiberRenderer: FiberRenderer {
     )
     var environment = EnvironmentValues()
     environment[_ColorSchemeKey.self] = .light
+    // Supply the JS-free SSR toggle style so `Toggle` does not trap on the
+    // `_ToggleStyleKey` fatalError default (mirrors the legacy `StaticHTMLRenderer`
+    // and `TokamakDOM` default environments).
+    environment[_ToggleStyleKey.self] = _AnyToggleStyle(StaticHTMLToggleStyle())
     defaultEnvironment = environment
   }
 

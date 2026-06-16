@@ -135,9 +135,15 @@ public struct DemoEntry: Identifiable {
   if #available(OSX 10.16, iOS 14.0, *) {
     c.append(DemoEntry(section: "Containers", name: "OutlineGroup", view: OutlineGroupDemo()))
   } // else: was NavItem(unavailable:) — omitted from catalog.
+  // DisclosureGroup renders expanded in static output (SSR has no JS toggle); the
+  // demo seeds `isExpanded: true` so the ImageRenderer capture matches. Not a root
+  // ScrollView, so ImageRenderer-safe (no needsWindowContext) — same as OutlineGroup,
+  // which composes DisclosureGroup internally.
+  c.append(DemoEntry(section: "Containers", name: "DisclosureGroup", view: DisclosureGroupDemo()))
 
   // MARK: Drawing
 
+  c.append(DemoEntry(section: "Drawing", name: "Shapes", view: ShapesDemo()))
   if #available(macOS 12.0, iOS 15.0, *) {
     c.append(DemoEntry(section: "Drawing", name: "Canvas", view: CanvasDemo(),
                        isStaticallyRenderable: false))
@@ -201,6 +207,8 @@ public struct DemoEntry: Identifiable {
                      needsWindowContext: true)) // root ScrollView — see Form note
   c.append(DemoEntry(section: "Text", name: "Text", view: TextDemo()))
   c.append(DemoEntry(section: "Text", name: "TextField", view: TextFieldDemo(),
+                     usesStaticControlFallback: true))
+  c.append(DemoEntry(section: "Text", name: "SecureField", view: SecureFieldDemo(),
                      usesStaticControlFallback: true))
   c.append(DemoEntry(section: "Text", name: "TextEditor", view: TextEditorDemo(),
                      usesStaticControlFallback: true))
@@ -516,6 +524,8 @@ func staticControlFallbackView(for entry: DemoEntry) -> some View {
     FallbackProgressViewDemo()
   case "Text/TextField":
     FallbackTextFieldDemo()
+  case "Text/SecureField":
+    FallbackSecureFieldDemo()
   case "Text/TextEditor":
     FallbackTextEditorDemo()
   case "Buttons/Menu":
@@ -618,6 +628,20 @@ struct FallbackTextFieldDemo: View {
         FallbackField(placeholder: "Password", text: "", isSecure: true)
         Text("Your password is ")
       }
+    }
+    .padding()
+  }
+}
+
+/// Mirrors `SecureFieldDemo`: two secure (dotted) fallback fields plus the real
+/// "Committed" status `Text` (which rasterizes fine). The static stand-in for the
+/// `NSSecureTextField`-backed control, keyed `Text/SecureField`.
+struct FallbackSecureFieldDemo: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      FallbackField(placeholder: "Password", text: "", isSecure: true)
+      FallbackField(placeholder: "Confirm password", text: "", isSecure: true)
+      Text("Committed: —")
     }
     .padding()
   }

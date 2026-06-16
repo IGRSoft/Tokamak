@@ -176,6 +176,46 @@ final class NewViewsRenderingTests: XCTestCase {
     XCTAssertTrue(html.contains("Body"))
   }
 
+  // MARK: - ProgressView
+
+  func testProgressViewDeterminateEmitsProgressWithValue() {
+    // A value-backed ProgressView resolves to `_FractionalProgressView`, which renders
+    // a <progress> element carrying the completed fraction.
+    let html = render(ProgressView(value: 0.25))
+    XCTAssertTrue(html.contains("<progress"), "determinate ProgressView renders a <progress>")
+    XCTAssertTrue(
+      html.contains("value=\"0.25\""),
+      "the progress element reflects the completed fraction"
+    )
+  }
+
+  func testProgressViewDeterminateNormalizesAgainstTotal() {
+    // fractionCompleted = value / total, so 1.0 of 2.0 is 0.5.
+    let html = render(ProgressView(value: 1.0, total: 2.0))
+    XCTAssertTrue(html.contains("<progress"))
+    XCTAssertTrue(
+      html.contains("value=\"0.5\""),
+      "the fraction is normalized against `total`"
+    )
+  }
+
+  func testProgressViewIndeterminateEmitsValuelessProgress() {
+    // No value -> `_IndeterminateProgressView` -> a valueless <progress> (the browser
+    // renders the indeterminate animation).
+    let html = render(ProgressView())
+    XCTAssertTrue(html.contains("<progress"), "indeterminate ProgressView renders a <progress>")
+    XCTAssertFalse(
+      html.contains("value="),
+      "an indeterminate progress element carries no value attribute"
+    )
+  }
+
+  func testProgressViewLabelIsRendered() {
+    let html = render(ProgressView("Loading", value: 0.5))
+    XCTAssertTrue(html.contains("<progress"))
+    XCTAssertTrue(html.contains("Loading"), "the ProgressView label is rendered alongside the bar")
+  }
+
   // MARK: - Gauge
 
   func testGaugeLinearEmitsMeter() {
