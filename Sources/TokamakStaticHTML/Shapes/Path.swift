@@ -170,10 +170,11 @@ extension Path: HTMLConvertible {
   public var tag: String { "svg" }
   public var namespace: String? { "http://www.w3.org/2000/svg" }
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
-    guard !useDynamicLayout else { return [:] }
+    guard !useDynamicLayout else { return ["style": "overflow: visible;"] }
     return [
       "style": """
       \(sizeStyle)
+      overflow: visible;
       """,
     ]
   }

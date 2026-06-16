@@ -2,7 +2,7 @@
 
 ## Project Milestones
 
-- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (51 entries) to PNG galleries on macOS (40), web (40), and iOS (40); 11 window/scroll-context demos are captured via the wasm path. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery fixed in [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode project updated to include all 14 missing demo files added since #28; verified: 39 PNGs, `[verify] OK` — no blanks, no nosign placeholders, no unexpected duplicates). Extended to 51 entries (ImageDemo + DynamicListDemo); iOS updated to 40 PNGs.
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (51 entries) to PNG galleries on macOS (40), web (40), iOS (40), and wasm (51 — all entries, incl. the 11 window/scroll-context demos that native/web cannot rasterize). Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery fixed in [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode project updated to include all 14 missing demo files added since #28; verified: 39 PNGs, `[verify] OK` — no blanks, no nosign placeholders, no unexpected duplicates). Extended to 51 entries (ImageDemo + DynamicListDemo); iOS updated to 40 PNGs.
 
 ## Views and Controls
 
@@ -279,7 +279,7 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
   no native grid primitive (composite fallback, untested).
 - ✅ **Form** — Composite delegating to `List`; renders identically to its underlying List on
   DOM + StaticHTML SSR (`testFormRendersListStructure`). Demo: Containers/Form & GroupBox
-  (`needsWindowContext` — root `ScrollView`, captured via wasm). GTK4 via List (untested).
+  (full-width layout — root `ScrollView`, captured via wasm). GTK4 via List (untested).
 - ✅ **GroupBox** — `DefaultGroupBoxStyle` renders a bordered VStack (label + content) on
   StaticHTML SSR; DOM emits a `<fieldset>`/`<legend>` (JS-gated). Both verified
   (`testGroupBoxRendersLabelAndContent`, `testGroupBoxTitleInitializer`). Demoed within
@@ -407,7 +407,8 @@ CSS-faithful modifiers render to equivalent CSS filters on DOM/StaticHTML. GTK4 
 - 🚧 `Color`: `Color` **values** render correctly everywhere (used throughout every demo).
   The dedicated `Drawing/Color` demo is intentionally skipped on the mac/web hosts because its
   root `ScrollView` is unrasterizable offscreen under macOS `ImageRenderer` (see
-  `screenshots/README.md`); it is captured authoritatively only via the wasm browser path,
-  which is currently absent on this host. Left as best-effort pending wasm gallery regeneration.
+  `screenshots/README.md`); it is captured authoritatively via the wasm browser path,
+  which now renders without the startup reflection trap — the wasm gallery is generated
+  (51 PNGs in `screenshots/wasm/`).
 - GTK4: shape primitives have `GTKPrimitive` hooks but the gallery is best-effort (no GTK4
   toolchain on the current host); GTK rendering is documented expectation, not blocking.
