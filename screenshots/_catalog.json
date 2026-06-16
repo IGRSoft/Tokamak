@@ -30,6 +30,12 @@
     "section" : "Containers"
   },
   {
+    "file" : "DynamicViewContent.png",
+    "id" : "Containers\/DynamicViewContent",
+    "name" : "DynamicViewContent",
+    "section" : "Containers"
+  },
+  {
     "file" : "Sidebar.png",
     "id" : "Containers\/Sidebar",
     "name" : "Sidebar",
@@ -57,6 +63,12 @@
     "file" : "Canvas.png",
     "id" : "Drawing\/Canvas",
     "name" : "Canvas",
+    "section" : "Drawing"
+  },
+  {
+    "file" : "Image.png",
+    "id" : "Drawing\/Image",
+    "name" : "Image",
     "section" : "Drawing"
   },
   {

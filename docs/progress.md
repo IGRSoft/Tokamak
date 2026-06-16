@@ -2,7 +2,7 @@
 
 ## Project Milestones
 
-- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (49 entries) to PNG galleries on macOS (37), web (37), and iOS (39); 10 window/scroll-context demos are captured via the wasm path. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery fixed in [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode project updated to include all 14 missing demo files added since #28; verified: 39 PNGs, `[verify] OK` — no blanks, no nosign placeholders, no unexpected duplicates).
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (51 entries) to PNG galleries on macOS (40), web (40), and iOS (40); 11 window/scroll-context demos are captured via the wasm path. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery fixed in [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode project updated to include all 14 missing demo files added since #28; verified: 39 PNGs, `[verify] OK` — no blanks, no nosign placeholders, no unexpected duplicates). Extended to 51 entries (ImageDemo + DynamicListDemo); iOS updated to 40 PNGs.
 
 ## Views and Controls
 
@@ -36,7 +36,27 @@ Table columns:
 
 |     |                                                                  |     |
 | --- | ---------------------------------------------------------------- | :-: |
-| 🚧  | [Image](https://developer.apple.com/documentation/swiftui/image) |     |
+| ✅  | [Image](https://developer.apple.com/documentation/swiftui/image) |  ¹  |
+
+**Notes on Image:**
+- ✅ **Works on DOM + StaticHTML SSR** (must-pass, string-assertion tested in
+  `Tests/TokamakStaticHTMLTests/ImageRenderingTests.swift`): named/bundle sources, inline
+  **data-URI** and remote (`http(s)://`) sources (pass-through `<img src>`), `.resizable()`
+  (`width/height:100%`), `.aspectRatio`/`.scaledToFit`/`.scaledToFill` (object-fit
+  contain/fill via `_tokamak-aspect-ratio-*` classes), accessibility `alt` from the image
+  label on **both** SSR paths (legacy `_HTMLPrimitive` and the `HTMLConvertible` path
+  TokamakDOM uses — the latter previously dropped `alt` entirely), and decorative images
+  (`Image(decorative:)` → `aria-hidden="true"` + empty `alt`).
+- ¹ 🚧 **Deferred — SF Symbols**: `Image(systemName:)` exists and renders a stable,
+  non-crashing placeholder on the web (a valid `<img>` carrying the symbol name as `alt` +
+  `data-sf-symbol`), but **not a real glyph** — Tokamak has no SF Symbol rasterization
+  pipeline on the web. `.renderingMode` and `.interpolation` are not yet modeled.
+- GTK4: best-effort/inert — `system` images resolve to an empty path (no glyph); named/file
+  sources unchanged.
+- Gallery note: on a macOS host both `mac` and `web` capture via SwiftUI `ImageRenderer`
+  (which cannot rasterize a data-URI `<img>` offscreen), so the gallery uses a pure-SwiftUI
+  shape mock (`FallbackImageDemo`). The authoritative DOM render is the wasm path; the
+  genuine `<img>`/`alt`/`object-fit` HTML output is verified by the SSR string tests.
 
 ### Buttons
 
@@ -135,7 +155,7 @@ Table columns:
 | ✅  | [ScrollView](https://developer.apple.com/documentation/swiftui/scrollview)                 |     |
 | 🚧  | [ScrollViewReader](https://developer.apple.com/documentation/swiftui/scrollviewreader)     |     |
 | 🚧  | [ScrollViewProxy](https://developer.apple.com/documentation/swiftui/scrollviewproxy)       |     |
-|     | [DynamicViewContent](https://developer.apple.com/documentation/swiftui/dynamicviewcontent) |     | <!-- not started: protocol absent from TokamakCore — see Notes -->
+| ✅  | [DynamicViewContent](https://developer.apple.com/documentation/swiftui/dynamicviewcontent) |     |
 
 
 ### Container Views
@@ -208,6 +228,10 @@ does not gate these flips.
   DOM and the dynamic-layout SSR path.
 - ✅ **EquatableView** — transparent pass-through; renders byte-identically to its wrapped content.
 - ✅ **EditButton** — Core-only, renders via Button; fully cross-platform (DOM/StaticHTML/GTK4).
+  Now drives a visible state change end-to-end: a `List` whose rows come from a `ForEach`
+  carrying `.onDelete`/`.onMove` renders delete/reorder affordances while the shared
+  `\.editMode` binding is `.active` (see the DynamicViewContent note in the grids/containers
+  block).
 
 **Stayed 🚧 — honest, renderer-specific reasons (not GTK4-only):**
 
@@ -274,13 +298,18 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
   fully expanded in SSR now that DisclosureGroup has an SSR primitive
   (`testOutlineGroupRendersNestedHierarchyExpanded`). Demo: Containers/OutlineGroup. GTK4 via
   DisclosureGroup decomposition (untested).
-- ⬜ **DynamicViewContent** — **Not started (blank).** This SwiftUI *protocol* (the conformance
-  `ForEach`/`List` adopt to support `.onDelete`/`.onMove` dynamic-content editing) does **not
-  exist** in TokamakCore — it is referenced only as a deferred prerequisite in
-  `EditButton.swift`'s doc comment. There is no view to render and no conformance to exercise,
-  so it is intentionally left blank rather than marked ✅. Implementing it (the `onDelete`/
-  `onMove`/`onInsert` editing surface on `ForEach`) is out of scope for this rendering-parity
-  batch.
+- ✅ **DynamicViewContent** — `DynamicViewContent` protocol (`var data`) in TokamakCore with
+  `ForEach` conformance; `.onDelete(perform:)` / `.onMove(perform:)` modifiers return a
+  `_DynamicViewContentWrapper` carrying the closures (type-erased via
+  `_DynamicViewContentProtocol`) while transparently re-exposing the wrapped content's `data`
+  and children. `List` reads `\.editMode` and, when editing, decorates each dynamic row with a
+  "Delete" control (wired to `onDelete([index])`) plus "Up"/"Down" reorder controls (wired to
+  `onMove`). Renders + tested on **DOM and StaticHTML SSR** (9 tests in
+  `DynamicViewContentRenderingTests`). This is what makes **EditButton** drive a visible
+  end-to-end state change. **Deferred:** native pointer drag-to-reorder (HTML5 drag-and-drop
+  needs JS/DOM event wiring) — reorder is exposed via discrete Up/Down buttons, nothing faked;
+  `.onInsert(of:perform:)` not implemented (needs UTType/Transferable groundwork). GTK4 inherits
+  the Core Button-based composition but is untested on this host.
 
 ### Conditionally Visible Items
 

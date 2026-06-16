@@ -35,7 +35,9 @@ public struct ForEach<Data, ID, Content>: _PrimitiveView where Data: RandomAcces
   ID: Hashable,
   Content: View
 {
-  let data: Data
+  // `public` so it can satisfy the `DynamicViewContent.data` requirement
+  // (conformance declared in `DynamicViewContent.swift`).
+  public let data: Data
   let id: KeyPath<Data.Element, ID>
   public let content: (Data.Element) -> Content
 

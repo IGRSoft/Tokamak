@@ -21,6 +21,12 @@ public class _AnyImageProviderBox: AnyTokenBox, Equatable {
   public struct _Image {
     public indirect enum Storage {
       case named(String, bundle: Bundle?)
+      /// A system (SF Symbol) image referenced by its symbol name (e.g. `"heart.fill"`).
+      ///
+      /// Tokamak has no SF Symbol rasterization pipeline, so renderers that cannot resolve
+      /// the symbol (notably the web) treat this as a best-effort, non-crashing placeholder
+      /// carrying the symbol name as accessible text rather than a real glyph.
+      case system(String)
       case resizable(Storage, capInsets: EdgeInsets, resizingMode: Image.ResizingMode)
     }
 
@@ -66,6 +72,25 @@ private class NamedImageProvider: _AnyImageProviderBox {
 
   override func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     .init(storage: .named(name, bundle: bundle), label: label)
+  }
+}
+
+private class SystemImageProvider: _AnyImageProviderBox {
+  let systemName: String
+  let label: Text?
+
+  init(systemName: String, label: Text?) {
+    self.systemName = systemName
+    self.label = label
+  }
+
+  override func equals(_ other: _AnyImageProviderBox) -> Bool {
+    guard let other = other as? SystemImageProvider else { return false }
+    return other.systemName == systemName && other.label == label
+  }
+
+  override func resolve(in environment: EnvironmentValues) -> ResolvedValue {
+    .init(storage: .system(systemName), label: label)
   }
 }
 
@@ -131,6 +156,16 @@ public extension Image {
 
   init(decorative name: String, bundle: Bundle? = nil) {
     self.init(NamedImageProvider(name: name, bundle: bundle, label: nil))
+  }
+
+  /// Creates a system symbol (SF Symbol) image.
+  ///
+  /// Tokamak has no SF Symbol pipeline, so on renderers without native symbol support
+  /// (the web) this resolves to a best-effort, non-crashing placeholder that exposes the
+  /// symbol name as accessible text. The label defaults to the symbol name so the rendered
+  /// `<img>`/element still carries a meaningful `alt`.
+  init(systemName: String) {
+    self.init(SystemImageProvider(systemName: systemName, label: Text(systemName)))
   }
 }
 

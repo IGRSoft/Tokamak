@@ -23,8 +23,12 @@
 /// StaticHTML / GTK4 rendering and needs no per-platform rendering files.
 ///
 /// > Note: `EditButton` publishes the binding only to its own subtree (the
-/// > button's label). Sibling / `List`-driven editing is deferred (requires
-/// > DynamicViewContent groundwork).
+/// > button's label), matching SwiftUI — to drive a `List`, place the
+/// > `EditButton` and the `List` in a shared ancestor that owns the
+/// > `\.editMode` binding (see `EditButtonDemo`). With `DynamicViewContent`
+/// > now implemented, a `List` whose rows come from a `ForEach` carrying
+/// > `.onDelete(perform:)` / `.onMove(perform:)` renders delete / reorder
+/// > affordances while `editMode.isEditing` is `true`.
 public struct EditButton: View {
   @State
   private var editMode: EditMode = .inactive

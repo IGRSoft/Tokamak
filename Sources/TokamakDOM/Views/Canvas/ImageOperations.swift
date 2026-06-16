@@ -97,6 +97,11 @@ extension _Canvas {
         with: fillStyle,
         in: canvasContext
       )
+    case .system:
+      // SF Symbols have no glyph rasterization pipeline on the web, so there is
+      // nothing to draw into a `Canvas` context. (The standalone `Image(systemName:)`
+      // view renders a labelled `<img>` placeholder; inside `Canvas` it is a no-op.)
+      break
     }
   }
 }
