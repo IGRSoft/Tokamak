@@ -74,7 +74,15 @@ public struct DemoEntry: Identifiable {
 /// Single source of truth. The app's List and every screenshot generator iterate THIS.
 /// Order is authoritative: it reproduces the current List's section + row order so that
 /// `TokamakDemoView` looks identical after the refactor (AC-1).
-@MainActor public let demoCatalog: [DemoEntry] = buildDemoCatalog()
+///
+/// `@MainActor` only when building against SwiftUI (macOS host / screenshot path),
+/// where constructing `View`s is main-actor-isolated. On WASI, `TokamakCore.View`
+/// is NOT `@MainActor`, so the catalog must be nonisolated for the (nonisolated)
+/// `TokamakDemoView.body` to read it.
+#if canImport(SwiftUI)
+@MainActor
+#endif
+public let demoCatalog: [DemoEntry] = buildDemoCatalog()
 
 // Assembled via a function (not an array literal) so `#if` / `if #available` control
 // flow is legal — array literals cannot contain statements. Append-style keeps the
@@ -87,7 +95,10 @@ public struct DemoEntry: Identifiable {
 //    (macOS 26 / iOS 26) every `#available` here is satisfied, so the omitted branch is
 //    dead anyway and on-screen parity is preserved.
 //  * `#if os(WASI)` -> verbatim; compiles out off-WASI exactly as today.
-@MainActor private func buildDemoCatalog() -> [DemoEntry] {
+#if canImport(SwiftUI)
+@MainActor
+#endif
+private func buildDemoCatalog() -> [DemoEntry] {
   var c = [DemoEntry]()
 
   // MARK: Buttons
