@@ -14,9 +14,13 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ShadowEffect: EnvironmentalModifier, Equatable {
+  /// The color of the shadow.
   public var color: Color
+  /// The blur radius of the shadow.
   public var radius: CGFloat
+  /// The offset of the shadow from the view.
   public var offset: CGSize
 
   @inlinable
@@ -30,6 +34,9 @@ public struct _ShadowEffect: EnvironmentalModifier, Equatable {
     self.offset = offset
   }
 
+  /// Resolves the shadow effect within the given environment.
+  /// - Parameter environment: The environment in which to resolve the shadow's color.
+  /// - Returns: A resolved shadow modifier ready to be applied.
   public func resolve(in environment: EnvironmentValues) -> _Resolved {
     .init(
       color: color.provider.resolve(in: environment),
@@ -38,15 +45,21 @@ public struct _ShadowEffect: EnvironmentalModifier, Equatable {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public struct _Resolved: ViewModifier, Animatable {
+    /// The resolved color of the shadow.
     public var color: AnyColorBox.ResolvedValue
+    /// The blur radius of the shadow.
     public var radius: CGFloat
+    /// The offset of the shadow from the view.
     public var offset: CGSize
 
+    /// The content and behavior of the modified view.
     public func body(content: Content) -> some View {
       content
     }
 
+    /// The type defining the data to animate.
     public typealias AnimatableData = AnimatablePair<
       AnimatablePair<
         Float,
@@ -57,6 +70,7 @@ public struct _ShadowEffect: EnvironmentalModifier, Equatable {
       >,
       AnimatablePair<CGFloat, CGSize.AnimatableData>
     >
+    /// The data to animate for the resolved shadow.
     public var animatableData: _Resolved.AnimatableData {
       get {
         .init(
@@ -88,6 +102,14 @@ public struct _ShadowEffect: EnvironmentalModifier, Equatable {
 }
 
 public extension View {
+  /// Adds a shadow to this view.
+  /// - Parameters:
+  ///   - color: The shadow's color.
+  ///   - radius: A measure of how much to blur the shadow. Larger values render more diffuse,
+  ///     larger shadows.
+  ///   - x: An amount to offset the shadow horizontally from the view.
+  ///   - y: An amount to offset the shadow vertically from the view.
+  /// - Returns: A view that adds a shadow to this view.
   @inlinable
   func shadow(
     color: Color = Color(.sRGBLinear, white: 0, opacity: 0.33),

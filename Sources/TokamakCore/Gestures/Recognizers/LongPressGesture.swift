@@ -17,7 +17,13 @@
 
 import Foundation
 
+/// A gesture that succeeds when the user performs a long press.
+///
+/// To recognize a long-press gesture on a view, create and configure a `LongPressGesture`, then add
+/// it to the view using the `gesture(_:)` modifier. The gesture's value is a `Bool` indicating
+/// whether the long press has completed.
 public struct LongPressGesture: Gesture {
+  /// The type representing the gesture's value.
   public typealias Value = Bool
 
   private(set) var startLocation: CGPoint? = nil
@@ -25,7 +31,9 @@ public struct LongPressGesture: Gesture {
   private var maximumDistance: Double
   private var onEndedAction: ((Value) -> ())? = nil
   private var onChangedAction: ((Value) -> ())? = nil
+  /// The minimum duration of the long press that must elapse before the gesture succeeds.
   public private(set) var minimumDuration: Double
+  /// The content and behavior of the gesture.
   public var body: LongPressGesture {
     self
   }
@@ -42,6 +50,7 @@ public struct LongPressGesture: Gesture {
     self.maximumDistance = maximumDistance
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool {
     switch phase {
     case let .began(context):
@@ -88,12 +97,14 @@ public struct LongPressGesture: Gesture {
     return false
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onEndedAction = action
     return gesture
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onChangedAction = action
@@ -105,13 +116,25 @@ public struct LongPressGesture: Gesture {
 
 public extension View {
   /// Adds an action to perform when this view recognizes a remote long touch gesture.
+  ///
   /// A long touch gesture is when the finger is on the remote touch surface without actually
   /// pressing.
+  /// - Parameter action: The action to perform when a long press is recognized.
+  /// - Returns: A view that triggers `action` when a long press gesture is recognized.
   func onLongPressGesture(perform action: @escaping () -> ()) -> some View {
     modifier(LongPressGestureModifier(action: action))
   }
 
   /// Adds an action to perform when this view recognizes a long press gesture.
+  /// - Parameters:
+  ///   - minimumDuration: The minimum duration of the long press that must elapse before the
+  ///     gesture succeeds.
+  ///   - maximumDistance: The maximum distance that the interaction can move before the gesture
+  ///     fails.
+  ///   - action: The action to perform when a long press is recognized.
+  ///   - onPressingChanged: A closure to run when the pressing state of the gesture changes,
+  ///     passing the current state as a parameter.
+  /// - Returns: A view that triggers `action` when a long press gesture is recognized.
   func onLongPressGesture(
     minimumDuration: Double,
     maximumDistance: Double,
@@ -129,6 +152,15 @@ public extension View {
   }
 
   /// Adds an action to perform when this view recognizes a long press gesture.
+  /// - Parameters:
+  ///   - minimumDuration: The minimum duration of the long press that must elapse before the
+  ///     gesture succeeds.
+  ///   - maximumDistance: The maximum distance that the interaction can move before the gesture
+  ///     fails.
+  ///   - pressing: A closure to run when the pressing state of the gesture changes, passing the
+  ///     current state as a parameter.
+  ///   - action: The action to perform when a long press is recognized.
+  /// - Returns: A view that triggers `action` when a long press gesture is recognized.
   func onLongPressGesture(
     minimumDuration: Double = 0.5,
     maximumDistance: Double = 10.0,

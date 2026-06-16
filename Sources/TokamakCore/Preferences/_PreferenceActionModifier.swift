@@ -15,14 +15,18 @@
 //  Created by Carson Katri on 11/26/20.
 //
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PreferenceActionModifier<Key>: _PreferenceWritingModifierProtocol
   where Key: PreferenceKey, Key.Value: Equatable
 {
+  /// The action to run when the preference value changes.
   public let action: (Key.Value) -> ()
+  /// Creates a modifier that runs `action` when the preference value changes.
   public init(action: @escaping (Key.Value) -> Swift.Void) {
     self.action = action
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func body(_ content: Content, with preferenceStore: inout _PreferenceStore) -> AnyView {
     let value = preferenceStore.value(forKey: Key.self)
     let previousValue = value.reduce((value.storage.valueList as? [Key.Value] ?? []).dropLast())
@@ -32,6 +36,7 @@ public struct _PreferenceActionModifier<Key>: _PreferenceWritingModifierProtocol
     return content.view
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _makeView(_ inputs: ViewInputs<Self>) -> ViewOutputs {
     .init(
       inputs: inputs,
@@ -48,6 +53,13 @@ public struct _PreferenceActionModifier<Key>: _PreferenceWritingModifierProtocol
 }
 
 public extension View {
+  /// Adds an action to perform when the specified preference key's value changes.
+  ///
+  /// - Parameters:
+  ///   - key: The key to monitor for value changes.
+  ///   - action: The action to perform when the value for `key` changes. The
+  ///     action closure receives the new value as its parameter.
+  /// - Returns: A view that triggers `action` when the value of `key` changes.
   func onPreferenceChange<K>(
     _ key: K.Type = K.self,
     perform action: @escaping (K.Value) -> ()

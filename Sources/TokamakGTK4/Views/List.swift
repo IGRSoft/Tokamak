@@ -31,6 +31,9 @@ extension List: GTKPrimitive {
     }
   }
 
+  /// Renders the list as a scrollable `GtkListBox`, wrapping each row in a list-box row widget.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _ListProxy(self)
@@ -55,6 +58,7 @@ extension List: GTKPrimitive {
 }
 
 extension PlainListStyle: ListStyleDeferredToRenderer {
+  /// Wraps a section header in styled, padded chrome for GTK4 output.
   public func sectionHeader<Header>(_ header: Header) -> AnyView where Header: View {
     AnyView(
       header
@@ -66,6 +70,7 @@ extension PlainListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section footer with a leading `Divider` for GTK4 output.
   public func sectionFooter<Footer>(_ footer: Footer) -> AnyView where Footer: View {
     AnyView(
       VStack(alignment: .leading) {
@@ -77,11 +82,13 @@ extension PlainListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Returns the section body unchanged for GTK4 output.
   public func sectionBody<SectionBody>(_ section: SectionBody) -> AnyView where SectionBody: View {
     // AnyView(section.padding(.leading).frame(minWidth: 0, maxWidth: .infinity))
     AnyView(section)
   }
 
+  /// Wraps a single row in a `GtkListBoxRow` widget.
   public func listRow<Row>(_ row: Row) -> AnyView where Row: View {
     // AnyView(row.padding(.vertical))
     AnyView(
@@ -93,6 +100,7 @@ extension PlainListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps the list contents in a `GtkListBox` widget.
   public func listBody<ListBody>(_ content: ListBody) -> AnyView where ListBody: View {
     AnyView(
       WidgetView(build: { _ in

@@ -17,30 +17,48 @@
 
 import Foundation
 
+/// A type that applies a custom appearance to all progress views within a view hierarchy.
 public protocol ProgressViewStyle {
+  /// A view representing the appearance and behavior of a progress view.
   associatedtype Body: View
+  /// The properties of a progress view instance being created.
   typealias Configuration = ProgressViewStyleConfiguration
 
+  /// Creates a view representing the body of a progress view.
+  ///
+  /// - Parameter configuration: The properties of the progress view being created.
+  /// - Returns: A view that represents the progress view.
   @ViewBuilder
   func makeBody(configuration: Self.Configuration) -> Self.Body
 }
 
+/// The properties of a progress view instance.
 public struct ProgressViewStyleConfiguration {
+  /// A type-erased label describing the task a progress view represents.
   public struct Label: View {
+    /// The content of the label.
     public let body: AnyView
   }
 
+  /// A type-erased label describing the current value of a progress view.
   public struct CurrentValueLabel: View {
+    /// The content of the label.
     public let body: AnyView
   }
 
+  /// The fraction of the task that is complete, in the range `0...1`, or `nil` if indeterminate.
   public let fractionCompleted: Double?
+  /// A view describing the task the progress view represents, if present.
   public var label: ProgressViewStyleConfiguration.Label?
+  /// A view describing the current value of the progress view, if present.
   public var currentValueLabel: ProgressViewStyleConfiguration.CurrentValueLabel?
 }
 
+/// The default progress view style.
 public struct DefaultProgressViewStyle: ProgressViewStyle {
+  /// Creates a default progress view style.
   public init() {}
+  /// Creates a view representing the body of a progress view using the default appearance.
   public func makeBody(configuration: Configuration) -> some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack { Spacer() }
@@ -59,12 +77,16 @@ public struct DefaultProgressViewStyle: ProgressViewStyle {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _AnyProgressViewStyle: ProgressViewStyle {
+  /// A view representing the appearance and behavior of a progress view.
   public typealias Body = AnyView
 
   private let bodyClosure: (ProgressViewStyleConfiguration) -> AnyView
+  /// The concrete type of the wrapped progress view style.
   public let type: Any.Type
 
+  /// Creates a type-erased progress view style wrapping the given style.
   public init<S: ProgressViewStyle>(_ style: S) {
     type = S.self
     bodyClosure = { configuration in
@@ -72,6 +94,7 @@ public struct _AnyProgressViewStyle: ProgressViewStyle {
     }
   }
 
+  /// Creates a type-erased view representing the body of a progress view.
   public func makeBody(configuration: ProgressViewStyleConfiguration) -> AnyView {
     bodyClosure(configuration)
   }
@@ -94,6 +117,10 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the style for progress views within this view.
+  ///
+  /// - Parameter style: The progress view style to apply.
+  /// - Returns: A view that uses the given style for its progress views.
   func progressViewStyle<S>(_ style: S) -> some View where S: ProgressViewStyle {
     environment(\.progressViewStyle, .init(style))
   }

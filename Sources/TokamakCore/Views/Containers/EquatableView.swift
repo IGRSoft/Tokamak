@@ -20,12 +20,15 @@ import Foundation
 /// Tokamak's first pass is render-only: `EquatableView` is a transparent pass-through whose body
 /// is its content. The reconciler short-circuit (skip re-render when `old == new`) is deferred.
 public struct EquatableView<Content>: View where Content: View & Equatable {
+  /// The wrapped content view that is compared against its previous value.
   public let content: Content
 
+  /// Creates an equatable view wrapping the given content.
   public init(content: Content) {
     self.content = content
   }
 
+  /// The content and behavior of the view.
   public var body: some View {
     content
   }

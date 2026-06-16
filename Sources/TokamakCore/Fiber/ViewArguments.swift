@@ -19,6 +19,7 @@ import Foundation
 
 /// Data passed to `_makeView` to create the `ViewOutputs` used in reconciling/rendering.
 public struct ViewInputs<V> {
+  /// The `View` value being processed.
   public let content: V
 
   /// Mutate the underlying content with the given inputs.
@@ -26,11 +27,14 @@ public struct ViewInputs<V> {
   /// Used to inject values such as environment values, traits, and preferences into the `View` type.
   public let updateContent: ((inout V) -> ()) -> ()
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let environment: EnvironmentBox
 
+  /// The view traits flowing into this view, if any.
   public let traits: _ViewTraitStore?
 
+  /// The preference values flowing into this view, if any.
   public let preferenceStore: _PreferenceStore?
 }
 
@@ -50,16 +54,20 @@ public struct ViewOutputs {
   let traits: _ViewTraitStore?
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public final class EnvironmentBox {
+  /// The boxed environment values.
   public let environment: EnvironmentValues
 
+  /// Creates a box wrapping the given environment values.
   public init(_ environment: EnvironmentValues) {
     self.environment = environment
   }
 }
 
 public extension ViewOutputs {
+  /// Creates outputs from the given inputs, overriding values that differ from the inputs.
   init<V>(
     inputs: ViewInputs<V>,
     environment: EnvironmentValues? = nil,
@@ -77,6 +85,7 @@ public extension ViewOutputs {
 }
 
 public extension View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   // By default, we simply pass the inputs through without modifications
   // or layout considerations.
   static func _makeView(_ inputs: ViewInputs<Self>) -> ViewOutputs {
@@ -85,6 +94,7 @@ public extension View {
 }
 
 public extension ModifiedContent where Content: View, Modifier: ViewModifier {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static func _makeView(_ inputs: ViewInputs<Self>) -> ViewOutputs {
     Modifier._makeView(.init(
       content: inputs.content.modifier,
@@ -95,6 +105,7 @@ public extension ModifiedContent where Content: View, Modifier: ViewModifier {
     ))
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     modifier._visitChildren(visitor, content: .init(modifier: modifier, view: content))
   }

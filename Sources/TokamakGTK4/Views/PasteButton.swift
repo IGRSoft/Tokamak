@@ -20,6 +20,9 @@ import TokamakCore
 // TODO: read text from gdk_display_get_clipboard / gdk_clipboard_read_text_async
 // and forward it to the payload action — best-effort, documented per R5/R6.
 extension _PasteButtonContainer: GTKPrimitive {
+  /// Renders a plain "Paste" button; the clipboard action is not wired (best-effort GTK4 output).
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(Button("Paste") {})

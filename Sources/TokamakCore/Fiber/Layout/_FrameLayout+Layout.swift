@@ -95,6 +95,7 @@ private struct FrameLayout: Layout {
 }
 
 public extension _FrameLayout {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V>(_ visitor: V, content: Content) where V: ViewVisitor {
     visitor.visit(FrameLayout(width: width, height: height, alignment: alignment).callAsFunction {
       content

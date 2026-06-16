@@ -21,6 +21,10 @@ protocol SectionView {
   func listRow(_ style: ListStyle) -> AnyView
 }
 
+/// A container view that you can use to add hierarchy within certain views, such as a `List`.
+///
+/// Use a section to group related content, optionally giving it a header and a footer that
+/// describe the group.
 public struct Section<Parent, Content, Footer> {
   let header: Parent
   let footer: Footer
@@ -28,12 +32,14 @@ public struct Section<Parent, Content, Footer> {
 }
 
 extension Section: View, SectionView where Parent: View, Content: View, Footer: View {
+  /// Creates a section with a header, a footer, and the provided content.
   public init(header: Parent, footer: Footer, @ViewBuilder content: () -> Content) {
     self.header = header
     self.footer = footer
     self.content = content()
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @ViewBuilder
   @_spi(TokamakCore)
   public var body: TupleView<(Parent, Content, Footer)> {
@@ -92,18 +98,21 @@ extension Section: View, SectionView where Parent: View, Content: View, Footer: 
 }
 
 public extension Section where Parent == EmptyView, Content: View, Footer: View {
+  /// Creates a section with a footer and the provided content.
   init(footer: Footer, @ViewBuilder content: () -> Content) {
     self.init(header: EmptyView(), footer: footer, content: content)
   }
 }
 
 public extension Section where Parent: View, Content: View, Footer == EmptyView {
+  /// Creates a section with a header and the provided content.
   init(header: Parent, @ViewBuilder content: () -> Content) {
     self.init(header: header, footer: EmptyView(), content: content)
   }
 }
 
 public extension Section where Parent == EmptyView, Content: View, Footer == EmptyView {
+  /// Creates a section with the provided content.
   init(@ViewBuilder content: () -> Content) {
     self.init(header: EmptyView(), footer: EmptyView(), content: content)
   }

@@ -14,10 +14,16 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `rotation3DEffect(_:axis:anchor:anchorZ:perspective:)` as a
+/// CSS `transform: perspective() rotate3d()` declaration.
 extension _Rotation3DEffect: DOMViewModifier {
   // Order-dependent so a 3D transform does not fuse unpredictably with sibling
   // 2D rotate/scale style declarations.
+  /// Implementation detail: keeps the 3D transform in its own DOM wrapper so it
+  /// does not fuse with sibling 2D rotate/scale declarations.
   public var isOrderDependent: Bool { true }
+  /// Implementation detail: emits the `transform` and `transform-origin` styles
+  /// for the 3D rotation, mapping SwiftUI's perspective factor to a CSS length.
   public var attributes: [HTMLAttribute: String] {
     // SwiftUI `perspective` is a unitless factor; CSS `perspective()` takes a
     // length. This px mapping is approximate (documented in docs/progress.md).

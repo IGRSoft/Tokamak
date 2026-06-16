@@ -53,6 +53,8 @@ private func textFieldInputAttributes(
 }
 
 extension TextField: _HTMLPrimitive where Label == Text {
+  /// The server-rendered markup for a `TextField`: a static `<input type="text">` (or `"search"`
+  /// for the rounded-border style) reflecting the binding's value and the label as placeholder.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("input", textFieldInputAttributes(_TextFieldProxy(self))))
@@ -61,9 +63,13 @@ extension TextField: _HTMLPrimitive where Label == Text {
 
 @_spi(TokamakStaticHTML)
 extension TextField: HTMLConvertible where Label == Text {
+  /// The HTML tag a `TextField` renders to on the Fiber path: `"input"`.
   @_spi(TokamakStaticHTML)
   public var tag: String { "input" }
 
+  /// The Fiber-path HTML attributes for a `TextField`: the input type, current value, placeholder,
+  /// and form-control class derived from the field's text-field style.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout Fiber renderer is in use.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     textFieldInputAttributes(_TextFieldProxy(self))

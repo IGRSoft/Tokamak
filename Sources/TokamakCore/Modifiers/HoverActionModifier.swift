@@ -11,10 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
+///
 /// Underscore is present in the name for SwiftUI compatibility.
 public struct _HoverActionModifier: ViewModifier {
+  /// The action to perform whenever the pointer enters or exits the view's frame.
   public var hover: ((Bool) -> ())?
 
+  /// The type of view representing the body of this modifier.
   public typealias Body = Never
 }
 
@@ -25,6 +29,10 @@ extension ModifiedContent
 }
 
 public extension View {
+  /// Adds an action to perform when the pointer enters or exits this view's frame.
+  /// - Parameter action: The action to perform when the pointer enters or exits this view's
+  ///   frame. The closure receives `true` when the pointer enters and `false` when it exits.
+  /// - Returns: A view that triggers `action` when the pointer enters or exits this view's frame.
   func onHover(perform action: ((Bool) -> ())?) -> some View {
     modifier(_HoverActionModifier(hover: action))
   }

@@ -22,6 +22,7 @@ import OpenCombineJS
 @_spi(TokamakCore) import TokamakCore
 import TokamakStaticHTML
 
+/// HTML/attribute sanitizers re-exported from TokamakStaticHTML.
 public typealias Sanitizers = TokamakStaticHTML.Sanitizers
 
 extension EnvironmentValues {
@@ -115,6 +116,12 @@ final class DOMRenderer: Renderer {
     }
   }
 
+  /// Mounts a host view as a new DOM node, applying any insertion transition.
+  /// - Parameters:
+  ///   - sibling: The node to insert before, or `nil` to append to the parent.
+  ///   - parent: The parent node receiving the new element.
+  ///   - host: The mounted host describing the view to render.
+  /// - Returns: The created node, or `nil` if the view produces no DOM element.
   public func mountTarget(
     before sibling: DOMNode?,
     to parent: DOMNode,

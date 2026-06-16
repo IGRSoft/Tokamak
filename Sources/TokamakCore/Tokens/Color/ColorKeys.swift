@@ -22,6 +22,7 @@ struct AccentColorKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// The accent color of the current environment, or `nil` to use the default.
   var accentColor: Color? {
     get {
       self[AccentColorKey.self]
@@ -33,6 +34,10 @@ public extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the accent color for this view and the views it contains.
+  ///
+  /// - Parameter accentColor: The accent color to apply, or `nil` to use the default.
+  /// - Returns: A view that uses the given accent color.
   func accentColor(_ accentColor: Color?) -> some View {
     environment(\.accentColor, accentColor)
   }
@@ -43,6 +48,7 @@ struct TintKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// The tint color of the current environment, or `nil` to use the default.
   var tint: Color? {
     get {
       self[TintKey.self]
@@ -54,6 +60,10 @@ public extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the tint color within this view.
+  ///
+  /// - Parameter tint: The tint color to apply, or `nil` to use the default.
+  /// - Returns: A view that uses the given tint color.
   func tint(_ tint: Color?) -> some View {
     environment(\.tint, tint)
   }
@@ -64,6 +74,7 @@ struct ForegroundColorKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// The foreground color of the current environment, or `nil` to use the default.
   var foregroundColor: Color? {
     get {
       self[ForegroundColorKey.self]
@@ -75,6 +86,10 @@ public extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the color of the foreground elements displayed by this view.
+  ///
+  /// - Parameter color: The foreground color to use, or `nil` to use the inherited color.
+  /// - Returns: A view that uses the given foreground color.
   func foregroundColor(_ color: Color?) -> some View {
     environment(\.foregroundColor, color)
   }

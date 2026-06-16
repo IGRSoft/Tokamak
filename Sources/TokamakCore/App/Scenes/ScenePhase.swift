@@ -15,9 +15,16 @@
 //  Created by Carson Katri on 7/19/20.
 //
 
+/// An indication of a scene's operational state.
+///
+/// Read the scene phase from the environment to react when the app moves between the foreground,
+/// becomes inactive, or moves to the background.
 public enum ScenePhase: Comparable, Sendable {
+  /// The scene is in the foreground and interactive.
   case active
+  /// The scene is in the foreground but should pause its work.
   case inactive
+  /// The scene isn't currently visible in the UI.
   case background
 }
 
@@ -26,6 +33,7 @@ struct ScenePhaseKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// The current phase of the scene.
   var scenePhase: ScenePhase {
     get {
       self[ScenePhaseKey.self]

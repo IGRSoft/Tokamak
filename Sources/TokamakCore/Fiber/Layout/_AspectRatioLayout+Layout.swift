@@ -92,6 +92,7 @@ private struct AspectRatioLayout: Layout {
 }
 
 public extension _AspectRatioLayout {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V>(_ visitor: V, content: Content) where V: ViewVisitor {
     visitor.visit(
       AspectRatioLayout(

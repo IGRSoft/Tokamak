@@ -15,6 +15,9 @@
 //  Created by Carson Katri on 2/11/22.
 //
 
+/// The action a `walk` step requests after visiting a `Fiber`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public enum WalkWorkResult<Success> {
   /// continue by recursing into children, if any
@@ -25,9 +28,14 @@ public enum WalkWorkResult<Success> {
   case `break`(with: Success)
 }
 
+/// The outcome of a completed `walk` over a `Fiber` tree.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public enum WalkResult<Renderer: FiberRenderer, Success> {
+  /// The walk stopped early, carrying the success value from a `break`.
   case success(Success)
+  /// The walk completed without stopping early.
   case finished
 }
 

@@ -18,6 +18,7 @@
 import TokamakCore
 
 extension _FractionalProgressView: _HTMLPrimitive {
+  /// Renders the determinate progress as an HTML `<progress>` element with a `value`.
   public var renderedBody: AnyView {
     AnyView(
       HTML("progress", [
@@ -29,6 +30,7 @@ extension _FractionalProgressView: _HTMLPrimitive {
 }
 
 extension _IndeterminateProgressView: _HTMLPrimitive {
+  /// Renders the indeterminate progress as a value-less HTML `<progress>` element.
   public var renderedBody: AnyView {
     AnyView(
       HTML("progress", ["style": "width: 100%;"])

@@ -21,11 +21,15 @@ import Foundation
 /// view and its subviews.
 @frozen
 public struct GestureMask: OptionSet, Sendable {
+  /// The raw type that can be used to represent all values of the option set.
   public typealias RawValue = Int8
+  /// The corresponding value of the raw type.
   public var rawValue: Int8
 
   // MARK: - OptionSet
 
+  /// Creates a gesture mask from a raw option-set value.
+  /// - Parameter rawValue: The raw value with which to create the gesture mask.
   public init(rawValue: Int8) {
     self.rawValue = rawValue
   }

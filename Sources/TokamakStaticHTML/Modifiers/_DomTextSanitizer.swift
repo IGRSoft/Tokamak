@@ -20,6 +20,9 @@ import TokamakCore
 typealias _DomTextSanitizer = (String) -> String
 
 public extension View {
+  /// An implementation detail installing a sanitizer applied to text before it is rendered into
+  /// HTML, exposed for renderer use rather than for app developers.
+  /// - Parameter sanitizer: A closure transforming raw text into HTML-safe output.
   func _domTextSanitizer(_ sanitizer: @escaping (String) -> String) -> some View {
     environment(\.domTextSanitizer, sanitizer)
   }
@@ -31,6 +34,7 @@ private struct DomTextSanitizerKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// The closure used to sanitize text before it is emitted as HTML; defaults to HTML encoding.
   var domTextSanitizer: (String) -> String {
     get {
       self[DomTextSanitizerKey.self]

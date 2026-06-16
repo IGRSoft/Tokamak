@@ -21,6 +21,9 @@
 @_spi(TokamakStaticHTML)
 extension Divider: HTMLConvertible {
   // `tag` is already satisfied by the `AnyHTML` conformance (`"hr"`).
+  /// The Fiber-path HTML attributes for a `Divider`: the same color-scheme-aware border style as
+  /// the legacy `AnyHTML` branch.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout Fiber renderer is in use.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     // Mirror the colorScheme-aware border style from the `AnyHTML` branch (Divider.swift).
@@ -43,9 +46,13 @@ extension Divider: HTMLConvertible {
 
 @_spi(TokamakStaticHTML)
 extension Spacer: HTMLConvertible {
+  /// The HTML tag a `Spacer` renders to on the Fiber path: `"div"`.
   @_spi(TokamakStaticHTML)
   public var tag: String { "div" }
 
+  /// The Fiber-path HTML attributes for a `Spacer`: a flex-grow style with an optional minimum
+  /// width when `minLength` is set.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout Fiber renderer is in use.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     [

@@ -18,6 +18,7 @@
 import TokamakCore
 
 extension Link: _HTMLPrimitive {
+  /// Implementation detail: the SSR markup, an `<a>` anchor wrapping the link's label.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _LinkProxy(self)
@@ -29,11 +30,16 @@ extension Link: _HTMLPrimitive {
 
 @_spi(TokamakStaticHTML)
 extension Link: HTMLConvertible {
+  /// Implementation detail: the `<a>` anchor tag emitted for a `Link` on the Fiber path.
   public var tag: String { "a" }
+  /// Implementation detail: the anchor's `href` and class attributes for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     ["href": _LinkProxy(self).destination.absoluteString, "class": "_tokamak-link"]
   }
 
+  /// Implementation detail: visits the link's label as the anchor's child on the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     {
       $0.visit(_LinkProxy(self).label)

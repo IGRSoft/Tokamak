@@ -23,6 +23,7 @@ struct _ZStack_ContentGridItem: ViewModifier, DOMViewModifier {
 }
 
 extension ZStack: _HTMLPrimitive {
+  /// Renders the stack as a single-cell CSS grid `<div>` that overlaps its children.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("div", [

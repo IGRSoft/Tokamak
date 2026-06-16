@@ -23,37 +23,68 @@
 // It seems like during the rendering process it’s dynamically replaced with the actual label.
 // That’s complicated so instead we’re providing the label view directly.
 
+/// The properties of a toggle.
 public struct ToggleStyleConfiguration {
+  /// A view that describes the effect of toggling the control.
   public let label: AnyView
+  /// A binding to a Boolean that indicates whether the toggle is on or off.
   @Binding
   public var isOn: Swift.Bool
 }
 
+/// A type that specifies the appearance and interaction of all toggles within a
+/// view hierarchy.
+///
+/// To configure the current toggle style for a view hierarchy, use the
+/// ``View/toggleStyle(_:)`` modifier.
 public protocol ToggleStyle {
+  /// A view that represents the appearance and interaction of a toggle.
   associatedtype Body: View
 
+  /// Creates a view that represents the body of a toggle.
+  ///
+  /// - Parameter configuration: The properties of the toggle.
+  /// - Returns: A view that describes the appearance and interaction of the toggle.
   func makeBody(configuration: Self.Configuration) -> Self.Body
 
+  /// The properties of a toggle.
   typealias Configuration = ToggleStyleConfiguration
 }
 
+/// A type-erased ``ToggleStyle``.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public struct _AnyToggleStyle: ToggleStyle {
+  /// A view that represents the appearance and interaction of a toggle.
   public typealias Body = AnyView
 
   private let bodyClosure: (ToggleStyleConfiguration) -> AnyView
 
+  /// Creates a type-erased toggle style that wraps the given style.
+  ///
+  /// - Parameter style: The toggle style to type-erase.
   public init<S: ToggleStyle>(_ style: S) {
     bodyClosure = { configuration in
       AnyView(style.makeBody(configuration: configuration))
     }
   }
 
+  /// Creates a view that represents the body of a toggle.
+  ///
+  /// - Parameter configuration: The properties of the toggle.
+  /// - Returns: A type-erased view describing the appearance of the toggle.
   public func makeBody(configuration: ToggleStyleConfiguration) -> AnyView {
     bodyClosure(configuration)
   }
 }
 
+/// The environment key that stores the current toggle style.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public enum _ToggleStyleKey: EnvironmentKey {
+  /// The default toggle style, which must be provided by the renderer.
   public static var defaultValue: _AnyToggleStyle {
     fatalError("\(self) must have a renderer-provided default value")
   }
@@ -71,6 +102,10 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the style for toggles within this view.
+  ///
+  /// - Parameter style: The toggle style to apply.
+  /// - Returns: A view that uses the specified toggle style.
   func toggleStyle<S>(_ style: S) -> some View where S: ToggleStyle {
     environment(\.toggleStyle, _AnyToggleStyle(style))
   }

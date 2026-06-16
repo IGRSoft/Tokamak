@@ -18,6 +18,7 @@
 /* A representation of a `View`, which has a `body` of type `Never`, stored in the tree of mounted
  views by `StackReconciler`.
  */
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class MountedHostView<R: Renderer>: MountedElement<R> {
   /** Target of a closest ancestor host view. As a parent of this view
    might not be a host view, but a composite view, we need to pass

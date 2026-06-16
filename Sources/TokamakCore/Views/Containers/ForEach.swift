@@ -37,10 +37,19 @@ public struct ForEach<Data, ID, Content>: _PrimitiveView where Data: RandomAcces
 {
   // `public` so it can satisfy the `DynamicViewContent.data` requirement
   // (conformance declared in `DynamicViewContent.swift`).
+  /// The collection of underlying identified data that the `ForEach` iterates.
   public let data: Data
   let id: KeyPath<Data.Element, ID>
+  /// The view builder that produces a view for each element of `data`.
   public let content: (Data.Element) -> Content
 
+  /// Creates an instance that uniquely identifies and creates views across updates based on the
+  /// provided key path to the underlying data's identifier.
+  ///
+  /// - Parameters:
+  ///   - data: The data that the `ForEach` instance uses to create views dynamically.
+  ///   - id: The key path to the provided data's identifier.
+  ///   - content: The view builder that creates views dynamically.
   public init(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,
@@ -51,6 +60,7 @@ public struct ForEach<Data, ID, Content>: _PrimitiveView where Data: RandomAcces
     self.content = content
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     for element in data {
       visitor.visit(content(element))
@@ -64,6 +74,12 @@ extension ForEach: ForEachProtocol where Data.Index == Int {
 }
 
 public extension ForEach where Data.Element: Identifiable, ID == Data.Element.ID {
+  /// Creates an instance that uniquely identifies and creates views across updates based on the
+  /// identity of the underlying data.
+  ///
+  /// - Parameters:
+  ///   - data: The identified data that the `ForEach` instance uses to create views dynamically.
+  ///   - content: The view builder that creates views dynamically.
   init(
     _ data: Data,
     @ViewBuilder content: @escaping (Data.Element) -> Content
@@ -73,6 +89,11 @@ public extension ForEach where Data.Element: Identifiable, ID == Data.Element.ID
 }
 
 public extension ForEach where Data == Range<Int>, ID == Int {
+  /// Creates an instance that computes views on demand over a constant range of integers.
+  ///
+  /// - Parameters:
+  ///   - data: A constant range of integers to iterate over.
+  ///   - content: The view builder that creates views dynamically.
   init(
     _ data: Range<Int>,
     @ViewBuilder content: @escaping (Data.Element) -> Content
@@ -84,6 +105,7 @@ public extension ForEach where Data == Range<Int>, ID == Int {
 }
 
 extension ForEach: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     data.map { AnyView(IDView(content($0), id: $0[keyPath: id])) }
@@ -98,6 +120,7 @@ struct _IDKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   var _id: AnyHashable? {
     get {
       self[_IDKey.self]
@@ -108,25 +131,35 @@ public extension EnvironmentValues {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public protocol _AnyIDView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   var anyId: AnyHashable { get }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   var anyContent: AnyView { get }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct IDView<Content, ID>: View, _AnyIDView where Content: View, ID: Hashable {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let content: Content
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let id: ID
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var anyId: AnyHashable { AnyHashable(id) }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var anyContent: AnyView { AnyView(content) }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public init(_ content: Content, id: ID) {
     self.content = content
     self.id = id
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     content
@@ -135,6 +168,9 @@ public struct IDView<Content, ID>: View, _AnyIDView where Content: View, ID: Has
 }
 
 public extension View {
+  /// Binds a view's identity to the given proxy value.
+  ///
+  /// - Parameter id: A value used to identify this view across updates.
   func id<ID>(_ id: ID) -> some View where ID: Hashable {
     IDView(self, id: id)
   }

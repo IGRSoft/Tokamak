@@ -15,13 +15,16 @@
 //  Created by Szymon on 16/7/2023.
 //
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _EndedGesture<Base: Gesture>: Gesture {
+  /// The type representing the gesture's value.
   public typealias Value = Base.Value
 
   private var gesture: Base
   private var onEnded: (Value) -> ()
   private var onChanged: ((Value) -> ())?
 
+  /// The content and behavior of the gesture.
   public var body: Base.Body {
     var gesture = gesture._onEnded(perform: onEnded)
     if let onChanged {
@@ -35,18 +38,21 @@ public struct _EndedGesture<Base: Gesture>: Gesture {
     self.onEnded = onEnded
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool {
     fatalError(
       "\(String(reflecting: Self.self)) is a proxy `Gesture`, onPhaseChange should never be called."
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onEnded = action
     return gesture
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onChanged = action

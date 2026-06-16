@@ -37,6 +37,7 @@ extension _Button: AnyWidget, ParentView {
     btn.connect(signal: "clicked", closure: action)
   }
 
+  /// The button's label view, exposed so GTK4 can render it inside the widget.
   public var children: [AnyView] {
     [AnyView(label)]
   }

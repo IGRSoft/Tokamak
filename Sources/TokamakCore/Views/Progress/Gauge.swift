@@ -52,6 +52,7 @@ public struct Gauge<Label, CurrentValueLabel, MinimumValueLabel, MaximumValueLab
     self.maximumValueLabel = maximumValueLabel
   }
 
+  /// The content and behavior of the gauge.
   public var body: some View {
     style.makeBody(
       configuration: .init(
@@ -66,6 +67,13 @@ public struct Gauge<Label, CurrentValueLabel, MinimumValueLabel, MaximumValueLab
 }
 
 /// Normalizes `value` within `bounds` to a `0...1` fraction, clamped, mirroring `ProgressView`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
+///
+/// - Parameters:
+///   - value: The value to normalize.
+///   - bounds: The closed range the value is measured against.
+/// - Returns: The clamped `0...1` fraction the value represents within `bounds`.
 @_spi(TokamakCore)
 public func _gaugeFraction<V: BinaryFloatingPoint>(
   value: V,
@@ -82,6 +90,12 @@ public extension Gauge where CurrentValueLabel == EmptyView,
   MinimumValueLabel == EmptyView,
   MaximumValueLabel == EmptyView
 {
+  /// Creates a gauge showing a value within a range, described by a label.
+  ///
+  /// - Parameters:
+  ///   - value: The value the gauge represents.
+  ///   - bounds: The range the value is measured against. Defaults to `0...1`.
+  ///   - label: A view describing the purpose of the gauge.
   init<V>(
     value: V,
     in bounds: ClosedRange<V> = 0...1,
@@ -98,6 +112,13 @@ public extension Gauge where CurrentValueLabel == EmptyView,
 }
 
 public extension Gauge where MinimumValueLabel == EmptyView, MaximumValueLabel == EmptyView {
+  /// Creates a gauge with a label and a label describing its current value.
+  ///
+  /// - Parameters:
+  ///   - value: The value the gauge represents.
+  ///   - bounds: The range the value is measured against. Defaults to `0...1`.
+  ///   - label: A view describing the purpose of the gauge.
+  ///   - currentValueLabel: A view describing the current value of the gauge.
   init<V>(
     value: V,
     in bounds: ClosedRange<V> = 0...1,
@@ -115,6 +136,15 @@ public extension Gauge where MinimumValueLabel == EmptyView, MaximumValueLabel =
 }
 
 public extension Gauge {
+  /// Creates a gauge with labels for its value and the bounds of its range.
+  ///
+  /// - Parameters:
+  ///   - value: The value the gauge represents.
+  ///   - bounds: The range the value is measured against. Defaults to `0...1`.
+  ///   - label: A view describing the purpose of the gauge.
+  ///   - currentValueLabel: A view describing the current value of the gauge.
+  ///   - minimumValueLabel: A view describing the lower bound of the gauge.
+  ///   - maximumValueLabel: A view describing the upper bound of the gauge.
   init<V>(
     value: V,
     in bounds: ClosedRange<V> = 0...1,
@@ -138,6 +168,12 @@ public extension Gauge where Label == Text,
   MinimumValueLabel == EmptyView,
   MaximumValueLabel == EmptyView
 {
+  /// Creates a gauge showing a value within a range, described by a title string.
+  ///
+  /// - Parameters:
+  ///   - title: The title of the gauge, describing its purpose.
+  ///   - value: The value the gauge represents.
+  ///   - bounds: The range the value is measured against. Defaults to `0...1`.
   @_disfavoredOverload
   init<S, V>(
     _ title: S,
@@ -151,16 +187,24 @@ public extension Gauge where Label == Text,
 }
 
 /// Override in renderers to provide a linear `<meter>` body for a gauge.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _GaugeView: _PrimitiveView {
+  /// The normalized fraction (0...1) the gauge represents.
   public let fractionCompleted: Double
+  /// Creates a linear gauge view for the given completed fraction.
   public init(fractionCompleted: Double) {
     self.fractionCompleted = fractionCompleted
   }
 }
 
 /// Override in renderers to provide a circular SVG-arc body for a gauge.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _CircularGaugeView: _PrimitiveView {
+  /// The normalized fraction (0...1) the gauge represents.
   public let fractionCompleted: Double
+  /// Creates a circular gauge view for the given completed fraction.
   public init(fractionCompleted: Double) {
     self.fractionCompleted = fractionCompleted
   }

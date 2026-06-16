@@ -16,8 +16,13 @@
 //
 
 public extension Path {
+  /// Describes how a path responds to the size of its frame of reference.
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   enum _Sizing {
+    /// The path keeps a fixed size regardless of its frame of reference.
     case fixed
+    /// The path scales to fit the size of its frame of reference.
     case flexible
   }
 }

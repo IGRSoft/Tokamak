@@ -16,6 +16,7 @@
 //
 
 extension FiberReconciler.Fiber: CustomDebugStringConvertible {
+  /// A textual representation of the fiber suitable for debugging.
   public var debugDescription: String {
     let memoryAddress = String(format: "%010p", unsafeBitCast(self, to: Int.self))
     if case let .view(view, _) = content,

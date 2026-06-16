@@ -15,7 +15,9 @@
 //  Created by Max Desiatov on 30/12/2018.
 //
 
+/// An alignment position for text along the horizontal axis.
 public enum TextAlignment: Hashable, CaseIterable, Sendable {
+  /// Aligns text to the leading edge, the center, and the trailing edge respectively.
   case leading,
        center,
        trailing
@@ -27,6 +29,7 @@ extension EnvironmentValues {
     nonisolated(unsafe) static var defaultValue: TextAlignment = .leading
   }
 
+  /// The alignment of multiline text in the current environment.
   public var multilineTextAlignment: TextAlignment {
     get {
       self[_MultilineTextAlignmentKey.self]
@@ -38,6 +41,10 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the alignment of a text view that contains multiple lines of text.
+  ///
+  /// - Parameter alignment: A value that you use to align multiple lines of text within a view.
+  /// - Returns: A view that aligns its multiline text using the given alignment.
   @inlinable
   func multilineTextAlignment(_ alignment: TextAlignment) -> some View {
     environment(\.multilineTextAlignment, alignment)

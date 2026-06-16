@@ -14,9 +14,12 @@
 
 import TokamakCore
 
+/// Renders `help(_:)` by emitting the element's `title` attribute, which browsers surface as a
+/// tooltip.
 extension _HelpModifier: DOMViewModifier {
   // Uses the non-style `title` attribute key so it never collides with `style`
   // in the attribute-merge machinery.
+  /// The `title` attribute carrying the help text shown as a native tooltip.
   public var attributes: [HTMLAttribute: String] {
     ["title": text]
   }

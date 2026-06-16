@@ -27,6 +27,11 @@ public struct Menu<Label, Content>: View where Label: View, Content: View {
   let label: Label
   let content: () -> Content
 
+  /// Creates a menu with a custom label and content.
+  ///
+  /// - Parameters:
+  ///   - content: A view builder that produces the menu's action items.
+  ///   - label: A view builder that produces the menu's label.
   public init(
     @ViewBuilder content: @escaping () -> Content,
     @ViewBuilder label: () -> Label
@@ -35,6 +40,7 @@ public struct Menu<Label, Content>: View where Label: View, Content: View {
     self.content = content
   }
 
+  /// The content and behavior of the menu.
   @_spi(TokamakCore)
   public var body: some View {
     _MenuContainer(label: label, content: content)
@@ -42,6 +48,11 @@ public struct Menu<Label, Content>: View where Label: View, Content: View {
 }
 
 public extension Menu where Label == Text {
+  /// Creates a menu that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the contents of the menu.
+  ///   - content: A view builder that produces the menu's action items.
   @_disfavoredOverload
   init<S>(_ title: S, @ViewBuilder content: @escaping () -> Content)
     where S: StringProtocol
@@ -50,6 +61,7 @@ public extension Menu where Label == Text {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _MenuContainer<Label, Content>: _PrimitiveView
   where Label: View, Content: View
 {
@@ -65,17 +77,26 @@ public struct _MenuContainer<Label, Content>: _PrimitiveView
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _MenuProxy<Label, Content>
   where Label: View, Content: View
 {
+  /// The menu container this proxy reads from and mutates.
   public var subject: _MenuContainer<Label, Content>
 
+  /// Creates a proxy that exposes the internals of the given menu container.
+  ///
+  /// - Parameter subject: The menu container to wrap.
   public init(_ subject: _MenuContainer<Label, Content>) { self.subject = subject }
 
+  /// The menu's label view.
   public var label: Label { subject.label }
+  /// A closure that produces the menu's action items.
   public var content: () -> Content { subject.content }
+  /// A Boolean value indicating whether the menu is currently open.
   public var isOpen: Bool { subject.isOpen }
 
+  /// Toggles whether the menu is open.
   public func toggleIsOpen() {
     subject.isOpen.toggle()
   }

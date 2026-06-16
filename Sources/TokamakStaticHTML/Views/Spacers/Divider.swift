@@ -15,8 +15,12 @@
 @_spi(TokamakCore) import TokamakCore
 
 extension Divider: AnyHTML {
+  /// The inner HTML of a `Divider`; always `nil` since an `<hr>` is a void element.
+  /// - Parameter shouldSortAttributes: Whether attributes should be emitted in sorted order.
   public func innerHTML(shouldSortAttributes: Bool) -> String? { nil }
+  /// The HTML tag a `Divider` renders to: `"hr"`.
   public var tag: String { "hr" }
+  /// The HTML attributes for a `Divider`: a color-scheme-aware bottom border style.
   public var attributes: [HTMLAttribute: String] {
     [
       "style": """

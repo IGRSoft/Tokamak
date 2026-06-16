@@ -17,17 +17,31 @@
 
 import Foundation
 
+/// A description of a row or a column in a lazy grid.
 public struct GridItem {
+  /// The size in the minor axis of one or more rows or columns in a grid layout.
   public enum Size {
+    /// A single item with the specified fixed size.
     case fixed(CGFloat)
+    /// A single flexible item that expands to fill the available space within the given bounds.
     case flexible(minimum: CGFloat = 10, maximum: CGFloat = .infinity)
+    /// Multiple items in the space of a single flexible item, each sized within the given bounds.
     case adaptive(minimum: CGFloat, maximum: CGFloat = .infinity)
   }
 
+  /// The size of the item, which is the width of a column item or the height of a row item.
   public var size: GridItem.Size
+  /// The spacing to the next item, or `nil` to use a default spacing.
   public var spacing: CGFloat?
+  /// The alignment to use when placing each view within the item.
   public var alignment: Alignment
 
+  /// Creates a grid item with the specified size, spacing, and alignment.
+  ///
+  /// - Parameters:
+  ///   - size: The size of the grid item.
+  ///   - spacing: The spacing to use between this and the next item.
+  ///   - alignment: The alignment to use for this grid item.
   public init(
     _ size: GridItem.Size = .flexible(),
     spacing: CGFloat? = nil,

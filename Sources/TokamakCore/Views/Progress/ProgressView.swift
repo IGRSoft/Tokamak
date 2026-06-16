@@ -17,6 +17,15 @@
 
 import Foundation
 
+/// A view that shows the progress towards completion of a task.
+///
+///     ProgressView(value: 0.4) {
+///       Text("Downloading…")
+///     }
+///
+/// Use a `ProgressView` to show that a task is making progress towards completion. A progress
+/// view can show determinate progress (a fraction of the way to completion) or indeterminate
+/// progress (no estimate of how long the task will take).
 public struct ProgressView<Label, CurrentValueLabel>: View
   where Label: View, CurrentValueLabel: View
 {
@@ -27,6 +36,7 @@ public struct ProgressView<Label, CurrentValueLabel>: View
     case foundation(_FoundationProgressView)
   }
 
+  /// The content and behavior of the progress view.
   public var body: some View {
     switch storage {
     case let .custom(custom): custom
@@ -35,6 +45,7 @@ public struct ProgressView<Label, CurrentValueLabel>: View
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _CustomProgressView<Label, CurrentValueLabel>: View
   where Label: View, CurrentValueLabel: View
 {
@@ -55,6 +66,7 @@ public struct _CustomProgressView<Label, CurrentValueLabel>: View
     self.currentValueLabel = currentValueLabel
   }
 
+  /// The content and behavior of the progress view.
   public var body: some View {
     style.makeBody(
       configuration: .init(
@@ -67,12 +79,15 @@ public struct _CustomProgressView<Label, CurrentValueLabel>: View
 }
 
 #if os(WASI)
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _FoundationProgressView: View {
+  /// The content and behavior of the view. Unavailable because `Foundation.Progress` is absent.
   public var body: Never {
     fatalError("`Foundation.Progress` is not available.")
   }
 }
 #else
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _FoundationProgressView: View {
   let progress: Progress
 
@@ -89,6 +104,7 @@ public struct _FoundationProgressView: View {
     self.progress = progress
   }
 
+  /// The content and behavior of the progress view.
   public var body: some View {
     ProgressView(
       value: progress.isIndeterminate ? nil : progress.fractionCompleted
@@ -102,7 +118,10 @@ public struct _FoundationProgressView: View {
 #endif
 
 /// Override in renderers to provide a default body for determinate progress views.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _FractionalProgressView: _PrimitiveView {
+  /// The fraction of the task that is complete, in the range `0...1`.
   public let fractionCompleted: Double
   init(_ fractionCompleted: Double) {
     self.fractionCompleted = fractionCompleted
@@ -110,21 +129,30 @@ public struct _FractionalProgressView: _PrimitiveView {
 }
 
 /// Override in renderers to provide a default body for indeterminate progress views.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _IndeterminateProgressView: _PrimitiveView {}
 
 public extension ProgressView where CurrentValueLabel == EmptyView {
+  /// Creates an indeterminate progress view without a label.
   init() where Label == EmptyView {
     self.init(storage: .custom(
       .init(fractionCompleted: nil, label: nil, currentValueLabel: nil)
     ))
   }
 
+  /// Creates an indeterminate progress view described by a label.
+  ///
+  /// - Parameter label: A view describing the task in progress.
   init(@ViewBuilder label: () -> Label) {
     self.init(storage: .custom(
       .init(fractionCompleted: nil, label: label(), currentValueLabel: nil)
     ))
   }
 
+  /// Creates an indeterminate progress view described by a title string.
+  ///
+  /// - Parameter title: A string describing the task in progress.
   init<S>(_ title: S) where Label == Text, S: StringProtocol {
     self.init {
       Text(title)
@@ -133,6 +161,11 @@ public extension ProgressView where CurrentValueLabel == EmptyView {
 }
 
 public extension ProgressView {
+  /// Creates a progress view for a determinate task with the given completed and total values.
+  ///
+  /// - Parameters:
+  ///   - value: The completed amount of the task, or `nil` for indeterminate progress.
+  ///   - total: The full amount of the task. Defaults to `1.0`.
   init<V>(
     value: V?,
     total: V = 1.0
@@ -146,6 +179,12 @@ public extension ProgressView {
     ))
   }
 
+  /// Creates a progress view for a determinate task, described by a label.
+  ///
+  /// - Parameters:
+  ///   - value: The completed amount of the task, or `nil` for indeterminate progress.
+  ///   - total: The full amount of the task. Defaults to `1.0`.
+  ///   - label: A view describing the task in progress.
   init<V>(
     value: V?,
     total: V = 1.0,
@@ -160,6 +199,13 @@ public extension ProgressView {
     ))
   }
 
+  /// Creates a progress view for a determinate task, with labels for the task and current value.
+  ///
+  /// - Parameters:
+  ///   - value: The completed amount of the task, or `nil` for indeterminate progress.
+  ///   - total: The full amount of the task. Defaults to `1.0`.
+  ///   - label: A view describing the task in progress.
+  ///   - currentValueLabel: A view describing the current value of the task.
   init<V>(
     value: V?,
     total: V = 1.0,
@@ -175,6 +221,12 @@ public extension ProgressView {
     ))
   }
 
+  /// Creates a progress view for a determinate task, described by a title string.
+  ///
+  /// - Parameters:
+  ///   - title: A string describing the task in progress.
+  ///   - value: The completed amount of the task, or `nil` for indeterminate progress.
+  ///   - total: The full amount of the task. Defaults to `1.0`.
   init<S, V>(
     _ title: S,
     value: V?,
@@ -191,6 +243,9 @@ public extension ProgressView {
 
 #if !os(WASI)
 public extension ProgressView {
+  /// Creates a progress view backed by a `Foundation.Progress` object.
+  ///
+  /// - Parameter progress: The progress object that drives the view's state.
   init(_ progress: Progress) where Label == EmptyView, CurrentValueLabel == EmptyView {
     self.init(storage: .foundation(.init(progress)))
   }
@@ -198,6 +253,12 @@ public extension ProgressView {
 #endif
 
 public extension ProgressView {
+  /// Creates a progress view from a progress view style configuration.
+  ///
+  /// Use this initializer within a custom `ProgressViewStyle` to render a configuration with the
+  /// default progress view appearance.
+  ///
+  /// - Parameter configuration: The properties of the progress view to render.
   init(_ configuration: ProgressViewStyleConfiguration)
     where Label == ProgressViewStyleConfiguration.Label,
     CurrentValueLabel == ProgressViewStyleConfiguration.CurrentValueLabel

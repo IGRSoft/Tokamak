@@ -21,9 +21,26 @@
 ///
 @_spi(TokamakCore)
 public protocol _EnvironmentReader {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   mutating func _setContent(from values: EnvironmentValues)
 }
 
+/// A property wrapper that reads a value from a view's environment.
+///
+/// Mirrors SwiftUI's `Environment`. Declare a property as `@Environment` and
+/// supply a key path into ``EnvironmentValues`` to read the corresponding value.
+/// The wrapped value updates automatically whenever the underlying environment
+/// value changes.
+///
+/// ```swift
+/// struct ContentView: View {
+///   @Environment(\.isEnabled) var isEnabled
+///
+///   var body: some View {
+///     Text(isEnabled ? "Enabled" : "Disabled")
+///   }
+/// }
+/// ```
 @propertyWrapper
 public struct Environment<Value>: DynamicProperty {
   enum Content {
@@ -33,15 +50,20 @@ public struct Environment<Value>: DynamicProperty {
 
   private var content: Content
   private let keyPath: KeyPath<EnvironmentValues, Value>
+  /// Creates an environment property to read the specified key path.
+  ///
+  /// - Parameter keyPath: A key path to a specific resulting value.
   public init(_ keyPath: KeyPath<EnvironmentValues, Value>) {
     content = .keyPath(keyPath)
     self.keyPath = keyPath
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _setContent(from values: EnvironmentValues) {
     content = .value(values[keyPath: keyPath])
   }
 
+  /// The current value of the environment property.
   public var wrappedValue: Value {
     switch content {
     case let .value(value):

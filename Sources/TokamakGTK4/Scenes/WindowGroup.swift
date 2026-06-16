@@ -18,6 +18,8 @@
 import TokamakCore
 
 extension WindowGroup: SceneDeferredToRenderer {
+  /// The renderer-provided body that fills the GTK window, centering the group's content and
+  /// letting it expand to occupy the available space.
   public var deferredBody: AnyView {
     AnyView(VStack(alignment: .center) {
       HStack(alignment: .center) {

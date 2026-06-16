@@ -16,6 +16,7 @@
 import TokamakCore
 
 extension _HoverActionModifier: DOMActionModifier {
+  /// Maps hover tracking to `mouseover` and `mouseout` DOM event listeners.
   public var listeners: [String: Listener] {
     [
       "mouseover":

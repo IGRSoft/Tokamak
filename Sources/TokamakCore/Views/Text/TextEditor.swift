@@ -12,18 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// A view that can display and edit long-form text.
+///
+///     @State private var text: String = ""
+///     var body: some View {
+///       TextEditor(text: $text)
+///     }
 public struct TextEditor: _PrimitiveView {
   let textBinding: Binding<String>
 
+  /// Creates a text editor with a binding to the editable text.
   public init(text: Binding<String>) {
     textBinding = text
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _TextEditorProxy {
+  /// The `TextEditor` value this proxy exposes to renderers.
   public let subject: TextEditor
 
+  /// Creates a proxy for the given text editor.
   public init(_ subject: TextEditor) { self.subject = subject }
 
+  /// The binding to the text editor's editable text.
   public var textBinding: Binding<String> { subject.textBinding }
 }

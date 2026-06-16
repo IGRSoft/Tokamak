@@ -25,8 +25,12 @@ import Foundation
 ///       Text("World")
 ///     }
 public struct Spacer: _PrimitiveView {
+  /// The minimum length this spacer can be shrunk to, along the axis of its containing stack.
   public var minLength: CGFloat?
 
+  /// Creates a spacer with an optional minimum length.
+  ///
+  /// - Parameter minLength: The minimum length this spacer can shrink to. Defaults to `nil`.
   public init(minLength: CGFloat? = nil) {
     self.minLength = minLength
   }

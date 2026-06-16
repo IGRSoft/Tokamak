@@ -34,6 +34,7 @@ public struct ViewSpacing: @unchecked Sendable {
   private var bottom: (ViewSpacing) -> CGFloat
   private var trailing: (ViewSpacing) -> CGFloat
 
+  /// A spacing instance with zero spacing on every edge.
   public static let zero: ViewSpacing = .init(
     viewType: nil,
     top: { _ in 0 },
@@ -47,9 +48,11 @@ public struct ViewSpacing: @unchecked Sendable {
     self.init(viewType: nil)
   }
 
+  /// The default spacing value used between adjacent views.
   @_spi(TokamakCore)
   public static let defaultValue: CGFloat = 8
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public init(
     viewType: Any.Type?,
@@ -65,6 +68,11 @@ public struct ViewSpacing: @unchecked Sendable {
     self.trailing = trailing
   }
 
+  /// Merges another spacing instance into this one, taking the larger value on each edge.
+  ///
+  /// - Parameters:
+  ///   - other: The spacing to merge into this one.
+  ///   - edges: The edges to merge. Defaults to `.all`.
   public mutating func formUnion(_ other: ViewSpacing, edges: Edge.Set = .all) {
     if viewType != other.viewType {
       viewType = nil
@@ -87,6 +95,12 @@ public struct ViewSpacing: @unchecked Sendable {
     }
   }
 
+  /// Returns a new spacing that merges this one with another, taking the larger value per edge.
+  ///
+  /// - Parameters:
+  ///   - other: The spacing to merge with this one.
+  ///   - edges: The edges to merge. Defaults to `.all`.
+  /// - Returns: A spacing combining `self` and `other`.
   public func union(_ other: ViewSpacing, edges: Edge.Set = .all) -> ViewSpacing {
     var spacing = self
     spacing.formUnion(other, edges: edges)
@@ -94,6 +108,11 @@ public struct ViewSpacing: @unchecked Sendable {
   }
 
   /// The smallest spacing that accommodates the preferences of `self` and `next`.
+  ///
+  /// - Parameters:
+  ///   - next: The spacing of the adjacent view that follows `self` along `axis`.
+  ///   - axis: The axis along which the two views are adjacent.
+  /// - Returns: The distance to place between the two views.
   public func distance(to next: ViewSpacing, along axis: Axis) -> CGFloat {
     // Assume `next` comes after `self` either horizontally or vertically.
     switch axis {

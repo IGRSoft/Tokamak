@@ -18,6 +18,9 @@ import TokamakCore
 // Best-effort GTK4 rendering: render content transparently with an inert proxy.
 // TODO: wire `scrollTo` to gtk_adjustment_set_value — best-effort, documented per R5/R6.
 extension ScrollViewReader: GTKPrimitive {
+  /// Renders the reader's content with an inert `ScrollViewProxy` (best-effort GTK4 output).
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(content(ScrollViewProxy(scrollTo: { _, _ in })))

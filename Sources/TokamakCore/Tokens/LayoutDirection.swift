@@ -15,8 +15,12 @@
 //  Created by Carson Katri on 6/20/22.
 //
 
+/// A direction in which content can be laid out, used to support left-to-right and
+/// right-to-left languages.
 public enum LayoutDirection: Hashable, CaseIterable, Sendable {
+  /// A left-to-right layout direction.
   case leftToRight
+  /// A right-to-left layout direction.
   case rightToLeft
 }
 
@@ -26,6 +30,7 @@ extension EnvironmentValues {
     nonisolated(unsafe) static var defaultValue: LayoutDirection = .leftToRight
   }
 
+  /// The layout direction associated with the current environment.
   public var layoutDirection: LayoutDirection {
     get { self[LayoutDirectionKey.self] }
     set { self[LayoutDirectionKey.self] = newValue }

@@ -17,6 +17,8 @@ import JavaScriptKit
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a picker as a DOM `<select>` element wrapped in a `<label>`, updating the selection
+/// binding on change.
 extension _PickerContainer: DOMPrimitive {
   var renderedBody: AnyView {
     AnyView(HTML("label") {
@@ -35,6 +37,7 @@ extension _PickerContainer: DOMPrimitive {
   }
 }
 
+/// Renders a single picker choice as a DOM `<option>` element tagged with its selection index.
 extension _PickerElement: DOMPrimitive {
   var renderedBody: AnyView {
     let attributes: [HTMLAttribute: String]

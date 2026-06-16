@@ -15,8 +15,11 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
+/// A type indicating the prominence of a view.
 public enum Prominence: Hashable, Sendable {
+  /// The standard prominence.
   case standard
+  /// An increased prominence.
   case increased
 }
 
@@ -26,6 +29,7 @@ extension EnvironmentValues {
     nonisolated(unsafe) static var defaultValue: Prominence = .standard
   }
 
+  /// The prominence to apply to section headers within a view.
   public var headerProminence: Prominence {
     get {
       self[HeaderProminenceKey.self]
@@ -37,6 +41,10 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the prominence of the section headers within this view.
+  ///
+  /// - Parameter prominence: The prominence to apply to section headers within the view.
+  /// - Returns: A view that uses the given header prominence.
   func headerProminence(_ prominence: Prominence) -> some View {
     environment(\.headerProminence, prominence)
   }

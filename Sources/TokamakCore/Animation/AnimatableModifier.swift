@@ -15,4 +15,8 @@
 //  Created by Carson Katri on 7/11/21.
 //
 
+/// A modifier that can create another modifier with animation.
+///
+/// Conform to `AnimatableModifier` to animate the effect a ``ViewModifier`` applies as its
+/// ``Animatable/animatableData`` changes.
 public protocol AnimatableModifier: Animatable, ViewModifier {}

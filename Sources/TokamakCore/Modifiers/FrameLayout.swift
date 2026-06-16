@@ -14,9 +14,13 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _FrameLayout: ViewModifier {
+  /// The fixed width of the resulting frame, or `nil` to keep the content's width.
   public let width: CGFloat?
+  /// The fixed height of the resulting frame, or `nil` to keep the content's height.
   public let height: CGFloat?
+  /// The alignment of the content within the resulting frame.
   public let alignment: Alignment
 
   init(width: CGFloat?, height: CGFloat?, alignment: Alignment) {
@@ -25,16 +29,24 @@ public struct _FrameLayout: ViewModifier {
     self.alignment = alignment
   }
 
+  /// The content and behavior of the modified view.
   public func body(content: Content) -> some View {
     content
   }
 }
 
 extension _FrameLayout: Animatable {
+  /// The type defining the data to animate. This layout has no animatable data.
   public typealias AnimatableData = EmptyAnimatableData
 }
 
 public extension View {
+  /// Positions this view within an invisible frame with the specified size.
+  /// - Parameters:
+  ///   - width: A fixed width for the resulting view. If `nil`, the view keeps its own width.
+  ///   - height: A fixed height for the resulting view. If `nil`, the view keeps its own height.
+  ///   - alignment: The alignment of this view inside the resulting frame.
+  /// - Returns: A view with fixed dimensions of `width` and `height`, for the parameters given.
   func frame(
     width: CGFloat? = nil,
     height: CGFloat? = nil,

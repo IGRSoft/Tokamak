@@ -154,6 +154,7 @@ extension Path: _HTMLPrimitive {
       """
   }
 
+  /// Renders the path as an `<svg>` element wrapping its derived SVG geometry.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("svg", ["style": """
@@ -167,8 +168,11 @@ extension Path: _HTMLPrimitive {
 
 @_spi(TokamakStaticHTML)
 extension Path: HTMLConvertible {
+  /// Renders a `Path` as an `<svg>` element.
   public var tag: String { "svg" }
+  /// The SVG XML namespace.
   public var namespace: String? { "http://www.w3.org/2000/svg" }
+  /// Sizing and overflow styles for the `<svg>` container.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return ["style": "overflow: visible;"] }
     return [
@@ -179,6 +183,7 @@ extension Path: HTMLConvertible {
     ]
   }
 
+  /// The serialized SVG geometry placed inside the `<svg>` element.
   public var innerHTML: String? {
     svgBody()?.outerHTML(shouldSortAttributes: false, children: [])
   }

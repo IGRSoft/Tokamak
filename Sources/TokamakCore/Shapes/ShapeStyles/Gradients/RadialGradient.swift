@@ -17,6 +17,22 @@
 
 import Foundation
 
+/// A radial gradient.
+///
+/// The gradient applies the color function as the distance from a center point,
+/// scaled to fit within the defined start and end radii. The gradient maps the
+/// unit space center point into the bounding rectangle of each shape filled
+/// with the gradient. When used as a ``ShapeStyle``, it fills the shape; when
+/// used as a ``View``, it fills the entire view.
+///
+/// ```swift
+/// RadialGradient(
+///   colors: [.yellow, .red],
+///   center: .center,
+///   startRadius: 0,
+///   endRadius: 100
+/// )
+/// ```
 @frozen
 public struct RadialGradient: ShapeStyle, View {
   internal var gradient: Gradient
@@ -24,6 +40,13 @@ public struct RadialGradient: ShapeStyle, View {
   internal var startRadius: CGFloat
   internal var endRadius: CGFloat
 
+  /// Creates a radial gradient from a gradient and a range of radii.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadius: The radius at which the gradient begins.
+  ///   - endRadius: The radius at which the gradient ends.
   public init(gradient: Gradient, center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
     self.gradient = gradient
     self.center = center
@@ -31,6 +54,13 @@ public struct RadialGradient: ShapeStyle, View {
     self.endRadius = endRadius
   }
 
+  /// Creates a radial gradient from colors and a range of radii.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadius: The radius at which the gradient begins.
+  ///   - endRadius: The radius at which the gradient ends.
   public init(colors: [Color], center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
     self.init(
       gradient: Gradient(colors: colors), center: center,
@@ -38,6 +68,13 @@ public struct RadialGradient: ShapeStyle, View {
     )
   }
 
+  /// Creates a radial gradient from color stops and a range of radii.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadius: The radius at which the gradient begins.
+  ///   - endRadius: The radius at which the gradient ends.
   public init(stops: [Gradient.Stop], center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
     self.init(
       gradient: Gradient(stops: stops), center: center,
@@ -45,8 +82,10 @@ public struct RadialGradient: ShapeStyle, View {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public typealias Body = _ShapeView<Rectangle, Self>
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     shape.result = .resolved(
       .gradient(
@@ -56,10 +95,18 @@ public struct RadialGradient: ShapeStyle, View {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to type: inout _ShapeStyle_ShapeType) {}
 }
 
 public extension ShapeStyle where Self == RadialGradient {
+  /// Returns a radial gradient style from a gradient and a range of radii.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadius: The radius at which the gradient begins.
+  ///   - endRadius: The radius at which the gradient ends.
   static func radialGradient(
     _ gradient: Gradient,
     center: UnitPoint,
@@ -72,6 +119,13 @@ public extension ShapeStyle where Self == RadialGradient {
     )
   }
 
+  /// Returns a radial gradient style from colors and a range of radii.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadius: The radius at which the gradient begins.
+  ///   - endRadius: The radius at which the gradient ends.
   static func radialGradient(
     colors: [Color],
     center: UnitPoint,
@@ -84,6 +138,13 @@ public extension ShapeStyle where Self == RadialGradient {
     )
   }
 
+  /// Returns a radial gradient style from color stops and a range of radii.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadius: The radius at which the gradient begins.
+  ///   - endRadius: The radius at which the gradient ends.
   static func radialGradient(
     stops: [Gradient.Stop],
     center: UnitPoint,

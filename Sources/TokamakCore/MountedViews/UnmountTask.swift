@@ -16,7 +16,10 @@
 //
 
 /// A tree of cancellable in-progress unmounts.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class UnmountTask<R> where R: Renderer {
+  /// A Boolean value indicating whether this task and its children have been cancelled.
   public internal(set) var isCancelled = false
   var childTasks = [UnmountTask<R>]()
   private let callback: () -> ()
@@ -29,6 +32,8 @@ public class UnmountTask<R> where R: Renderer {
     forEach { $0.isCancelled = true }
   }
 
+  /// Signals that the renderer has finished unmounting the host, running the completion callback.
+  ///
   /// Call after completely unmounting the `host`.
   public func finish() {
     callback()
@@ -60,7 +65,10 @@ public class UnmountTask<R> where R: Renderer {
 }
 
 /// The state for the unmounting of a `MountedHostView` by a `Renderer`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class UnmountHostTask<R>: UnmountTask<R> where R: Renderer {
+  /// The host view being unmounted by this task.
   public private(set) weak var host: MountedHostView<R>!
   private unowned var reconciler: StackReconciler<R>
 

@@ -18,6 +18,7 @@
 import TokamakCore
 
 extension ScrollView: _HTMLPrimitive, SpacerContainer {
+  /// The primary scroll axis, preferring horizontal when both axes scroll.
   public var axis: SpacerContainerAxis {
     if axes.contains(.horizontal) {
       return .horizontal
@@ -26,6 +27,7 @@ extension ScrollView: _HTMLPrimitive, SpacerContainer {
     }
   }
 
+  /// Renders the scroll view as an overflowing `<div>` wrapping its content in a `VStack`.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let scrollX = axes.contains(.horizontal)
@@ -49,8 +51,10 @@ extension ScrollView: _HTMLPrimitive, SpacerContainer {
 
 @_spi(TokamakStaticHTML)
 extension ScrollView: HTMLConvertible {
+  /// The HTML element used to host the scroll view: a `div`.
   public var tag: String { "div" }
 
+  /// The CSS `style` attribute setting `overflow` to match the enabled scroll axes.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     ["style": """
     \(axes.contains(.horizontal) ? "overflow-x: auto; width: 100%;" : "overflow-x: hidden;")

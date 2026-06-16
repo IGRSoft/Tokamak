@@ -15,6 +15,12 @@
 //  Created by Carson Katri on 7/3/20.
 //
 
+/// A structure that computes views and disclosure groups on demand from an underlying collection
+/// of tree-structured, identified data.
+///
+/// Use an outline group when you need a view that can represent a hierarchy of data. The group
+/// reads the children of each element through a key path, recursively producing a nested,
+/// expandable `DisclosureGroup` for every element that has children.
 public struct OutlineGroup<Data, ID, Parent, Leaf, Subgroup>
   where Data: RandomAccessCollection, ID: Hashable
 {
@@ -35,6 +41,13 @@ public extension OutlineGroup where ID == Data.Element.ID,
   Subgroup == DisclosureGroup<Parent, OutlineSubgroupChildren>,
   Data.Element: Identifiable
 {
+  /// Creates an outline group from a root element, the key path to its children, and a content
+  /// closure, identifying elements by their `Identifiable` conformance.
+  ///
+  /// - Parameters:
+  ///   - root: The root element of the tree of data.
+  ///   - children: The key path to a value's children.
+  ///   - content: A closure that produces a view for a given element.
   init<DataElement>(
     _ root: DataElement,
     children: KeyPath<DataElement, Data?>,
@@ -43,6 +56,13 @@ public extension OutlineGroup where ID == Data.Element.ID,
     self.init(root, id: \.id, children: children, content: content)
   }
 
+  /// Creates an outline group from a collection of root elements, the key path to their children,
+  /// and a content closure, identifying elements by their `Identifiable` conformance.
+  ///
+  /// - Parameters:
+  ///   - data: The collection of root elements of the tree of data.
+  ///   - children: The key path to a value's children.
+  ///   - content: A closure that produces a view for a given element.
   init<DataElement>(
     _ data: Data,
     children: KeyPath<DataElement, Data?>,
@@ -56,6 +76,14 @@ public extension OutlineGroup where Parent: View,
   Parent == Leaf,
   Subgroup == DisclosureGroup<Parent, OutlineSubgroupChildren>
 {
+  /// Creates an outline group from a root element, the key path to its identifier, the key path to
+  /// its children, and a content closure.
+  ///
+  /// - Parameters:
+  ///   - root: The root element of the tree of data.
+  ///   - id: The key path to a value's identifier.
+  ///   - children: The key path to a value's children.
+  ///   - content: A closure that produces a view for a given element.
   init<DataElement>(
     _ root: DataElement,
     id: KeyPath<DataElement, ID>,
@@ -70,6 +98,14 @@ public extension OutlineGroup where Parent: View,
     self.content = content
   }
 
+  /// Creates an outline group from a collection of root elements, the key path to their
+  /// identifier, the key path to their children, and a content closure.
+  ///
+  /// - Parameters:
+  ///   - data: The collection of root elements of the tree of data.
+  ///   - id: The key path to a value's identifier.
+  ///   - children: The key path to a value's children.
+  ///   - content: A closure that produces a view for a given element.
   init<DataElement>(
     _ data: Data,
     id: KeyPath<DataElement, ID>,
@@ -86,6 +122,7 @@ public extension OutlineGroup where Parent: View,
 }
 
 extension OutlineGroup: View where Parent: View, Leaf: View, Subgroup: View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     switch root {
@@ -122,9 +159,11 @@ extension OutlineGroup: View where Parent: View, Leaf: View, Subgroup: View {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct OutlineSubgroupChildren: View {
   let children: () -> AnyView
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     children()

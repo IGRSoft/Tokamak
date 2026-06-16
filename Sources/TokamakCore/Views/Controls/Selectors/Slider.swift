@@ -12,8 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _SliderStep {
+  /// The slider moves continuously, with no fixed increment.
   case any
+  /// The slider snaps to multiples of the associated stride.
   case discrete(Double.Stride)
 }
 
@@ -39,6 +42,12 @@ public struct Slider<Label, ValueLabel>: _PrimitiveView where Label: View, Value
 }
 
 public extension Slider where Label == EmptyView, ValueLabel == EmptyView {
+  /// Creates a slider to select a value from a continuous range.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the selected value.
+  ///   - bounds: The inclusive range of selectable values.
+  ///   - onEditingChanged: A closure called when editing of the slider begins or ends.
   init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V> = 0...1,
@@ -53,6 +62,13 @@ public extension Slider where Label == EmptyView, ValueLabel == EmptyView {
     self.onEditingChanged = onEditingChanged
   }
 
+  /// Creates a slider to select a value from a range, subject to a step increment.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the selected value.
+  ///   - bounds: The inclusive range of selectable values.
+  ///   - step: The distance between each selectable value.
+  ///   - onEditingChanged: A closure called when editing of the slider begins or ends.
   init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V>,
@@ -70,6 +86,13 @@ public extension Slider where Label == EmptyView, ValueLabel == EmptyView {
 }
 
 public extension Slider where ValueLabel == EmptyView {
+  /// Creates a slider with a label to select a value from a continuous range.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the selected value.
+  ///   - bounds: The inclusive range of selectable values.
+  ///   - onEditingChanged: A closure called when editing of the slider begins or ends.
+  ///   - label: A view builder that produces the slider's label.
   init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V> = 0...1,
@@ -85,6 +108,14 @@ public extension Slider where ValueLabel == EmptyView {
     self.onEditingChanged = onEditingChanged
   }
 
+  /// Creates a slider with a label to select a value from a range, subject to a step increment.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the selected value.
+  ///   - bounds: The inclusive range of selectable values.
+  ///   - step: The distance between each selectable value.
+  ///   - onEditingChanged: A closure called when editing of the slider begins or ends.
+  ///   - label: A view builder that produces the slider's label.
   init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V>,
@@ -103,6 +134,15 @@ public extension Slider where ValueLabel == EmptyView {
 }
 
 public extension Slider {
+  /// Creates a slider with min/max value labels to select a value from a continuous range.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the selected value.
+  ///   - bounds: The inclusive range of selectable values.
+  ///   - onEditingChanged: A closure called when editing of the slider begins or ends.
+  ///   - minimumValueLabel: A view describing the slider's lower bound.
+  ///   - maximumValueLabel: A view describing the slider's upper bound.
+  ///   - label: A view builder that produces the slider's label.
   init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V> = 0...1,
@@ -120,6 +160,16 @@ public extension Slider {
     self.onEditingChanged = onEditingChanged
   }
 
+  /// Creates a slider with min/max value labels to select a value, subject to a step increment.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the selected value.
+  ///   - bounds: The inclusive range of selectable values.
+  ///   - step: The distance between each selectable value.
+  ///   - onEditingChanged: A closure called when editing of the slider begins or ends.
+  ///   - minimumValueLabel: A view describing the slider's lower bound.
+  ///   - maximumValueLabel: A view describing the slider's upper bound.
+  ///   - label: A view builder that produces the slider's label.
   init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V>,
@@ -140,6 +190,7 @@ public extension Slider {
 }
 
 extension Slider: ParentView {
+  /// The slider's label and value-label views.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     ((label as? GroupView)?.children ?? [AnyView(label)])
@@ -149,16 +200,29 @@ extension Slider: ParentView {
 }
 
 /// This is a helper type that works around absence of "package private" access control in Swift
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _SliderProxy<Label, ValueLabel> where Label: View, ValueLabel: View {
+  /// The slider this proxy reads from.
   public let subject: Slider<Label, ValueLabel>
 
+  /// Creates a proxy that exposes the internals of the given slider.
+  ///
+  /// - Parameter subject: The slider to wrap.
   public init(_ subject: Slider<Label, ValueLabel>) { self.subject = subject }
 
+  /// The slider's label view.
   public var label: Label { subject.label }
+  /// The view describing the slider's lower bound.
   public var minValueLabel: ValueLabel { subject.minValueLabel }
+  /// The view describing the slider's upper bound.
   public var maxValueLabel: ValueLabel { subject.maxValueLabel }
+  /// A binding to the slider's selected value.
   public var valueBinding: Binding<Double> { subject.valueBinding }
+  /// The inclusive range of selectable values.
   public var bounds: ClosedRange<Double> { subject.bounds }
+  /// The step behavior of the slider.
   public var step: _SliderStep { subject.step }
+  /// A closure called when editing of the slider begins or ends.
   public var onEditingChanged: (Bool) -> () { subject.onEditingChanged }
 }

@@ -17,6 +17,7 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
   final class Coordinator: ObservableObject {
     var gesture: G
@@ -39,7 +40,9 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
 
   let mask: GestureMask
   let priority: _GesturePriority
+  /// The wrapped content view the gesture is attached to.
   public let content: Content
+  /// The unique identifier of the attached gesture.
   public var gestureId: String {
     coordinator.gestureId
   }
@@ -51,6 +54,13 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
     return longPressGesture.minimumDuration
   }
 
+  /// Creates a gesture view that attaches the given gesture to its content.
+  ///
+  /// - Parameters:
+  ///   - gesture: The gesture to attach.
+  ///   - mask: A value controlling how this gesture interacts with other gestures.
+  ///   - priority: The recognition priority of the gesture. Defaults to `.standard`.
+  ///   - content: The content view the gesture is attached to.
   public init(
     gesture: G,
     mask: GestureMask,
@@ -63,6 +73,9 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
     self.content = content
   }
 
+  /// Processes a change in the gesture's phase, advancing recognition as appropriate.
+  ///
+  /// - Parameter phase: The new phase of the gesture event.
   public func onPhaseChange(_ phase: _GesturePhase) {
     guard isEnabled else {
       // View needs to be enabled in order for the gestures to work
@@ -136,7 +149,10 @@ public struct _GestureView<Content: View, G: Gesture>: _PrimitiveView {
 public extension View {
   /// Attaches a single gesture to the view.
   ///
-  /// - Parameter gesture: The gesture to attach.
+  /// - Parameters:
+  ///   - gesture: The gesture to attach.
+  ///   - mask: A value that controls how adding this gesture affects other gestures recognized
+  /// by the view and its subviews. Defaults to all.
   /// - Returns: A modified version of the view with the gesture attached.
   @ViewBuilder
   func gesture<T>(_ gesture: T?, including mask: GestureMask = .all) -> some View
@@ -150,7 +166,10 @@ public extension View {
   }
 
   /// Attaches a gesture to the view to process simultaneously with gestures defined by the view.
-  /// - Parameter gesture: The gesture to attach.
+  /// - Parameters:
+  ///   - gesture: The gesture to attach.
+  ///   - mask: A value that controls how adding this gesture affects other gestures recognized
+  /// by the view and its subviews. Defaults to all.
   /// - Returns: A modified version of the view with the gesture attached.
   @ViewBuilder
   func simultaneousGesture<T>(_ gesture: T?, including mask: GestureMask = .all) -> some View

@@ -17,15 +17,23 @@
 
 import Foundation
 
+/// An ellipse aligned inside the frame of the view containing it.
 public struct Ellipse: Shape {
+  /// Describes this shape as a path within a rectangular frame of reference.
   public func path(in rect: CGRect) -> Path {
     .init(storage: .ellipse(rect), sizing: .flexible)
   }
 
+  /// Creates a new ellipse shape.
   public init() {}
 }
 
+/// A circle centered on the frame of the view containing it.
+///
+/// The circle's radius equals half the length of the frame rectangle's
+/// smallest edge.
 public struct Circle: Shape {
+  /// Describes this shape as a path within a rectangular frame of reference.
   public func path(in rect: CGRect) -> Path {
     .init(
       storage: .ellipse(
@@ -41,21 +49,26 @@ public struct Circle: Shape {
     )
   }
 
+  /// Creates a new circle shape.
   public init() {}
 }
 
 extension Circle: InsettableShape {
+  /// Returns this circle inset by the given amount on all sides.
   public func inset(by amount: CGFloat) -> _Inset {
     _Inset(amount: amount)
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public struct _Inset: InsettableShape {
+    /// The amount by which the circle is inset.
     public var amount: CGFloat
 
     init(amount: CGFloat) {
       self.amount = amount
     }
 
+    /// Describes this shape as a path within a rectangular frame of reference.
     public func path(in rect: CGRect) -> Path {
       .init(
         storage: .ellipse(CGRect(
@@ -69,6 +82,7 @@ extension Circle: InsettableShape {
       )
     }
 
+    /// Returns this inset circle further inset by the given amount.
     public func inset(by amount: CGFloat) -> Circle._Inset {
       var copy = self
       copy.amount += amount
@@ -77,13 +91,22 @@ extension Circle: InsettableShape {
   }
 }
 
+/// A capsule shape aligned inside the frame of the view containing it.
+///
+/// A capsule shape is equivalent to a rounded rectangle where the corner
+/// radius is chosen as half the length of the rectangle's smallest edge.
 public struct Capsule: Shape {
+  /// The style of corners drawn by the capsule.
   public var style: RoundedCornerStyle
 
+  /// Creates a new capsule shape.
+  ///
+  /// - Parameter style: The style of corners drawn by the shape.
   public init(style: RoundedCornerStyle = .circular) {
     self.style = style
   }
 
+  /// Describes this shape as a path within a rectangular frame of reference.
   public func path(in rect: CGRect) -> Path {
     .init(
       storage: .roundedRect(.init(

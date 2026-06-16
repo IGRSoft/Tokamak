@@ -45,6 +45,13 @@ public struct TextField<Label>: _PrimitiveView where Label: View {
 }
 
 public extension TextField where Label == Text {
+  /// Creates a text field with a title string and a binding to its text.
+  ///
+  /// - Parameters:
+  ///   - title: The title of the text field, describing its purpose.
+  ///   - text: The text to display and edit.
+  ///   - onEditingChanged: An action to perform when the user begins or ends editing the text.
+  ///   - onCommit: An action to perform when the user commits the entered text.
   init<S>(
     _ title: S,
     text: Binding<String>,
@@ -66,24 +73,36 @@ public extension TextField where Label == Text {
 }
 
 extension TextField: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (label as? GroupView)?.children ?? [AnyView(label)]
   }
 }
 
-/// This is a helper type that works around absence of "package private" access control in Swift
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
+///
+/// This is a helper type that works around absence of "package private" access control in Swift.
 public struct _TextFieldProxy<Label: View> {
+  /// The `TextField` value this proxy exposes to renderers.
   public let subject: TextField<Label>
 
+  /// Creates a proxy for the given text field.
   public init(_ subject: TextField<Label>) { self.subject = subject }
 
+  /// The text field's label view.
   public var label: Label { subject.label }
+  /// The binding to the text field's text.
   public var textBinding: Binding<String> { subject.textBinding }
+  /// The action to perform when the user commits the entered text.
   public var onCommit: () -> () { subject.onCommit }
+  /// The action to perform when the user begins or ends editing the text.
   public var onEditingChanged: (Bool) -> () { subject.onEditingChanged }
+  /// The resolved text field style from the environment.
   public var textFieldStyle: _AnyTextFieldStyle { subject.environment.textFieldStyle }
+  /// The environment values in effect for the text field.
   public var environment: EnvironmentValues { subject.environment }
+  /// The resolved foreground color of the text field, or `nil` if none is set.
   public var foregroundColor: AnyColorBox.ResolvedValue? {
     guard let foregroundColor = subject.environment.foregroundColor else {
       return nil

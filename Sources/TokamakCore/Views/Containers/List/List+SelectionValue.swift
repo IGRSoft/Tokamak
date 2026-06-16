@@ -16,11 +16,14 @@
 //
 
 public extension List where SelectionValue == Never {
+  /// Creates a list with the given content and no selection support.
   init(@ViewBuilder content: () -> Content) {
     selection = .one(nil)
     self.content = content()
   }
 
+  /// Creates a list with no selection support that computes its rows on demand from a collection
+  /// of identified data.
   init<Data, RowContent>(
     _ data: Data,
     @ViewBuilder rowContent: @escaping (Data.Element) -> RowContent
@@ -34,6 +37,8 @@ public extension List where SelectionValue == Never {
     }
   }
 
+  /// Creates a hierarchical list with no selection support over identified tree-structured data,
+  /// reading each element's children through a key path.
   init<Data, RowContent>(
     _ data: Data,
     children: KeyPath<Data.Element, Data?>,
@@ -54,6 +59,8 @@ public extension List where SelectionValue == Never {
     }
   }
 
+  /// Creates a hierarchical list with no selection support, identifying elements by a key path and
+  /// reading each element's children through a key path.
   init<Data, ID, RowContent>(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,
@@ -75,6 +82,8 @@ public extension List where SelectionValue == Never {
     }
   }
 
+  /// Creates a list with no selection support that computes its rows on demand from a collection,
+  /// identifying rows by a key path.
   init<Data, ID, RowContent>(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,
@@ -89,6 +98,8 @@ public extension List where SelectionValue == Never {
     }
   }
 
+  /// Creates a list with no selection support that computes its rows on demand from a constant
+  /// range of integers.
   init<RowContent>(
     _ data: Range<Int>,
     @ViewBuilder rowContent: @escaping (Int) -> RowContent

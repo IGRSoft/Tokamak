@@ -15,8 +15,11 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
+/// A value that describes the purpose of a button.
 public struct ButtonRole: Equatable, Sendable {
+  /// A role that indicates a destructive button.
   public static let destructive = ButtonRole(rawValue: 0)
+  /// A role that indicates a button that cancels an operation.
   public static let cancel = ButtonRole(rawValue: 1)
 
   private let rawValue: Int

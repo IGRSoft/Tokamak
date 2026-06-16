@@ -47,12 +47,16 @@ struct Box<Content: View>: View, ParentView, AnyWidget, StackProtocol {
     neverBody("Box")
   }
 
+  /// The box's content view, exposed so GTK4 can render it inside the grid widget.
   public var children: [AnyView] {
     [AnyView(content)]
   }
 }
 
 extension VStack: GTKPrimitive {
+  /// Renders the stack as a vertically oriented `GtkGrid`-backed box.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(
@@ -67,6 +71,9 @@ extension VStack: GTKPrimitive {
 }
 
 extension HStack: GTKPrimitive {
+  /// Renders the stack as a horizontally oriented `GtkGrid`-backed box.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(

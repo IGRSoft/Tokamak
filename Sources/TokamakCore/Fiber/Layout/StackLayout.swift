@@ -28,6 +28,8 @@ private extension ViewDimensions {
 }
 
 /// The `Layout.Cache` for `StackLayout` conforming types.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public struct StackLayoutCache {
   /// The widest/tallest (depending on the `axis`) subview.
@@ -51,6 +53,8 @@ private struct MeasuredSubview {
 
 /// The protocol all built-in stacks conform to.
 /// Provides a shared implementation for stack layout logic.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public protocol StackLayout: Layout where Cache == StackLayoutCache {
   /// The direction of this stack. `vertical` for `VStack`, `horizontal` for `HStack`.
@@ -59,11 +63,13 @@ public protocol StackLayout: Layout where Cache == StackLayoutCache {
   /// The full `Alignment` with an ignored value for the main axis.
   var _alignment: Alignment { get }
 
+  /// The fixed spacing between subviews, or `nil` to use each subview's spacing preferences.
   var spacing: CGFloat? { get }
 }
 
 @_spi(TokamakCore)
 public extension StackLayout {
+  /// The layout properties for a stack, reporting its `orientation` as the stack orientation.
   static var layoutProperties: LayoutProperties {
     var properties = LayoutProperties()
     properties.stackOrientation = Self.orientation
@@ -92,17 +98,20 @@ public extension StackLayout {
     }
   }
 
+  /// Creates a fresh cache sized to hold an ideal size for each subview.
   func makeCache(subviews: Subviews) -> Cache {
     // Ensure we have enough space in `idealSizes` for each subview.
     .init(maxSubview: nil, idealSizes: Array(repeating: .zero, count: subviews.count))
   }
 
+  /// Resets the cache before each layout pass.
   func updateCache(_ cache: inout Cache, subviews: Subviews) {
     cache.maxSubview = nil
     // Ensure we have enough space in `idealSizes` for each subview.
     cache.idealSizes = Array(repeating: .zero, count: subviews.count)
   }
 
+  /// Returns the size needed to stack the subviews along the stack's axis within the proposal.
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
     let proposal = proposal.replacingUnspecifiedDimensions()
 
@@ -203,10 +212,12 @@ public extension StackLayout {
     return size
   }
 
+  /// Returns the union of the spacing preferences of all subviews.
   func spacing(subviews: Subviews, cache: inout Cache) -> ViewSpacing {
     subviews.reduce(into: .zero) { $0.formUnion($1.spacing) }
   }
 
+  /// Places the subviews in sequence along the stack's axis, aligned on the cross axis.
   func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -257,12 +268,16 @@ public extension StackLayout {
 
 @_spi(TokamakCore)
 extension VStack: StackLayout {
+  /// A vertical stack lays its subviews out along the vertical axis.
   public static var orientation: Axis { .vertical }
+  /// The stack's alignment, applying its horizontal alignment with a centered vertical guide.
   public var _alignment: Alignment { .init(horizontal: alignment, vertical: .center) }
 }
 
 @_spi(TokamakCore)
 extension HStack: StackLayout {
+  /// A horizontal stack lays its subviews out along the horizontal axis.
   public static var orientation: Axis { .horizontal }
+  /// The stack's alignment, applying its vertical alignment with a centered horizontal guide.
   public var _alignment: Alignment { .init(horizontal: .center, vertical: alignment) }
 }

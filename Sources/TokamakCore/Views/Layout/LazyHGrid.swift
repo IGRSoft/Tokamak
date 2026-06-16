@@ -17,14 +17,26 @@
 
 import Foundation
 
+/// A container view that arranges its child views in a grid that grows
+/// horizontally, creating items only as needed.
 public struct LazyHGrid<Content>: _PrimitiveView where Content: View {
   let rows: [GridItem]
   let alignment: VerticalAlignment
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let spacing: CGFloat?
   let pinnedViews: PinnedScrollableViews
   let content: Content
 
+  /// Creates a grid that grows horizontally, given the provided properties.
+  /// - Parameters:
+  ///   - rows: An array of grid items that size and position each row of the
+  ///     grid.
+  ///   - alignment: The alignment of the grid within its parent view.
+  ///   - spacing: The distance between each column, or `nil` to use a default
+  ///     distance.
+  ///   - pinnedViews: The kinds of child views that stay pinned during scrolling.
+  ///   - content: A view builder that produces the grid's content.
   public init(
     rows: [GridItem],
     alignment: VerticalAlignment = .center,
@@ -40,12 +52,19 @@ public struct LazyHGrid<Content>: _PrimitiveView where Content: View {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _LazyHGridProxy<Content> where Content: View {
+  /// The wrapped `LazyHGrid` whose resolved layout values this proxy exposes.
   public let subject: LazyHGrid<Content>
 
+  /// Wraps the given `LazyHGrid` in a proxy that exposes its resolved values.
+  /// - Parameter subject: The `LazyHGrid` to wrap.
   public init(_ subject: LazyHGrid<Content>) { self.subject = subject }
 
+  /// The grid items that size and position each row of the grid.
   public var rows: [GridItem] { subject.rows }
+  /// The grid's child content.
   public var content: Content { subject.content }
+  /// The spacing between columns, resolving `nil` to the default distance.
   public var spacing: CGFloat { subject.spacing ?? 8 }
 }

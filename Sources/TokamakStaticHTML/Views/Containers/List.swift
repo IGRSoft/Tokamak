@@ -15,6 +15,9 @@
 @_spi(TokamakCore) import TokamakCore
 
 extension PlainListStyle: ListStyleDeferredToRenderer {
+  /// Wraps a section header in the plain list style's typography, padding, and background.
+  /// - Parameter header: The section header view.
+  /// - Returns: The styled header as a type-erased view.
   public func sectionHeader<Header>(_ header: Header) -> AnyView where Header: View {
     AnyView(
       header
@@ -26,6 +29,9 @@ extension PlainListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section footer in the plain list style, with a leading divider.
+  /// - Parameter footer: The section footer view.
+  /// - Returns: The styled footer as a type-erased view.
   public func sectionFooter<Footer>(_ footer: Footer) -> AnyView where Footer: View {
     AnyView(
       VStack(alignment: .leading) {
@@ -37,16 +43,25 @@ extension PlainListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section body in the plain list style's leading padding and full-width frame.
+  /// - Parameter section: The section body view.
+  /// - Returns: The styled section body as a type-erased view.
   public func sectionBody<SectionBody>(_ section: SectionBody) -> AnyView where SectionBody: View {
     AnyView(section.padding(.leading).frame(minWidth: 0, maxWidth: .infinity))
   }
 
+  /// Wraps a list row in the plain list style's vertical padding.
+  /// - Parameter row: The list row view.
+  /// - Returns: The styled row as a type-erased view.
   public func listRow<Row>(_ row: Row) -> AnyView where Row: View {
     AnyView(row.padding(.vertical))
   }
 }
 
 extension InsetListStyle: ListStyleDeferredToRenderer {
+  /// Wraps a section header in the inset list style's typography, inset padding, and background.
+  /// - Parameter header: The section header view.
+  /// - Returns: The styled header as a type-erased view.
   public func sectionHeader<Header>(_ header: Header) -> AnyView where Header: View {
     AnyView(
       header
@@ -58,6 +73,9 @@ extension InsetListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section footer in the inset list style, with a leading divider and inset padding.
+  /// - Parameter footer: The section footer view.
+  /// - Returns: The styled footer as a type-erased view.
   public func sectionFooter<Footer>(_ footer: Footer) -> AnyView where Footer: View {
     AnyView(
       VStack(alignment: .leading) {
@@ -69,6 +87,9 @@ extension InsetListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section body in the inset list style's inset padding and full-width frame.
+  /// - Parameter section: The section body view.
+  /// - Returns: The styled section body as a type-erased view.
   public func sectionBody<SectionBody>(_ section: SectionBody) -> AnyView where SectionBody: View {
     AnyView(
       section
@@ -77,12 +98,18 @@ extension InsetListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a list row in the inset list style's vertical padding.
+  /// - Parameter row: The list row view.
+  /// - Returns: The styled row as a type-erased view.
   public func listRow<Row>(_ row: Row) -> AnyView where Row: View {
     AnyView(row.padding(.vertical))
   }
 }
 
 extension GroupedListStyle: ListStyleDeferredToRenderer {
+  /// Wraps the whole list body in the grouped list style's background color.
+  /// - Parameter content: The list body view.
+  /// - Returns: The styled list body as a type-erased view.
   public func listBody<ListBody>(_ content: ListBody) -> AnyView where ListBody: View {
     AnyView(
       content
@@ -90,6 +117,9 @@ extension GroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section header in the grouped list style's caption typography and padding.
+  /// - Parameter header: The section header view.
+  /// - Returns: The styled header as a type-erased view.
   public func sectionHeader<Header>(_ header: Header) -> AnyView where Header: View {
     AnyView(
       header
@@ -99,6 +129,9 @@ extension GroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section body in the grouped list style's group background and padding.
+  /// - Parameter section: The section body view.
+  /// - Returns: The styled section body as a type-erased view.
   public func sectionBody<SectionBody>(_ section: SectionBody) -> AnyView where SectionBody: View {
     AnyView(
       section
@@ -109,6 +142,9 @@ extension GroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section footer in the grouped list style's caption typography and padding.
+  /// - Parameter footer: The section footer view.
+  /// - Returns: The styled footer as a type-erased view.
   public func sectionFooter<Footer>(_ footer: Footer) -> AnyView where Footer: View {
     AnyView(
       footer
@@ -117,16 +153,25 @@ extension GroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a list row in the grouped list style's vertical padding.
+  /// - Parameter row: The list row view.
+  /// - Returns: The styled row as a type-erased view.
   public func listRow<Row>(_ row: Row) -> AnyView where Row: View {
     AnyView(row.padding(.vertical))
   }
 }
 
 extension InsetGroupedListStyle: ListStyleDeferredToRenderer {
+  /// Wraps the whole list body in the inset grouped list style's background color.
+  /// - Parameter content: The list body view.
+  /// - Returns: The styled list body as a type-erased view.
   public func listBody<ListBody>(_ content: ListBody) -> AnyView where ListBody: View {
     AnyView(content.background(Color.groupedListBackground))
   }
 
+  /// Wraps a section header in the inset grouped list style's caption typography and padding.
+  /// - Parameter header: The section header view.
+  /// - Returns: The styled header as a type-erased view.
   public func sectionHeader<Header>(_ header: Header) -> AnyView where Header: View {
     AnyView(
       header
@@ -137,6 +182,9 @@ extension InsetGroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section body in the inset grouped list style's rounded group background and padding.
+  /// - Parameter section: The section body view.
+  /// - Returns: The styled section body as a type-erased view.
   public func sectionBody<SectionBody>(_ section: SectionBody) -> AnyView where SectionBody: View {
     AnyView(
       section
@@ -148,6 +196,9 @@ extension InsetGroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a section footer in the inset grouped list style's caption typography and padding.
+  /// - Parameter footer: The section footer view.
+  /// - Returns: The styled footer as a type-erased view.
   public func sectionFooter<Footer>(_ footer: Footer) -> AnyView where Footer: View {
     AnyView(
       footer
@@ -157,6 +208,9 @@ extension InsetGroupedListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a list row in the inset grouped list style's vertical padding.
+  /// - Parameter row: The list row view.
+  /// - Returns: The styled row as a type-erased view.
   public func listRow<Row>(_ row: Row) -> AnyView where Row: View {
     AnyView(row.padding(.vertical))
   }
@@ -164,6 +218,9 @@ extension InsetGroupedListStyle: ListStyleDeferredToRenderer {
 
 // TODO: Make sections collapsible (see Section.swift for more impl. details)
 extension SidebarListStyle: ListStyleDeferredToRenderer {
+  /// Wraps a section header in the sidebar list style's small, scheme-aware caption typography.
+  /// - Parameter header: The section header view.
+  /// - Returns: The styled header as a type-erased view.
   public func sectionHeader<Header>(_ header: Header) -> AnyView where Header: View {
     AnyView(
       header
@@ -179,10 +236,16 @@ extension SidebarListStyle: ListStyleDeferredToRenderer {
     )
   }
 
+  /// Wraps a list row in the sidebar list style's leading-aligned full-width frame.
+  /// - Parameter row: The list row view.
+  /// - Returns: The styled row as a type-erased view.
   public func listRow<Row>(_ row: Row) -> AnyView where Row: View {
     AnyView(row.frame(maxWidth: .infinity, alignment: .leading))
   }
 
+  /// Wraps the whole list body in the sidebar list style's navigation-link style and background.
+  /// - Parameter content: The list body view.
+  /// - Returns: The styled list body as a type-erased view.
   public func listBody<ListBody>(_ content: ListBody) -> AnyView where ListBody: View {
     AnyView(
       content
@@ -193,7 +256,11 @@ extension SidebarListStyle: ListStyleDeferredToRenderer {
   }
 }
 
+/// Implementation detail: the navigation-link style used by `SidebarListStyle` rows.
 public struct _SidebarNavigationLinkStyle: _NavigationLinkStyle {
+  /// Implementation detail: styles a navigation link, highlighting the selected row.
+  /// - Parameter configuration: The navigation link's style configuration.
+  /// - Returns: The styled navigation link body.
   @ViewBuilder
   public func makeBody(configuration: _NavigationLinkStyleConfiguration) -> some View {
     if configuration.isSelected {

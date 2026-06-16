@@ -14,20 +14,39 @@
 //
 //  Created by Gene Z. Ragan on 07/22/2020.
 
+/// A type that applies standard interaction behavior and a custom appearance to
+/// all buttons within a view hierarchy.
+///
+/// To configure the current button style for a view hierarchy, use the
+/// `buttonStyle(_:)` modifier. Specify a style that conforms to
+/// `ButtonStyle` when creating a button that uses the standard button
+/// interaction behavior defined for each platform.
 public protocol ButtonStyle {
+  /// A view that represents the body of a button.
   associatedtype Body: View
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   @ViewBuilder
   func makeBody(configuration: Self.Configuration) -> Self.Body
+  /// The properties of a button.
   typealias Configuration = ButtonStyleConfiguration
 }
 
+/// The properties of a button.
 public struct ButtonStyleConfiguration {
+  /// A type-erased label of a button.
   public struct Label: View {
+    /// The content and behavior of the label.
     public let body: AnyView
   }
 
+  /// An optional semantic role that describes the button's purpose.
   public let role: ButtonRole?
+  /// A view that describes the effect of pressing the button.
   public let label: ButtonStyleConfiguration.Label
+  /// A Boolean that indicates whether the user is currently pressing the button.
   public let isPressed: Bool
 }
 

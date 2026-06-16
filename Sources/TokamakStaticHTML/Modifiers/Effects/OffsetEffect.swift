@@ -17,7 +17,10 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `offset(_:)` as a CSS `transform: translate()` declaration.
 extension _OffsetEffect: DOMViewModifier {
+  /// Implementation detail: emits the `transform: translate()` style from the
+  /// offset's width and height.
   public var attributes: [HTMLAttribute: String] {
     ["style": "transform: translate(\(offset.width)px, \(offset.height)px);"]
   }

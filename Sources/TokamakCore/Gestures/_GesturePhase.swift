@@ -17,6 +17,7 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _GesturePhase {
   /// The gesture phase when it begins.
   case began(_GesturePhaseContext)
@@ -31,6 +32,7 @@ public enum _GesturePhase {
   case cancelled
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _GesturePhaseContext {
   /// The  event id in which phase has originated form.
   let eventId: String?
@@ -44,6 +46,13 @@ public struct _GesturePhaseContext {
   /// targets every view.
   let ownerIds: [String]?
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
+  /// - Parameters:
+  ///   - eventId: The event id from which the phase originated.
+  ///   - boundsOrigin: The origin point of the target element in global coordinates.
+  ///   - location: The current location of the gesture in global coordinates.
+  ///   - ownerIds: Gesture-view ids whose elements contain the hit target, ordered innermost to
+  ///     outermost.
   public init(
     eventId: String? = nil,
     boundsOrigin: CGPoint? = nil,

@@ -18,18 +18,22 @@
 @_spi(TokamakCore) import TokamakCore
 
 extension WindowGroup: SceneDeferredToRenderer {
+  /// The scene's content rendered as the deferred body for SSR.
   public var deferredBody: AnyView {
     AnyView(content)
   }
 }
 
 extension _WindowGroupTitle: HTMLConvertible {
+  /// Renders the window title as a zero-size `div` placeholder.
   public var tag: String { "div" }
+  /// Positions the title element off-layout with zero width and height.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return ["style": "position: absolute; width: 0; height: 0; top: 0; left: 0;"]
   }
 
+  /// Emits an `HTMLTitle` child so the title flows into the document `<head>`.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     {
       if let title = self.title {

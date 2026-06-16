@@ -18,9 +18,13 @@
 /// A reference type that points to a `Renderer`-specific element that has been mounted.
 /// For instance, a DOM node in the `DOMFiberRenderer`.
 public protocol FiberElement: AnyObject {
+  /// The data that describes the rendered state of this element.
   associatedtype Content: FiberElementContent
+  /// The data describing the element's current rendered state.
   var content: Content { get }
+  /// Creates a new element from the given content.
   init(from content: Content)
+  /// Updates the element in place to reflect the given content.
   func update(with content: Content)
 }
 
@@ -29,5 +33,9 @@ public protocol FiberElement: AnyObject {
 /// We re-use `FiberElement` instances in the `Fiber` tree,
 /// but can re-create and copy `FiberElementContent` as often as needed.
 public protocol FiberElementContent: Equatable {
+  /// Creates content describing a primitive `View` for the given layout configuration.
+  ///
+  /// - Parameter primitiveView: The primitive view to derive the content from.
+  /// - Parameter useDynamicLayout: Whether the renderer performs its own layout pass.
   init<V: View>(from primitiveView: V, useDynamicLayout: Bool)
 }

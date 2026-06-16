@@ -17,15 +17,23 @@
 
 import Foundation
 
+/// A type with values that support multiplication by a scalar and a magnitude.
+///
+/// Conforming a type to `VectorArithmetic` lets the animation system interpolate it over time. The
+/// standard floating-point types and ``AnimatablePair`` already conform.
 public protocol VectorArithmetic: AdditiveArithmetic {
+  /// Multiplies each component of this value by the given amount.
   mutating func scale(by rhs: Double)
+  /// The dot-product of this vector arithmetic instance with itself.
   var magnitudeSquared: Double { get }
 }
 
 extension Float: VectorArithmetic {
+  /// Multiplies this value by the given amount.
   @_transparent
   public mutating func scale(by rhs: Double) { self *= Float(rhs) }
 
+  /// The square of this value.
   @_transparent
   public var magnitudeSquared: Double {
     @_transparent get { Double(self * self) }
@@ -33,9 +41,11 @@ extension Float: VectorArithmetic {
 }
 
 extension Double: VectorArithmetic {
+  /// Multiplies this value by the given amount.
   @_transparent
   public mutating func scale(by rhs: Double) { self *= rhs }
 
+  /// The square of this value.
   @_transparent
   public var magnitudeSquared: Double {
     @_transparent get { self * self }
@@ -43,9 +53,11 @@ extension Double: VectorArithmetic {
 }
 
 extension CGFloat: VectorArithmetic {
+  /// Multiplies this value by the given amount.
   @_transparent
   public mutating func scale(by rhs: Double) { self *= CGFloat(rhs) }
 
+  /// The square of this value.
   @_transparent
   public var magnitudeSquared: Double {
     @_transparent get { Double(self * self) }

@@ -94,14 +94,17 @@ public protocol FiberRenderer {
 }
 
 public extension FiberRenderer {
+  /// The default environment, an empty set of values.
   var defaultEnvironment: EnvironmentValues { .init() }
 
+  /// Returns no custom child visitor by default, deferring to the view's own `_visitChildren`.
   func visitPrimitiveChildren<Primitive, Visitor>(
     _ view: Primitive
   ) -> ViewVisitorF<Visitor>? where Primitive: View, Visitor: ViewVisitor {
     nil
   }
 
+  /// Returns the visitor function used to traverse the children of `view`.
   func viewVisitor<V: View, Visitor: ViewVisitor>(for view: V) -> ViewVisitorF<Visitor> {
     if Self.isPrimitive(view) {
       return visitPrimitiveChildren(view) ?? view._visitChildren
@@ -110,14 +113,17 @@ public extension FiberRenderer {
     }
   }
 
+  /// Ignores preference changes by default.
   func preferencesChanged(_ preferenceStore: _PreferenceStore) {}
 
+  /// Renders the given `View` and returns the reconciler driving its updates.
   @discardableResult
   @_disfavoredOverload
   func render<V: View>(_ view: V) -> FiberReconciler<Self> {
     .init(self, view)
   }
 
+  /// Renders the given `App` and returns the reconciler driving its updates.
   @discardableResult
   @_disfavoredOverload
   func render<A: App>(_ app: A) -> FiberReconciler<Self> {
@@ -132,6 +138,7 @@ extension EnvironmentValues {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var measureText: (Text, ProposedViewSize, EnvironmentValues) -> CGSize {
     get { self[MeasureTextKey.self] }

@@ -16,6 +16,8 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a Sign in with Apple button as a styled DOM `<button>` (black pill,
+/// white text) whose click handler invokes the no-op web tap action.
 extension _SignInWithAppleButtonContainer: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _SignInWithAppleButtonProxy(self)

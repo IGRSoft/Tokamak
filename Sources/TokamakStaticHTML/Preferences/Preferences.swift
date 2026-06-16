@@ -17,19 +17,25 @@
 
 import TokamakCore
 
+/// A `PreferenceKey` that propagates the document `<title>` up the view tree.
 public struct HTMLTitlePreferenceKey: PreferenceKey {
   // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+  /// The default title, an empty string.
   nonisolated(unsafe) public static var defaultValue: String = ""
 
+  /// Reduces nested titles by taking the most recently provided value.
   public static func reduce(value: inout String, nextValue: () -> String) {
     value = nextValue()
   }
 }
 
+/// A `PreferenceKey` that collects `<meta>` tags from the view tree for the document head.
 public struct HTMLMetaPreferenceKey: PreferenceKey {
   // Single-threaded (Wasm/DOM) runtime: no concurrent access to this mutable global.
+  /// The default value, an empty array of meta tags.
   nonisolated(unsafe) public static var defaultValue: [HTMLMeta.MetaTag] = []
 
+  /// Reduces nested meta tags by appending each provided value.
   public static func reduce(
     value: inout [HTMLMeta.MetaTag],
     nextValue: () -> [HTMLMeta.MetaTag]

@@ -16,7 +16,10 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a `GroupBox` as a DOM `<fieldset>` whose `<legend>` holds the label
+/// and whose body holds the content.
 extension GroupBox: DOMPrimitive {
+  /// The DOM element tree rendered for this group box.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _GroupBoxProxy(self)

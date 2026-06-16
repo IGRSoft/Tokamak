@@ -15,45 +15,82 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
+/// A type that applies a custom appearance and custom interaction behavior to
+/// all buttons within a view hierarchy.
+///
+/// To configure the current button style for a view hierarchy, use the
+/// `buttonStyle(_:)` modifier. Specify a style that conforms to
+/// `PrimitiveButtonStyle` to create a button with custom interaction behavior.
 public protocol PrimitiveButtonStyle {
+  /// A view that represents the body of a button.
   associatedtype Body: View
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   @ViewBuilder
   func makeBody(configuration: Self.Configuration) -> Self.Body
+  /// The properties of a button.
   typealias Configuration = PrimitiveButtonStyleConfiguration
 }
 
+/// The properties of a button.
 public struct PrimitiveButtonStyleConfiguration {
+  /// A type-erased label of a button.
   public struct Label: View {
+    /// The content and behavior of the label.
     public let body: AnyView
   }
 
+  /// An optional semantic role that describes the button's purpose.
   public let role: ButtonRole?
+  /// A view that describes the effect of triggering the button.
   public let label: PrimitiveButtonStyleConfiguration.Label
 
   let action: () -> ()
+  /// Performs the button's action.
   public func trigger() { action() }
 }
 
+/// The default button style, based on the button's context.
 public struct DefaultButtonStyle: PrimitiveButtonStyle {
+  /// Creates a default button style.
   public init() {}
 
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   public func makeBody(configuration: Configuration) -> some View {
     BorderedButtonStyle().makeBody(configuration: configuration)
   }
 }
 
+/// A button style that doesn't apply a border.
 public struct PlainButtonStyle: ButtonStyle {
+  /// Creates a plain button style.
   public init() {}
 
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   public func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .foregroundColor(configuration.isPressed ? .secondary : .primary)
   }
 }
 
+/// A button style that applies standard border artwork based on the button's
+/// context.
 public struct BorderedButtonStyle: PrimitiveButtonStyle {
+  /// Creates a bordered button style.
   public init() {}
 
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   public func makeBody(configuration: Configuration) -> some View {
     _PrimitiveButtonStyleBody(style: self, configuration: configuration) {
       configuration.label
@@ -61,9 +98,16 @@ public struct BorderedButtonStyle: PrimitiveButtonStyle {
   }
 }
 
+/// A button style that applies standard border artwork based on the button's
+/// context, with a prominent accent-colored background.
 public struct BorderedProminentButtonStyle: PrimitiveButtonStyle {
+  /// Creates a bordered prominent button style.
   public init() {}
 
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   public func makeBody(configuration: Configuration) -> some View {
     _PrimitiveButtonStyleBody(style: self, configuration: configuration) {
       configuration.label
@@ -71,18 +115,30 @@ public struct BorderedProminentButtonStyle: PrimitiveButtonStyle {
   }
 }
 
+/// A button style that doesn't apply a border.
 public struct BorderlessButtonStyle: ButtonStyle {
+  /// Creates a borderless button style.
   public init() {}
 
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   public func makeBody(configuration: Configuration) -> some View {
     configuration.label
       .foregroundColor(configuration.isPressed ? .primary : .secondary)
   }
 }
 
+/// A button style that applies the appearance of a link.
 public struct LinkButtonStyle: ButtonStyle {
+  /// Creates a link button style.
   public init() {}
 
+  /// Creates a view that represents the body of a button.
+  ///
+  /// - Parameter configuration: The properties of the button.
+  /// - Returns: A view that describes the appearance and interaction of the button.
   public func makeBody(configuration: Configuration) -> some View {
     configuration.label.body
       .foregroundColor(
@@ -132,12 +188,22 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the style for buttons within this view to a button style with a
+  /// custom appearance and custom interaction behavior.
+  ///
+  /// - Parameter style: The primitive button style to apply.
+  /// - Returns: A view that uses the specified button style.
   func buttonStyle<S>(
     _ style: S
   ) -> some View where S: PrimitiveButtonStyle {
     environment(\.buttonStyle, .primitiveButtonStyle(.init(style)))
   }
 
+  /// Sets the style for buttons within this view to a button style with a
+  /// custom appearance and standard interaction behavior.
+  ///
+  /// - Parameter style: The button style to apply.
+  /// - Returns: A view that uses the specified button style.
   func buttonStyle<S>(_ style: S) -> some View where S: ButtonStyle {
     environment(\.buttonStyle, .buttonStyle(.init(style)))
   }

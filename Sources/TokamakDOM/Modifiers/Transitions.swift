@@ -20,6 +20,7 @@ import TokamakCore
 import TokamakStaticHTML
 
 extension _MoveTransition: DOMViewModifier {
+  /// Produces a CSS `transform: translate(...)` style implementing the move transition.
   public var attributes: [HTMLAttribute: String] {
     let offset: (String, String)
     switch edge {

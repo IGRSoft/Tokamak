@@ -35,16 +35,22 @@
 public struct SignInWithAppleButton: View {
   let onTap: () -> Void
 
+  /// Creates a "Sign in with Apple" button.
+  ///
+  /// - Parameter onTap: A closure invoked when the button is activated. The authorization
+  ///   flow itself is a documented no-op on web and GTK4.
   public init(onTap: @escaping () -> Void = {}) {
     self.onTap = onTap
   }
 
+  /// The content and behavior of the button.
   @_spi(TokamakCore)
   public var body: some View {
     _SignInWithAppleButtonContainer(onTap: onTap)
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _SignInWithAppleButtonContainer: _PrimitiveView {
   let onTap: () -> Void
 
@@ -53,16 +59,23 @@ public struct _SignInWithAppleButtonContainer: _PrimitiveView {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _SignInWithAppleButtonProxy {
+  /// The button container this proxy reads from and activates.
   public var subject: _SignInWithAppleButtonContainer
 
+  /// Creates a proxy that exposes the internals of the given button container.
+  ///
+  /// - Parameter subject: The button container to wrap.
   public init(_ subject: _SignInWithAppleButtonContainer) { self.subject = subject }
 
+  /// The closure invoked when the button is activated.
   public var onTap: () -> Void { subject.onTap }
 
   /// The button's standard title.
   public var title: String { "Sign in with Apple" }
 
+  /// Activates the button, invoking its tap handler.
   public func activate() {
     subject.onTap()
   }

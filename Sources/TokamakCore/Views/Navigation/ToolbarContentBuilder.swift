@@ -15,8 +15,10 @@
 //  Created by Carson Katri on 7/7/20.
 //
 
+/// A result builder that creates toolbar content from closures you provide.
 @resultBuilder
 public enum ToolbarContentBuilder<ID> {
+  /// Builds a toolbar item group from a single toolbar item.
   public static func buildBlock<V>(_ content: ToolbarItem<ID, V>)
     -> ToolbarItemGroup<ID, ToolbarItem<ID, V>> where V: View
   {
@@ -29,6 +31,7 @@ public enum ToolbarContentBuilder<ID> {
 // swiftlint:disable function_parameter_count
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from two toolbar items.
   static func buildBlock<C0, C1>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>
@@ -43,6 +46,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from three toolbar items.
   static func buildBlock<C0, C1, C2>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -56,6 +60,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from four toolbar items.
   static func buildBlock<C0, C1, C2, C3>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -73,6 +78,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from five toolbar items.
   static func buildBlock<C0, C1, C2, C3, C4>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -91,6 +97,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from six toolbar items.
   static func buildBlock<C0, C1, C2, C3, C4, C5>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -111,6 +118,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from seven toolbar items.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -133,6 +141,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from eight toolbar items.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -157,6 +166,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from nine toolbar items.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7, C8>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -185,6 +195,7 @@ public extension ToolbarContentBuilder {
 }
 
 public extension ToolbarContentBuilder {
+  /// Builds a toolbar item group from ten toolbar items.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(
     _ c0: ToolbarItem<ID, C0>,
     _ c1: ToolbarItem<ID, C1>,
@@ -215,6 +226,7 @@ public extension ToolbarContentBuilder {
 }
 
 extension ToolbarItemGroup: View {
+  /// The content and behavior of the toolbar item group.
   public var body: some View {
     let items = _items.sorted { a, b in
       if let a = a.view as? AnyToolbarItem,
@@ -232,6 +244,11 @@ extension ToolbarItemGroup: View {
     }
   }
 
+  /// Creates a toolbar item group from a typed value and its type-erased children.
+  ///
+  /// - Parameters:
+  ///   - value: The structured representation of the toolbar items.
+  ///   - children: The type-erased toolbar item views.
   public init(_ value: Items, children: [AnyView]) {
     items = value
     _items = children

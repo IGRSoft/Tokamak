@@ -15,17 +15,26 @@
 //  Created by Szymon on 16/7/2023.
 //
 
+/// A gesture containing two gestures that can happen at the same time with neither gesture
+/// preceding the other.
+///
+/// Create a simultaneous gesture with the ``Gesture/simultaneously(with:)`` modifier.
 @frozen
 public struct SimultaneousGesture<First, Second>: Gesture
   where First: Gesture, Second: Gesture
 {
+  /// The value of a simultaneous gesture that indicates which of its gestures receive events.
   public typealias Value = SimultaneousGesture.SimultaneousValue
 
+  /// The value of a simultaneous gesture that indicates which of its gestures receive events.
   public struct SimultaneousValue {
+    /// The value of the first gesture, or `nil` if it hasn't received a value.
     public let first: First.Value?
+    /// The value of the second gesture, or `nil` if it hasn't received a value.
     public let second: First.Value?
   }
 
+  /// The content and behavior of the gesture.
   public var body: SimultaneousGesture<First, Second> { self }
 
   /// The first of two gestures that can happen simultaneously.
@@ -40,7 +49,10 @@ public struct SimultaneousGesture<First, Second>: Gesture
     self.second = second
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool { false }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self { self }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self { self }
 }

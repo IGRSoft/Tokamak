@@ -21,20 +21,30 @@ import OpenCombineShim
 import TokamakCore
 
 extension App {
+  /// Implementation detail: boots the GTK renderer for `app` to launch the application.
+  ///
+  /// - Parameters:
+  ///   - app: The root app value to render.
+  ///   - configuration: The launch configuration carrying the root environment.
   public static func _launch(_ app: Self, with configuration: _AppConfiguration) {
     _ = Unmanaged.passRetained(GTKRenderer(app, configuration.rootEnvironment))
   }
 
+  /// Implementation detail: sets the title of the shared GTK application window.
+  ///
+  /// - Parameter title: The new window title.
   public static func _setTitle(_ title: String) {
     GTKRenderer.sharedWindow.withMemoryRebound(to: GtkWindow.self, capacity: 1) {
       gtk_window_set_title($0, title)
     }
   }
 
+  /// Implementation detail: publishes the app's `ScenePhase`, always `.active` under GTK.
   public var _phasePublisher: AnyPublisher<ScenePhase, Never> {
     CurrentValueSubject(.active).eraseToAnyPublisher()
   }
 
+  /// Implementation detail: publishes the app's `ColorScheme`, always `.light` under GTK.
   public var _colorSchemePublisher: AnyPublisher<ColorScheme, Never> {
     CurrentValueSubject(.light).eraseToAnyPublisher()
   }

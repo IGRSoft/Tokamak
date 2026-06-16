@@ -18,34 +18,63 @@
 import Foundation
 
 public extension GraphicsContext {
+  /// The ways that a graphics context combines new content with the background.
   enum BlendMode: Int32, Equatable {
+    /// Paints the source over the background.
     case normal
+    /// Multiplies the source and background colors.
     case multiply
+    /// Multiplies the inverse of the source and background colors.
     case screen
+    /// Multiplies or screens the colors, depending on the background.
     case overlay
+    /// Selects the darker of the source and background colors.
     case darken
+    /// Selects the lighter of the source and background colors.
     case lighten
+    /// Brightens the background to reflect the source color.
     case colorDodge
+    /// Darkens the background to reflect the source color.
     case colorBurn
+    /// Lightens or darkens the colors, depending on the source.
     case softLight
+    /// Multiplies or screens the colors, depending on the source.
     case hardLight
+    /// Subtracts the darker color from the lighter of the two.
     case difference
+    /// Produces an effect similar to ``difference`` but with lower contrast.
     case exclusion
+    /// Uses the hue of the source with the saturation and luminosity of the background.
     case hue
+    /// Uses the saturation of the source with the hue and luminosity of the background.
     case saturation
+    /// Uses the hue and saturation of the source with the luminosity of the background.
     case color
+    /// Uses the luminosity of the source with the hue and saturation of the background.
     case luminosity
+    /// Clears the destination, regardless of the source.
     case clear
+    /// Copies the source over the destination, ignoring the background.
     case copy
+    /// Keeps the source where it overlaps the destination.
     case sourceIn
+    /// Keeps the source where it does not overlap the destination.
     case sourceOut
+    /// Paints the source atop the destination, preserving the destination's alpha.
     case sourceAtop
+    /// Paints the destination over the source.
     case destinationOver
+    /// Keeps the destination where it overlaps the source.
     case destinationIn
+    /// Keeps the destination where it does not overlap the source.
     case destinationOut
+    /// Paints the destination atop the source, preserving the source's alpha.
     case destinationAtop
+    /// Keeps the source and destination where they do not overlap.
     case xor
+    /// Sums the inverse of the source and background colors, producing a darker result.
     case plusDarker
+    /// Sums the source and background colors, producing a lighter result.
     case plusLighter
   }
 }

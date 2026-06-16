@@ -18,6 +18,7 @@
 import Foundation
 
 public extension Scene {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   // By default, we simply pass the inputs through without modifications.
   static func _makeScene(_ inputs: SceneInputs<Self>) -> SceneOutputs {
     .init(inputs: inputs)

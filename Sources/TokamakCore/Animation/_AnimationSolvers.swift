@@ -18,19 +18,32 @@
 import Foundation
 
 /// A solver for an animation with a duration that depends on its properties.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public protocol _AnimationSolver {
   /// Solve value at a specific point in time.
+  ///
+  /// - Parameter t: The point in time at which to evaluate the animation.
+  /// - Returns: The solved value at time `t`.
   func solve(at t: Double) -> Double
   /// Calculates the duration of the animation to a specific precision.
+  ///
+  /// - Parameter y: The precision at which to determine the resting point.
+  /// - Returns: The time at which the animation settles within the given precision.
   func restingPoint(precision y: Double) -> Double
 }
 
+/// A namespace of built-in ``_AnimationSolver`` implementations.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _AnimationSolvers {
   // swiftlint:disable line_length
   /// Calculates the animation of a spring with certain properties.
   ///
   /// For some useful information, see
   /// [Demystifying UIKit Spring Animations](https://medium.com/ios-os-x-development/demystifying-uikit-spring-animations-2bb868446773)
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public struct Spring: _AnimationSolver {
     // swiftlint:enable line_length
     let ƛ: Double
@@ -41,6 +54,13 @@ public enum _AnimationSolvers {
     /// Target value
     let s0: Double = 1
 
+    /// Creates a spring solver with the given physical characteristics.
+    ///
+    /// - Parameters:
+    ///   - mass: The mass of the object attached to the spring.
+    ///   - stiffness: The stiffness of the spring.
+    ///   - damping: The spring's damping coefficient.
+    ///   - initialVelocity: The initial velocity of the spring.
     public init(mass: Double, stiffness: Double, damping: Double, initialVelocity: Double) {
       ƛ = (damping * 0.755) / (mass * 2)
       w0 = sqrt(stiffness / 2)
@@ -48,6 +68,10 @@ public enum _AnimationSolvers {
       v0 = initialVelocity
     }
 
+    /// Solves the spring's value at the given point in time.
+    ///
+    /// - Parameter t: The point in time at which to evaluate the spring.
+    /// - Returns: The solved spring value at time `t`.
     public func solve(at t: Double) -> Double {
       let y: Double
       if ƛ < w0 {
@@ -59,6 +83,10 @@ public enum _AnimationSolvers {
       return 1 - y
     }
 
+    /// Calculates the time at which the spring settles to the given precision.
+    ///
+    /// - Parameter y: The precision at which to determine the resting point.
+    /// - Returns: The time at which the spring settles within the given precision.
     public func restingPoint(precision y: Double) -> Double {
       log(y) / -ƛ
     }

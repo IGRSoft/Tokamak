@@ -17,6 +17,15 @@
 
 import Foundation
 
+/// A radial gradient that draws an ellipse.
+///
+/// The gradient maps its color stops to the ellipse's radii, where 0 is the
+/// center and 1 fills the bounding rectangle. When used as a ``ShapeStyle``, it
+/// fills the shape; when used as a ``View``, it fills the entire view.
+///
+/// ```swift
+/// EllipticalGradient(colors: [.blue, .clear])
+/// ```
 @frozen
 public struct EllipticalGradient: ShapeStyle, View {
   internal var gradient: Gradient
@@ -24,6 +33,13 @@ public struct EllipticalGradient: ShapeStyle, View {
   internal var startRadiusFraction: CGFloat
   internal var endRadiusFraction: CGFloat
 
+  /// Creates an elliptical gradient from a gradient.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadiusFraction: The fraction of the bounding rectangle at which the gradient begins.
+  ///   - endRadiusFraction: The fraction of the bounding rectangle at which the gradient ends.
   public init(
     gradient: Gradient,
     center: UnitPoint = .center,
@@ -36,6 +52,13 @@ public struct EllipticalGradient: ShapeStyle, View {
     self.endRadiusFraction = endRadiusFraction
   }
 
+  /// Creates an elliptical gradient from colors.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadiusFraction: The fraction of the bounding rectangle at which the gradient begins.
+  ///   - endRadiusFraction: The fraction of the bounding rectangle at which the gradient ends.
   public init(
     colors: [Color],
     center: UnitPoint = .center,
@@ -50,6 +73,13 @@ public struct EllipticalGradient: ShapeStyle, View {
     )
   }
 
+  /// Creates an elliptical gradient from color stops.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadiusFraction: The fraction of the bounding rectangle at which the gradient begins.
+  ///   - endRadiusFraction: The fraction of the bounding rectangle at which the gradient ends.
   public init(
     stops: [Gradient.Stop],
     center: UnitPoint = .center,
@@ -64,8 +94,10 @@ public struct EllipticalGradient: ShapeStyle, View {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public typealias Body = _ShapeView<Rectangle, Self>
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     shape.result = .resolved(
       .gradient(
@@ -79,10 +111,18 @@ public struct EllipticalGradient: ShapeStyle, View {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to type: inout _ShapeStyle_ShapeType) {}
 }
 
 public extension ShapeStyle where Self == EllipticalGradient {
+  /// Returns an elliptical gradient style from a gradient.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadiusFraction: The fraction of the bounding rectangle at which the gradient begins.
+  ///   - endRadiusFraction: The fraction of the bounding rectangle at which the gradient ends.
   static func ellipticalGradient(
     _ gradient: Gradient,
     center: UnitPoint = .center,
@@ -96,6 +136,13 @@ public extension ShapeStyle where Self == EllipticalGradient {
     )
   }
 
+  /// Returns an elliptical gradient style from colors.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadiusFraction: The fraction of the bounding rectangle at which the gradient begins.
+  ///   - endRadiusFraction: The fraction of the bounding rectangle at which the gradient ends.
   static func ellipticalGradient(
     colors: [Color],
     center: UnitPoint = .center,
@@ -109,6 +156,13 @@ public extension ShapeStyle where Self == EllipticalGradient {
     )
   }
 
+  /// Returns an elliptical gradient style from color stops.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - startRadiusFraction: The fraction of the bounding rectangle at which the gradient begins.
+  ///   - endRadiusFraction: The fraction of the bounding rectangle at which the gradient ends.
   static func ellipticalGradient(
     stops: [Gradient.Stop],
     center: UnitPoint = .center,

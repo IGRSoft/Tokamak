@@ -22,6 +22,18 @@ final class NavigationLinkDestination {
   }
 }
 
+/// A view that controls a navigation presentation.
+///
+/// Users tap or click a navigation link to present a destination view inside a
+/// ``NavigationView``.
+///
+/// ```swift
+/// NavigationView {
+///   NavigationLink(destination: Text("Detail")) {
+///     Text("Show detail")
+///   }
+/// }
+/// ```
 public struct NavigationLink<Label, Destination>: _PrimitiveView where Label: View,
   Destination: View
 {
@@ -36,6 +48,11 @@ public struct NavigationLink<Label, Destination>: _PrimitiveView where Label: Vi
   @Environment(\._navigationLinkStyle)
   var style
 
+  /// Creates a navigation link that presents the destination view.
+  ///
+  /// - Parameters:
+  ///   - destination: The view to present when the link is activated.
+  ///   - label: A view builder that produces the link's label.
   public init(destination: Destination, @ViewBuilder label: () -> Label) {
     _destination = State(wrappedValue: NavigationLinkDestination(destination))
     self.label = label()
@@ -56,6 +73,10 @@ public struct NavigationLink<Label, Destination>: _PrimitiveView where Label: Vi
 public extension NavigationLink where Label == Text {
   /// Creates an instance that presents `destination`, with a `Text` label
   /// generated from a title string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the link's purpose.
+  ///   - destination: The view to present when the link is activated.
   init<S>(_ title: S, destination: Destination) where S: StringProtocol {
     self.init(destination: destination) { Text(title) }
   }
@@ -76,13 +97,18 @@ public extension NavigationLink where Label == Text {
 }
 
 /// This is a helper type that works around absence of "package private" access control in Swift
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _NavigationLinkProxy<Label, Destination> where Label: View, Destination: View {
+  /// The navigation link being proxied.
   public let subject: NavigationLink<Label, Destination>
 
+  /// Wraps the given navigation link so renderers can drive its presentation.
   public init(_ subject: NavigationLink<Label, Destination>) {
     self.subject = subject
   }
 
+  /// The styled label of the wrapped navigation link.
   public var label: some View {
     subject.style.makeBody(configuration: .init(
       body: AnyView(subject.label),
@@ -91,13 +117,17 @@ public struct _NavigationLinkProxy<Label, Destination> where Label: View, Destin
     // subject.label
   }
 
+  /// The navigation context that tracks the active destination.
   public var context: NavigationContext { subject.navigationContext }
 
+  /// The style applied to the wrapped navigation link's label.
   public var style: _AnyNavigationLinkStyle { subject.style }
+  /// A Boolean value indicating whether this link's destination is currently active.
   public var isSelected: Bool {
     subject.destination === subject.navigationContext.destination
   }
 
+  /// Activates the link, presenting its destination unless already selected.
   public func activate() {
     if !isSelected {
       subject.navigationContext.destination = subject.destination

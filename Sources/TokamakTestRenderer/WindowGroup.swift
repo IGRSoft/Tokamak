@@ -15,6 +15,7 @@
 import TokamakCore
 
 extension WindowGroup: SceneDeferredToRenderer {
+  /// The window group's content, type-erased so the test renderer can render it directly.
   public var deferredBody: AnyView {
     AnyView(content)
   }

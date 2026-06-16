@@ -64,6 +64,7 @@ public struct TestViewProxy<V: View> {
     self.view?[keyPath: member]
   }
 
+  /// Invokes the button's action and flushes the renderer, simulating a tap.
   public func tap() where V == Button<Text> {
     self.action?()
     reconciler.renderer.flush()

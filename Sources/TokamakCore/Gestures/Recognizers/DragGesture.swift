@@ -17,6 +17,20 @@
 
 import Foundation
 
+/// A dragging motion that invokes an action as the drag-event sequence changes.
+///
+/// To recognize a drag gesture on a view, create and configure a `DragGesture`, then add it to the
+/// view using the `gesture(_:)` modifier. As the drag moves, observe its progress with
+/// ``Gesture/onChanged(_:)`` and ``Gesture/onEnded(_:)``.
+///
+/// ```swift
+/// Rectangle()
+///   .frame(width: 100, height: 100)
+///   .gesture(
+///     DragGesture()
+///       .onChanged { value in print(value.translation) }
+///   )
+/// ```
 public struct DragGesture: Gesture {
   @Environment(\._coordinateSpace)
   private var coordinates
@@ -29,6 +43,7 @@ public struct DragGesture: Gesture {
   private(set) var minimumDistance: Double
   private(set) var coordinateSpace: CoordinateSpace
 
+  /// The content and behavior of the gesture.
   public var body: DragGesture {
     self
   }
@@ -47,6 +62,7 @@ public struct DragGesture: Gesture {
     self.coordinateSpace = coordinateSpace
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool {
     switch phase {
     case let .began(context):
@@ -123,12 +139,14 @@ public struct DragGesture: Gesture {
     return false
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onEndedAction = action
     return gesture
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onChangedAction = action
@@ -158,6 +176,7 @@ public struct DragGesture: Gesture {
 
   // MARK: Types
 
+  /// The attributes of a drag gesture, reported as the gesture changes and when it ends.
   public struct Value: Equatable {
     /// The location of the drag gesture's first event.
     public var startLocation: CGPoint = .zero

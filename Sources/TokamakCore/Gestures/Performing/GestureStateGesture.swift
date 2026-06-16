@@ -15,7 +15,12 @@
 //  Created by Szymon on 16/7/2023.
 //
 
+/// A gesture that updates the state provided by a gesture's `updating` callback.
+///
+/// You typically don't create this gesture directly. Instead, the ``Gesture/updating(_:body:)``
+/// modifier returns it.
 public struct GestureStateGesture<Base: Gesture, State>: Gesture {
+  /// The type representing the gesture's value.
   public typealias Value = Base.Value
 
   @GestureState
@@ -25,6 +30,7 @@ public struct GestureStateGesture<Base: Gesture, State>: Gesture {
   private let updatingBody: (Base.Value, inout State, inout Transaction) -> ()
   private var onEnded: ((Value) -> ())?
 
+  /// The content and behavior of the gesture.
   public var body: Base.Body {
     var gesture = gesture._onChanged(perform: { value in
       // TODO: Is this transaction working?
@@ -47,18 +53,21 @@ public struct GestureStateGesture<Base: Gesture, State>: Gesture {
     self.updatingBody = updatingBody
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool {
     fatalError(
       "\(String(reflecting: Self.self)) is a proxy `Gesture`, onPhaseChange should never be called."
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onEnded = action
     return gesture
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self {
     self
   }

@@ -30,10 +30,12 @@ private enum MountedElementKind {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class MountedElement<R: Renderer> {
   private var element: MountedElementKind
   var type: Any.Type { element.type }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public internal(set) var app: _AnyApp {
     get {
       if case let .app(app) = element {
@@ -46,6 +48,7 @@ public class MountedElement<R: Renderer> {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public internal(set) var scene: _AnyScene {
     get {
       if case let .scene(scene) = element {
@@ -59,6 +62,7 @@ public class MountedElement<R: Renderer> {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public internal(set) var view: AnyView {
     get {
       if case let .view(view) = element {
@@ -86,18 +90,21 @@ public class MountedElement<R: Renderer> {
 
   var mountedChildren = [MountedElement<R>]()
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var transaction: Transaction = .init(animation: nil)
   /// Where this element is the process of mounting/unmounting.
   var transitionPhase = TransitionPhase.willMount
   /// The current `UnmountTask` of this element.
   var unmountTask: UnmountTask<R>?
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public internal(set) var environmentValues: EnvironmentValues
 
   private(set) weak var parent: MountedElement<R>?
 
   var preferenceStore: _PreferenceStore = .init()
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public internal(set) var viewTraits: _ViewTraitStore
 
   init(_ app: _AnyApp, _ environmentValues: EnvironmentValues, _ parent: MountedElement<R>?) {

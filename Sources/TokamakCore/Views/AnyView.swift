@@ -42,6 +42,11 @@ public struct AnyView: _PrimitiveView {
 
   let visitChildren: (ViewVisitor, Any) -> ()
 
+  /// Creates a type-erased view that wraps the given view.
+  ///
+  /// If `view` is already an `AnyView`, it is used directly rather than wrapped a second time.
+  ///
+  /// - Parameter view: The view to type-erase.
   public init<V>(_ view: V) where V: View {
     if let anyView = view as? AnyView {
       self = anyView
@@ -59,11 +64,18 @@ public struct AnyView: _PrimitiveView {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     visitChildren(visitor, view)
   }
 }
 
+/// Unwraps the value stored in an `AnyView` as `V` and maps it, returning `nil` on type mismatch.
+///
+/// - Parameters:
+///   - anyView: The type-erased view whose wrapped value to inspect.
+///   - transform: A closure applied to the wrapped value when it is of type `V`.
+/// - Returns: The result of `transform`, or `nil` if the wrapped value is not a `V`.
 public func mapAnyView<T, V>(_ anyView: AnyView, transform: (V) -> T) -> T? {
   guard let view = anyView.view as? V else { return nil }
 
@@ -71,17 +83,25 @@ public func mapAnyView<T, V>(_ anyView: AnyView, transform: (V) -> T) -> T? {
 }
 
 extension AnyView: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (view as? ParentView)?.children ?? []
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _AnyViewProxy {
+  /// The type-erased view this proxy reads from.
   public var subject: AnyView
 
+  /// Creates a proxy for the given type-erased view.
+  ///
+  /// - Parameter subject: The type-erased view to inspect.
   public init(_ subject: AnyView) { self.subject = subject }
 
+  /// The type of the view wrapped by the subject.
   public var type: Any.Type { subject.type }
+  /// The underlying view value wrapped by the subject.
   public var view: Any { subject.view }
 }

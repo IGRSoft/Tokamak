@@ -81,6 +81,15 @@ public final class StackReconciler<R: Renderer> {
    */
   private let scheduler: (@escaping () -> ()) -> ()
 
+  /// Creates a reconciler that mounts the given root view into the target.
+  ///
+  /// - Parameters:
+  ///   - view: The root view to mount and reconcile.
+  ///   - target: The renderer's root target the view is rendered into.
+  ///   - environment: The initial environment values for the view tree.
+  ///   - renderer: The renderer instance to delegate render operations to.
+  ///   - scheduler: A platform-specific closure that schedules reconciliation work
+  ///     on the next event loop cycle.
   public init<V: View>(
     view: V,
     target: R.TargetType,
@@ -97,6 +106,15 @@ public final class StackReconciler<R: Renderer> {
     performInitialMount()
   }
 
+  /// Creates a reconciler that mounts the given root app into the target.
+  ///
+  /// - Parameters:
+  ///   - app: The root app to mount and reconcile.
+  ///   - target: The renderer's root target the app is rendered into.
+  ///   - environment: The initial environment values for the app's view tree.
+  ///   - renderer: The renderer instance to delegate render operations to.
+  ///   - scheduler: A platform-specific closure that schedules reconciliation work
+  ///     on the next event loop cycle.
   public init<A: App>(
     app: A,
     target: R.TargetType,

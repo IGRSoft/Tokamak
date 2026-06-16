@@ -14,8 +14,12 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `contrast(_:)` as a CSS `filter: contrast()` declaration.
 extension _ContrastEffect: DOMViewModifier {
+  /// Implementation detail: keeps stacked filters in separate DOM wrappers so
+  /// they are not flattened into one clobbering `filter:` style.
   public var isOrderDependent: Bool { true }
+  /// Implementation detail: emits the `filter: contrast()` style.
   public var attributes: [HTMLAttribute: String] {
     ["style": "filter: contrast(\(amount)); "]
   }

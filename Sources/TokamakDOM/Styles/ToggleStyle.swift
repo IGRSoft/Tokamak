@@ -19,15 +19,24 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// The default `Toggle` style on the web, rendering as an HTML checkbox.
 public struct DefaultToggleStyle: ToggleStyle {
+  /// Builds the toggle body, delegating to ``CheckboxToggleStyle``.
+  /// - Parameter configuration: The label and binding describing the toggle.
+  /// - Returns: A checkbox-based view representing the toggle.
   public func makeBody(configuration: Configuration) -> some View {
     CheckboxToggleStyle().makeBody(configuration: configuration)
   }
 
+  /// Creates the default toggle style.
   public init() {}
 }
 
+/// A `Toggle` style that renders as a labeled HTML checkbox `<input>`.
 public struct CheckboxToggleStyle: ToggleStyle {
+  /// Builds a `<label>` wrapping a checkbox input bound to the toggle's state.
+  /// - Parameter configuration: The label and binding describing the toggle.
+  /// - Returns: A view that renders the checkbox and its label.
   public func makeBody(configuration: ToggleStyleConfiguration) -> some View {
     var attrs: [HTMLAttribute: String] = ["type": "checkbox"]
     if configuration.isOn {
@@ -46,7 +55,11 @@ public struct CheckboxToggleStyle: ToggleStyle {
 }
 
 // FIXME: implement properly
+/// A `Toggle` style intended to render as a switch; currently falls back to a checkbox.
 public struct SwitchToggleStyle: ToggleStyle {
+  /// Builds the toggle body, temporarily delegating to ``CheckboxToggleStyle``.
+  /// - Parameter configuration: The label and binding describing the toggle.
+  /// - Returns: A checkbox-based view representing the toggle.
   public func makeBody(configuration: Configuration) -> some View {
     CheckboxToggleStyle().makeBody(configuration: configuration)
   }

@@ -35,6 +35,9 @@ struct ToolbarKey: PreferenceKey {
 }
 
 public extension View {
+  /// Populates the toolbar or navigation bar with the views you provide.
+  ///
+  /// - Parameter content: A view builder that produces the toolbar's content.
   @_disfavoredOverload
   func toolbar<Content>(
     @ViewBuilder content: @escaping () -> Content
@@ -44,6 +47,9 @@ public extension View {
     }
   }
 
+  /// Populates the toolbar or navigation bar with the toolbar items you provide.
+  ///
+  /// - Parameter items: A toolbar content builder that produces the toolbar's items.
   func toolbar<Items>(@ToolbarContentBuilder<()> items: () -> ToolbarItemGroup<(), Items>)
     -> some View
   {
@@ -52,6 +58,11 @@ public extension View {
     }))
   }
 
+  /// Populates the toolbar with the items you provide, identified for state restoration.
+  ///
+  /// - Parameters:
+  ///   - id: A unique identifier for the toolbar's configuration.
+  ///   - items: A toolbar content builder that produces the toolbar's items.
   func toolbar<Items>(
     id: String,
     @ToolbarContentBuilder<String> items: () -> ToolbarItemGroup<String, Items>

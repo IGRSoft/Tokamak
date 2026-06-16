@@ -27,11 +27,17 @@ public struct Label<Title, Icon>: View where Title: View, Icon: View {
   @Environment(\.labelStyle)
   var style
 
+  /// Creates a label with a custom title and icon, each built from a view builder.
+  ///
+  /// - Parameters:
+  ///   - title: A view builder that produces the label's title.
+  ///   - icon: A view builder that produces the label's icon.
   public init(@ViewBuilder title: () -> Title, @ViewBuilder icon: () -> Icon) {
     self.title = title()
     self.icon = icon()
   }
 
+  /// The content and behavior of the label.
   public var body: some View {
     style.makeBody(
       configuration: .init(

@@ -15,7 +15,9 @@
 #if canImport(JavaScriptKit)
 import TokamakCore
 
+/// A view modifier that contributes DOM event listeners to the element it modifies.
 public protocol DOMActionModifier {
+  /// The DOM event listeners installed by this modifier, keyed by event name.
   var listeners: [String: Listener] { get }
 }
 

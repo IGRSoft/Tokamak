@@ -43,6 +43,8 @@ private func secureFieldInputAttributes(
 }
 
 extension SecureField: _HTMLPrimitive where Label == Text {
+  /// The server-rendered markup for a `SecureField`: a static `<input type="password">` whose
+  /// placeholder is the label text. The entered value is never echoed back into the markup.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("input", secureFieldInputAttributes(_SecureFieldProxy(self))))
@@ -51,9 +53,13 @@ extension SecureField: _HTMLPrimitive where Label == Text {
 
 @_spi(TokamakStaticHTML)
 extension SecureField: HTMLConvertible where Label == Text {
+  /// The HTML tag a `SecureField` renders to on the Fiber path: `"input"`.
   @_spi(TokamakStaticHTML)
   public var tag: String { "input" }
 
+  /// The Fiber-path HTML attributes for a `SecureField`: a `type="password"` form control carrying
+  /// the placeholder label text.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout Fiber renderer is in use.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     secureFieldInputAttributes(_SecureFieldProxy(self))

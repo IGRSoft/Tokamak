@@ -17,15 +17,18 @@
 
 /// A type that can visit a `View`.
 public protocol ViewVisitor {
+  /// Visits the given view.
   func visit<V: View>(_ view: V)
 }
 
 public extension View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V: ViewVisitor>(_ visitor: V) {
     visitor.visit(body)
   }
 }
 
+/// A function that applies a `ViewVisitor` to a view's children.
 public typealias ViewVisitorF<V: ViewVisitor> = (V) -> ()
 
 /// A type that creates a `Result` by visiting multiple `View`s.

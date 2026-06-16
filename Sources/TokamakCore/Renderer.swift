@@ -22,7 +22,9 @@
  the renderer about updates in the view tree.
  */
 public protocol Renderer: AnyObject {
+  /// A mounted element instance reconciled and managed by this renderer.
   typealias Mounted = MountedElement<Self>
+  /// A mounted primitive host view reconciled and managed by this renderer.
   typealias MountedHost = MountedHostView<Self>
 
   /** Views are rendered to platform-specific targets with a renderer.
@@ -34,8 +36,9 @@ public protocol Renderer: AnyObject {
   /** Function called by a reconciler when a new target instance should be
    created and added to the parent (either as a subview or some other way, e.g.
    installed if it's a layout constraint).
+   - parameter sibling: The sibling target before which the new target is inserted.
    - parameter parent: Parent target that will own a newly created target instance.
-   - parameter view: The host view that renders to the newly created target.
+   - parameter host: The host view that renders to the newly created target.
    - returns: The newly created target.
    */
   func mountTarget(
@@ -47,7 +50,7 @@ public protocol Renderer: AnyObject {
   /** Function called by a reconciler when an existing target instance should be
    updated.
    - parameter target: Existing target instance to be updated.
-   - parameter view: The host view that renders to the updated target.
+   - parameter host: The host view that renders to the updated target.
    */
   func update(
     target: TargetType,

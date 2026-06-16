@@ -30,8 +30,10 @@ extension HorizontalAlignment {
 }
 
 extension VStack: _HTMLPrimitive, SpacerContainer {
+  /// Lays out spacers along the vertical axis.
   public var axis: SpacerContainerAxis { .vertical }
 
+  /// Renders the stack as a flex-column `<div>` whose alignment and spacing come from the stack.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let spacing = _VStackProxy(self).spacing

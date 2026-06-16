@@ -15,6 +15,7 @@
 //  Created by Carson Katri on 7/19/20.
 //
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _AnyScene: Scene {
   /** The result type of `bodyClosure` allowing to disambiguate between scenes that
    produce other scenes or scenes that only produce containing views.
@@ -66,6 +67,7 @@ public struct _AnyScene: Scene {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: Never {
     neverScene("_AnyScene")

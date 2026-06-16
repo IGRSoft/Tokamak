@@ -15,44 +15,70 @@
 import Foundation
 
 public extension Font {
+  /// Returns a version of the font that uses an italic style.
+  ///
+  /// - Returns: An italicized copy of the font.
   func italic() -> Self {
     .init(_ModifiedFontBox(previously: provider) {
       $0._italic = true
     })
   }
 
+  /// Returns a version of the font that uses small capitals.
+  ///
+  /// - Returns: A copy of the font with small caps enabled.
   func smallCaps() -> Self {
     .init(_ModifiedFontBox(previously: provider) {
       $0._smallCaps = true
     })
   }
 
+  /// Returns a version of the font that uses lowercase small capitals.
+  ///
+  /// - Returns: A copy of the font with lowercase small caps enabled.
   func lowercaseSmallCaps() -> Self {
     smallCaps()
   }
 
+  /// Returns a version of the font that uses uppercase small capitals.
+  ///
+  /// - Returns: A copy of the font with uppercase small caps enabled.
   func uppercaseSmallCaps() -> Self {
     smallCaps()
   }
 
+  /// Returns a version of the font that uses monospaced digits.
+  ///
+  /// - Returns: A copy of the font with fixed-width digits.
   func monospacedDigit() -> Self {
     .init(_ModifiedFontBox(previously: provider) {
       $0._monospaceDigit = true
     })
   }
 
+  /// Returns a version of the font with the specified weight.
+  ///
+  /// - Parameter weight: The weight to apply to the font.
+  /// - Returns: A copy of the font with the given weight.
   func weight(_ weight: Weight) -> Self {
     .init(_ModifiedFontBox(previously: provider) {
       $0._weight = weight
     })
   }
 
+  /// Returns a bold version of the font.
+  ///
+  /// - Returns: A bold copy of the font.
   func bold() -> Self {
     .init(_ModifiedFontBox(previously: provider) {
       $0._bold = true
     })
   }
 
+  /// Returns a version of the font with the specified leading.
+  ///
+  /// - Parameter leading: The leading (line spacing) to apply to the font.
+  /// - Returns: A copy of the font with the given leading.
   func leading(_ leading: Leading) -> Self {
     .init(_ModifiedFontBox(previously: provider) {
       $0._leading = leading

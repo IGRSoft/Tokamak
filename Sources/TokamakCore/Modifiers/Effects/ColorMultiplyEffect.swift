@@ -12,19 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ColorMultiplyEffect: ViewModifier, Equatable {
+  /// The color multiplied with the colors of the modified view.
   public var color: Color
 
+  /// Creates an effect that multiplies a view's colors by the given color.
   public init(color: Color) {
     self.color = color
   }
 
+  /// Returns the modifier's body for the given content.
   public func body(content: Content) -> some View {
     content
   }
 }
 
 public extension View {
+  /// Adds a color multiplication effect to this view.
+  ///
+  /// - Parameter color: The color to multiply with this view's colors.
+  /// - Returns: A view that multiplies its colors by the specified color.
   func colorMultiply(_ color: Color) -> some View {
     modifier(_ColorMultiplyEffect(color: color))
   }

@@ -23,12 +23,19 @@
 public struct ScrollViewProxy {
   let scrollToImpl: (AnyHashable, UnitPoint?) -> ()
 
+  /// Creates a proxy backed by the given renderer-supplied scrolling closure.
+  /// - Parameter scrollTo: A closure that scrolls to the view matching the given
+  ///   identifier and anchor.
   public init(scrollTo: @escaping (AnyHashable, UnitPoint?) -> ()) {
     scrollToImpl = scrollTo
   }
 
   /// Scans all scroll views contained by the proxy for the first with a child
   /// view of `id`, and then scrolls to that view.
+  /// - Parameters:
+  ///   - id: The identifier of the child view to scroll to.
+  ///   - anchor: The alignment of the child view within the visible region after
+  ///     scrolling, or `nil` to use a default alignment.
   public func scrollTo<ID>(_ id: ID, anchor: UnitPoint? = nil) where ID: Hashable {
     scrollToImpl(AnyHashable(id), anchor)
   }
@@ -40,12 +47,18 @@ public struct ScrollViewProxy {
 /// Mirrors SwiftUI's `ScrollViewReader`. It is a transparent wrapper: it renders
 /// its content unchanged and provides a `ScrollViewProxy` to the content closure.
 public struct ScrollViewReader<Content>: View where Content: View {
+  /// A closure that produces the reader's content from a `ScrollViewProxy`.
   public let content: (ScrollViewProxy) -> Content
 
+  /// Creates an instance that can perform programmatic scrolling of its child
+  /// scroll views.
+  /// - Parameter content: A view builder that produces the content using the
+  ///   supplied `ScrollViewProxy`.
   public init(@ViewBuilder content: @escaping (ScrollViewProxy) -> Content) {
     self.content = content
   }
 
+  /// The content and behavior of the view.
   public var body: some View {
     // Core / non-DOM proxy is inert; the DOM renderer overrides this with a
     // real `scrollIntoView`-backed proxy.

@@ -27,6 +27,7 @@ public final class TestView: Target {
   /// Parent `TestView` instance that owns this instance as a child
   private weak var parent: TestView?
 
+  /// The type-erased view rendered by this test view.
   public var view: AnyView
 
   /** Initialize a new test view. */

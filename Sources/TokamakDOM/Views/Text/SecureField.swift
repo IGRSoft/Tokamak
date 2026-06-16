@@ -18,6 +18,7 @@
 #if canImport(JavaScriptKit)
 import TokamakCore
 
+/// Renders a `SecureField` as a DOM password `<input>` element wired to its text binding.
 extension SecureField: DOMPrimitive where Label == Text {
   var renderedBody: AnyView {
     let proxy = _SecureFieldProxy(self)

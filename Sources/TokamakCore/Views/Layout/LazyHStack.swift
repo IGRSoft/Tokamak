@@ -25,14 +25,26 @@ import Foundation
 ///       Text("World")
 ///     }
 public struct LazyHStack<Content>: View where Content: View {
+  /// The guide for aligning the subviews vertically.
   public let alignment: VerticalAlignment
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let spacing: CGFloat?
 
+  /// The kinds of child views that stay pinned during scrolling.
   public let pinnedViews: PinnedScrollableViews
+  /// The content of the stack.
   public let content: Content
 
+  /// Creates a lazy horizontal stack with the given spacing, alignment, and
+  /// pinning behavior.
+  /// - Parameters:
+  ///   - alignment: The guide for aligning the subviews vertically.
+  ///   - spacing: The distance between adjacent subviews, or `nil` to use a
+  ///     default distance.
+  ///   - pinnedViews: The kinds of child views that stay pinned during scrolling.
+  ///   - content: A view builder that produces the stacked subviews.
   public init(
     alignment: VerticalAlignment = .center,
     spacing: CGFloat? = nil,
@@ -45,16 +57,19 @@ public struct LazyHStack<Content>: View where Content: View {
     self.content = content()
   }
 
+  /// The content and behavior of the view.
   public var body: Never {
     neverBody("LazyHStack")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     visitor.visit(content)
   }
 }
 
 extension LazyHStack: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]
@@ -63,14 +78,21 @@ extension LazyHStack: ParentView {
 
 @_spi(TokamakCore)
 extension LazyHStack: StackLayout {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static var orientation: Axis { .horizontal }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var _alignment: Alignment { .init(horizontal: .center, vertical: alignment) }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _LazyHStackProxy<Content> where Content: View {
+  /// The wrapped `LazyHStack` whose resolved layout values this proxy exposes.
   public let subject: LazyHStack<Content>
 
+  /// Wraps the given `LazyHStack` in a proxy that resolves its default values.
+  /// - Parameter subject: The `LazyHStack` to wrap.
   public init(_ subject: LazyHStack<Content>) { self.subject = subject }
 
+  /// The spacing between subviews, resolving `nil` to the default stack spacing.
   public var spacing: CGFloat { subject.spacing ?? defaultStackSpacing }
 }

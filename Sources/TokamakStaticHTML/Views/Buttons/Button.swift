@@ -28,9 +28,12 @@
 // oracle) has no Button primitive, so the Fiber path is the one that exercises this.
 @_spi(TokamakStaticHTML)
 extension _PrimitiveButtonStyleBody: HTMLConvertible {
+  /// Implementation detail: the `<button>` tag emitted for a `Button` on the Fiber path.
   @_spi(TokamakStaticHTML)
   public var tag: String { "button" }
 
+  /// Implementation detail: the reset-styled `<button>` attributes for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     ["class": "_tokamak-buttonstyle-reset"]

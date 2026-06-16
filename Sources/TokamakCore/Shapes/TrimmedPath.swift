@@ -17,11 +17,21 @@
 
 import Foundation
 
+/// A path paired with the fractional range that trims it.
 public struct TrimmedPath: Equatable {
+  /// The path that is trimmed.
   public let path: Path
+  /// The fraction of the path's length at which the trimmed path begins.
   public let from: CGFloat
+  /// The fraction of the path's length at which the trimmed path ends.
   public let to: CGFloat
 
+  /// Creates a trimmed path from the given path and fractions.
+  ///
+  /// - Parameters:
+  ///   - path: The path that is trimmed.
+  ///   - from: The fraction at which the trimmed path begins.
+  ///   - to: The fraction at which the trimmed path ends.
   public init(path: Path, from: CGFloat, to: CGFloat) {
     self.path = path
     self.from = from

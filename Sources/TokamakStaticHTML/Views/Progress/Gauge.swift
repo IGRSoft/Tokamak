@@ -18,6 +18,7 @@ import Foundation
 private let svgNamespace = "http://www.w3.org/2000/svg"
 
 extension _GaugeView: _HTMLPrimitive {
+  /// Renders the gauge as an HTML `<meter>` element reflecting the completed fraction.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(
@@ -54,6 +55,7 @@ private func gaugeArcPath(fractionCompleted: Double) -> String {
 }
 
 extension _CircularGaugeView: _HTMLPrimitive {
+  /// Renders the gauge as an SVG dial with a track arc and a progress arc.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let track = gaugeArcPath(fractionCompleted: 1)

@@ -7,6 +7,14 @@
 - View modifiers for visual effects: `blur`, `grayscale`, `brightness`, `contrast`, `saturation`, `hueRotation`, `colorInvert`
 - Blending and interaction modifiers: `blendMode`, `allowsHitTesting`, `help`
 - State and appearance modifiers: `disabled`, `tint`, `rotation3DEffect`, `fixedSize`
+- Complete documentation set for the library and demo. Added a DocC catalog
+  (`Sources/TokamakCore/Tokamak.docc/`) with a curated API landing page and narrative guides (Getting
+  Started, Architecture, State & Data Flow, Layout, Renderers, SwiftUI Compatibility, Working with
+  HTML), per-renderer DocC landing pages for `TokamakDOM`/`TokamakStaticHTML`, and full `///` API
+  documentation across all modules. Added the `swift-docc-plugin` dependency, a `.spi.yml` for Swift
+  Package Index hosting, and a GitHub Pages documentation workflow. New repo guides: `docs/README.md`
+  (documentation index) and `docs/DemoCatalog.md` (demo catalog + how to add a demo); expanded
+  `docs/FAQ.md` and the `screenshots/README.md` pipeline notes; refreshed README requirements.
 
 ---
 

@@ -30,10 +30,14 @@
 public struct HSplitView<Content>: View where Content: View {
   let content: Content
 
+  /// Creates a horizontal split view with the given panes.
+  ///
+  /// - Parameter content: A view builder that produces the panes to lay out horizontally.
   public init(@ViewBuilder content: () -> Content) {
     self.content = content()
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     _HSplitContainer(content: content)
@@ -58,16 +62,21 @@ public struct HSplitView<Content>: View where Content: View {
 public struct VSplitView<Content>: View where Content: View {
   let content: Content
 
+  /// Creates a vertical split view with the given panes.
+  ///
+  /// - Parameter content: A view builder that produces the panes to lay out vertically.
   public init(@ViewBuilder content: () -> Content) {
     self.content = content()
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     _VSplitContainer(content: content)
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _HSplitContainer<Content>: _PrimitiveView where Content: View {
   let content: Content
 
@@ -77,12 +86,14 @@ public struct _HSplitContainer<Content>: _PrimitiveView where Content: View {
 }
 
 extension _HSplitContainer: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _VSplitContainer<Content>: _PrimitiveView where Content: View {
   let content: Content
 
@@ -92,24 +103,35 @@ public struct _VSplitContainer<Content>: _PrimitiveView where Content: View {
 }
 
 extension _VSplitContainer: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _HSplitViewProxy<Content> where Content: View {
+  /// The horizontal split container this proxy reads from.
   public var subject: _HSplitContainer<Content>
 
+  /// Creates a proxy for the given horizontal split container.
+  ///
+  /// - Parameter subject: The container to inspect.
   public init(_ subject: _HSplitContainer<Content>) { self.subject = subject }
 
   /// The resolved panes, in declaration order.
   public var panes: [AnyView] { subject.children }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _VSplitViewProxy<Content> where Content: View {
+  /// The vertical split container this proxy reads from.
   public var subject: _VSplitContainer<Content>
 
+  /// Creates a proxy for the given vertical split container.
+  ///
+  /// - Parameter subject: The container to inspect.
   public init(_ subject: _VSplitContainer<Content>) { self.subject = subject }
 
   /// The resolved panes, in declaration order.

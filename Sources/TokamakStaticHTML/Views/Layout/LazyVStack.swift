@@ -15,8 +15,10 @@
 @_spi(TokamakStaticHTML) import TokamakCore
 
 extension LazyVStack: _HTMLPrimitive, SpacerContainer {
+  /// Lays out spacers along the vertical axis.
   public var axis: SpacerContainerAxis { .vertical }
 
+  /// Renders the stack as a flex-column `<div>` whose alignment and spacing come from the stack.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let spacing = _LazyVStackProxy(self).spacing
@@ -35,9 +37,11 @@ extension LazyVStack: _HTMLPrimitive, SpacerContainer {
 
 @_spi(TokamakStaticHTML)
 extension LazyVStack: HTMLConvertible {
+  /// The HTML element used to host the stack: a `div`.
   @_spi(TokamakStaticHTML)
   public var tag: String { "div" }
 
+  /// The stack's CSS `style` and `class` attributes, omitting style under dynamic layout.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
@@ -53,6 +57,7 @@ extension LazyVStack: HTMLConvertible {
     ]
   }
 
+  /// Visits the stack's content so the renderer can walk its child views.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     {
       $0.visit(self.content)

@@ -14,17 +14,26 @@
 
 import OpenCombineShim
 
+/// A property wrapper type that instantiates an observable object.
+///
+/// Use a state object as the single source of truth for a reference type that you store in a view
+/// hierarchy. Tokamak creates a new instance of the object only once for each instance of the view
+/// that declares the object, and keeps it alive for the view's lifetime.
 @propertyWrapper
 public struct StateObject<ObjectType: ObservableObject>: DynamicProperty {
+  /// The underlying value referenced by the state object.
   public var wrappedValue: ObjectType { (getter?() as? ObservedObject.Wrapper)?.root ?? initial() }
 
   let initial: () -> ObjectType
   var getter: (() -> Any)?
 
+  /// Creates a new state object with an initial wrapped value.
+  /// - Parameter initial: An autoclosure that produces the initial value of the observable object.
   public init(wrappedValue initial: @autoclosure @escaping () -> ObjectType) {
     self.initial = initial
   }
 
+  /// A projection of the state object that creates bindings to its properties.
   public var projectedValue: ObservedObject<ObjectType>.Wrapper {
     getter?() as? ObservedObject.Wrapper ?? ObservedObject.Wrapper(root: initial())
   }

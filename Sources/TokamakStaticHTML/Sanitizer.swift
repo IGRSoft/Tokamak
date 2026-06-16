@@ -24,6 +24,7 @@ protocol Sanitizer {
   static func sanitize(_ input: Input) -> Output
 }
 
+/// Namespace for the string sanitizers used when emitting HTML and CSS output.
 public enum Sanitizers {
   enum CSS {
     /// Automatically sanitizes a value.
@@ -118,8 +119,11 @@ public enum Sanitizers {
     }
   }
 
+  /// Sanitizers for text interpolated into HTML output.
   public enum HTML {
+    /// Escapes HTML-significant characters (`&`, `<`, `>`, `"`, `'`) into entities.
     public static let encode = Encode.sanitize
+    /// Passes text through unchanged; use only for trusted, pre-escaped HTML.
     public static let insecure = Insecure.sanitize
 
     typealias Default = Encode

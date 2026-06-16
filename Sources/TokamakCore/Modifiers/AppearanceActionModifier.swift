@@ -33,10 +33,16 @@ extension ModifiedContent: AppearanceActionType
 }
 
 public extension View {
+  /// Adds an action to perform before this view appears.
+  /// - Parameter action: The action to perform. If `action` is `nil`, the call has no effect.
+  /// - Returns: A view that triggers `action` before it appears.
   func onAppear(perform action: (() -> ())? = nil) -> some View {
     modifier(_AppearanceActionModifier(appear: action))
   }
 
+  /// Adds an action to perform after this view disappears.
+  /// - Parameter action: The action to perform. If `action` is `nil`, the call has no effect.
+  /// - Returns: A view that triggers `action` after it disappears.
   func onDisappear(perform action: (() -> ())? = nil) -> some View {
     modifier(_AppearanceActionModifier(disappear: action))
   }

@@ -36,6 +36,7 @@ private struct PaddingLayout: Layout {
     .init()
   }
 
+  /// Returns the size of the padded subview, expanded by the resolved insets.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -55,6 +56,7 @@ private struct PaddingLayout: Layout {
     )
   }
 
+  /// Places the subview inset from the container's edges by the resolved insets.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -76,6 +78,7 @@ private struct PaddingLayout: Layout {
 }
 
 public extension _PaddingLayout {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V>(_ visitor: V, content: Content) where V: ViewVisitor {
     visitor.visit(PaddingLayout(edges: edges, insets: insets).callAsFunction {
       content

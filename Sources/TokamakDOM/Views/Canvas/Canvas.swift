@@ -23,14 +23,18 @@ import TokamakCore
 import TokamakStaticHTML
 
 extension Canvas: DOMPrimitive {
+  /// The view rendered into a live `<canvas>` element backed by the 2D drawing context.
   public var renderedBody: AnyView {
     AnyView(_Canvas(parent: self))
   }
 }
 
 extension Canvas: SpacerContainer {
+  /// Indicates the canvas contributes a spacer so it expands within its container.
   public var hasSpacer: Bool { true }
+  /// The axis along which the canvas grows to fill available space.
   public var axis: SpacerContainerAxis { .vertical }
+  /// Whether the canvas also stretches to fill its cross axis.
   public var fillCrossAxis: Bool { true }
 }
 

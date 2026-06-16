@@ -31,22 +31,46 @@ import Foundation
 ///     }
 ///
 public protocol AnyFontBoxDeferredToRenderer: AnyFontBox {
+  /// Resolves the font into a renderer-specific value using the given environment.
   func deferredResolve(in environment: EnvironmentValues) -> AnyFontBox.ResolvedValue
 }
 
 // Single-threaded (Wasm/DOM) runtime: box hierarchy is effectively immutable and never shared across threads.
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class AnyFontBox: AnyTokenBox, Hashable, Equatable, @unchecked Sendable {
+  /// The fully resolved attributes of a font.
   public struct _Font: Hashable, Equatable {
+    /// The name identifying the font, either the system font or a custom font.
     public var _name: _FontNames
+    /// The point size of the font.
     public var _size: CGFloat
+    /// The design of the font.
     public var _design: Font.Design
+    /// The weight of the font.
     public var _weight: Font.Weight
+    /// A Boolean value indicating whether the font uses small caps.
     public var _smallCaps: Bool
+    /// A Boolean value indicating whether the font is italicized.
     public var _italic: Bool
+    /// A Boolean value indicating whether the font is bold.
     public var _bold: Bool
+    /// A Boolean value indicating whether the font uses monospaced digits.
     public var _monospaceDigit: Bool
+    /// The leading (line spacing) of the font.
     public var _leading: Font.Leading
 
+    /// Creates a resolved font from the given attributes.
+    ///
+    /// - Parameters:
+    ///   - name: The name identifying the font.
+    ///   - size: The point size of the font.
+    ///   - design: The design of the font.
+    ///   - weight: The weight of the font.
+    ///   - smallCaps: Whether the font uses small caps.
+    ///   - italic: Whether the font is italicized.
+    ///   - bold: Whether the font is bold.
+    ///   - monospaceDigit: Whether the font uses monospaced digits.
+    ///   - leading: The leading of the font.
     public init(
       name: _FontNames,
       size: CGFloat,
@@ -70,30 +94,38 @@ public class AnyFontBox: AnyTokenBox, Hashable, Equatable, @unchecked Sendable {
     }
   }
 
+  /// Returns a Boolean value indicating whether two font boxes are equal.
   public static func == (lhs: AnyFontBox, rhs: AnyFontBox) -> Bool {
     lhs.equals(rhs)
   }
 
+  /// Returns a Boolean value indicating whether this box equals another font box.
   public func equals(_ other: AnyFontBox) -> Bool {
     fatalError("implement \(#function) in subclass")
   }
 
+  /// Hashes the essential components of the font box into the given hasher.
   public func hash(into hasher: inout Hasher) {
     fatalError("implement \(#function) in subclass")
   }
 
+  /// Resolves the box into a concrete font using the given environment.
   public func resolve(in environment: EnvironmentValues) -> _Font {
     fatalError("implement \(#function) in subclass")
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class _ConcreteFontBox: AnyFontBox, @unchecked Sendable {
+  /// The fixed font stored by this box.
   public let font: ResolvedValue
 
+  /// Returns a Boolean value indicating whether two concrete font boxes are equal.
   public static func == (lhs: _ConcreteFontBox, rhs: _ConcreteFontBox) -> Bool {
     lhs.font == rhs.font
   }
 
+  /// Hashes the essential components of the font box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(font)
   }
@@ -102,24 +134,31 @@ public class _ConcreteFontBox: AnyFontBox, @unchecked Sendable {
     self.font = font
   }
 
+  /// Resolves the box into a concrete font using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     font
   }
 
+  /// Returns a Boolean value indicating whether this box equals another font box.
   override public func equals(_ other: AnyFontBox) -> Bool {
     guard let other = other as? _ConcreteFontBox else { return false }
     return other.font == font
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class _ModifiedFontBox: AnyFontBox, @unchecked Sendable {
+  /// The underlying font box that this box modifies.
   public let provider: AnyFontBox
+  /// A closure that mutates the resolved font of the underlying box.
   public let modifier: (inout ResolvedValue) -> ()
 
+  /// Returns a Boolean value indicating whether two modified font boxes are equal.
   public static func == (lhs: _ModifiedFontBox, rhs: _ModifiedFontBox) -> Bool {
     lhs.resolve(in: EnvironmentValues()) == rhs.resolve(in: EnvironmentValues())
   }
 
+  /// Hashes the essential components of the font box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(provider.resolve(in: EnvironmentValues()))
   }
@@ -129,12 +168,14 @@ public class _ModifiedFontBox: AnyFontBox, @unchecked Sendable {
     self.modifier = modifier
   }
 
+  /// Resolves the box into a concrete font using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     var font = provider.resolve(in: environment)
     modifier(&font)
     return font
   }
 
+  /// Returns a Boolean value indicating whether this box equals another font box.
   override public func equals(_ other: AnyFontBox) -> Bool {
     guard let other = other as? _ModifiedFontBox else { return false }
     var resolved = provider.resolve(in: .init())
@@ -145,8 +186,11 @@ public class _ModifiedFontBox: AnyFontBox, @unchecked Sendable {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class _SystemFontBox: AnyFontBox, @unchecked Sendable {
+  /// The set of built-in system text styles that this box can represent.
   public enum SystemFont: Equatable, Hashable {
+    /// The system text styles, from large titles down to the smallest captions.
     case largeTitle
     case title
     case title2
@@ -160,12 +204,15 @@ public class _SystemFontBox: AnyFontBox, @unchecked Sendable {
     case caption2
   }
 
+  /// The system text style stored by this box.
   public let value: SystemFont
 
+  /// Returns a Boolean value indicating whether two system font boxes are equal.
   public static func == (lhs: _SystemFontBox, rhs: _SystemFontBox) -> Bool {
     lhs.value == rhs.value
   }
 
+  /// Hashes the essential components of the font box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(value)
   }
@@ -174,6 +221,7 @@ public class _SystemFontBox: AnyFontBox, @unchecked Sendable {
     self.value = value
   }
 
+  /// Resolves the box into a concrete font using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     switch value {
     case .largeTitle: return .init(name: .system, size: 34)
@@ -190,30 +238,40 @@ public class _SystemFontBox: AnyFontBox, @unchecked Sendable {
     }
   }
 
+  /// Returns a Boolean value indicating whether this box equals another font box.
   override public func equals(_ other: AnyFontBox) -> Bool {
     guard let other = other as? _SystemFontBox else { return false }
     return other.value == value
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class _CustomFontBox: AnyFontBox, @unchecked Sendable {
+  /// The PostScript name of the custom font.
   public let name: String
+  /// The size of the custom font.
   public let size: Size
+  /// The size of a custom font, either dynamically scaled or fixed.
   public enum Size: Hashable {
     // FIXME: Update size with dynamic type.
+    /// A size that scales with the user's preferred content size.
     case dynamic(CGFloat)
+    /// A fixed size that does not scale.
     case fixed(CGFloat)
   }
 
   // FIXME: Update size with dynamic type using `textStyle`.
+  /// The text style the font scales relative to, if any.
   public let textStyle: Font.TextStyle?
 
+  /// Returns a Boolean value indicating whether two custom font boxes are equal.
   public static func == (lhs: _CustomFontBox, rhs: _CustomFontBox) -> Bool {
     lhs.name == rhs.name
       && lhs.size == rhs.size
       && lhs.textStyle == rhs.textStyle
   }
 
+  /// Hashes the essential components of the font box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(name)
     hasher.combine(size)
@@ -224,6 +282,7 @@ public class _CustomFontBox: AnyFontBox, @unchecked Sendable {
     (self.name, self.size, self.textStyle) = (name, size, textStyle)
   }
 
+  /// Resolves the box into a concrete font using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     switch size {
     case let .dynamic(size):
@@ -239,6 +298,7 @@ public class _CustomFontBox: AnyFontBox, @unchecked Sendable {
     }
   }
 
+  /// Returns a Boolean value indicating whether this box equals another font box.
   override public func equals(_ other: AnyFontBox) -> Bool {
     guard let other = other as? _CustomFontBox else { return false }
     return other.name == name && other.size == size && other.textStyle == textStyle

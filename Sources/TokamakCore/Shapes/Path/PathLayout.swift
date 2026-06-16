@@ -18,6 +18,7 @@
 import Foundation
 
 public extension Path.Storage {
+  /// The drawing elements that this storage resolves to.
   var elements: [Path.Element] {
     switch self {
     case .empty:
@@ -211,6 +212,7 @@ public extension Path.Storage {
 }
 
 public extension Path {
+  /// The last point in the path, or `nil` if the path has no points.
   var currentPoint: CGPoint? {
     switch elements.last {
     case let .move(to: point): return point
@@ -221,6 +223,10 @@ public extension Path {
     }
   }
 
+  /// Returns a copy of the path with the given affine transform applied.
+  ///
+  /// - Parameter transform: The affine transform to apply to the path.
+  /// - Returns: A transformed copy of the path.
   func applying(_ transform: CGAffineTransform) -> Path {
     guard transform != .identity else { return self }
     let elements = elements.map { transform.transform(element: $0) }
@@ -228,18 +234,29 @@ public extension Path {
     return Path(storage: .path(box), sizing: .fixed)
   }
 
+  /// Returns a copy of the path translated by the given offsets.
+  ///
+  /// - Parameters:
+  ///   - dx: The horizontal amount to translate the path by.
+  ///   - dy: The vertical amount to translate the path by.
+  /// - Returns: A translated copy of the path.
   func offsetBy(dx: CGFloat, dy: CGFloat) -> Path {
     applying(.init(translationX: dx, y: dy))
   }
 }
 
 extension Path: Shape {
+  /// Describes this shape as a path within a rectangular frame of reference.
   public func path(in rect: CGRect) -> Path {
     self
   }
 }
 
 public extension CGAffineTransform {
+  /// Returns a copy of the given path element with this transform applied.
+  ///
+  /// - Parameter element: The path element to transform.
+  /// - Returns: A transformed copy of the element.
   func transform(element: Path.Element) -> Path.Element {
     switch element {
     case let .move(to: p):

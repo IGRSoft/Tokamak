@@ -15,11 +15,18 @@
 //  Created by Carson Katri on 7/16/20.
 //
 
+/// A part of an app's user interface with a life cycle managed by the system.
+///
+/// You create an `App` by combining one or more instances that conform to the `Scene` protocol in
+/// the app's ``App/body-swift.property``. Tokamak provides primitive scenes such as
+/// ``WindowGroup`` and ``Window``, which you can compose with the ``SceneBuilder`` result builder.
 public protocol Scene {
+  /// The type of scene that represents the body of this scene.
   associatedtype Body: Scene
 
   // FIXME: If I put `@SceneBuilder` in front of this
   // it fails to build with no useful error message.
+  /// The content and behavior of the scene.
   var body: Self.Body { get }
 
   /// Override the default implementation for `Scene`s with body types of `Never`
@@ -35,7 +42,10 @@ public protocol Scene {
   static func _makeScene(_ inputs: SceneInputs<Self>) -> SceneOutputs
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public typealias SceneInputs<S: Scene> = ViewInputs<S>
+
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public typealias SceneOutputs = ViewOutputs
 
 protocol TitledScene {
@@ -48,7 +58,9 @@ protocol ParentScene {
 
 protocol GroupScene: ParentScene {}
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public protocol SceneDeferredToRenderer {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   var deferredBody: AnyView { get }
 }
 

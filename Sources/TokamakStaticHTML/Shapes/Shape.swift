@@ -21,6 +21,7 @@ import TokamakCore
 extension _OverlayModifier: DOMViewModifier
   where Overlay == _ShapeView<_StrokedShape<TokamakCore.Rectangle._Inset>, Color>
 {
+  /// CSS `border` attributes translating a stroked-rectangle overlay into a DOM border.
   public var attributes: [HTMLAttribute: String] {
     let style = overlay.shape.style.dashPhase == 0 ? "solid" : "dashed"
     return ["style": """
@@ -34,7 +35,9 @@ extension _OverlayModifier: DOMViewModifier
 
 // TODO: Implement arbitrary clip paths with CSS `clip-path`
 extension _ClipEffect: DOMViewModifier {
+  /// Indicates the clip must be applied in declaration order relative to other modifiers.
   public var isOrderDependent: Bool { true }
+  /// CSS clip attributes for rounded-rectangle and circular clip shapes.
   public var attributes: [HTMLAttribute: String] {
     if let roundedRect = shape as? RoundedRectangle {
       return ["style": "border-radius: \(roundedRect.cornerSize.width)px; overflow: hidden;"]

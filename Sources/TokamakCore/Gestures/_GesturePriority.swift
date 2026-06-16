@@ -15,8 +15,13 @@
 //  Created by Szymon on 13/8/2023.
 //
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _GesturePriority {
+  /// The default precedence, where the gesture attaches with lower precedence than gestures
+  /// already defined by the view.
   case standard
+  /// Precedence for a gesture that is recognized alongside other simultaneous gestures.
   case simultaneous
+  /// Precedence for a gesture that takes priority over the view's own gestures.
   case highPriority
 }

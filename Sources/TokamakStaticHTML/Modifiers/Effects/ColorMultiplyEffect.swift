@@ -31,9 +31,15 @@ import Foundation
 // and a scheme-deferred color falls back to its `.light` value — an acceptable default
 // for SSR. Emitting a single `filter:` declaration also lets the modifier participate
 // in the same stacked-filter merge as `blur`/`grayscale`/`hueRotation`.
+/// Renders SwiftUI's `colorMultiply(_:)` as an inline-SVG `feColorMatrix`
+/// filter referenced through a `data:` URI in the CSS `filter` property.
 extension _ColorMultiplyEffect: DOMViewModifier {
+  /// Implementation detail: keeps stacked filters in separate DOM wrappers so
+  /// they are not flattened into one clobbering `filter:` style.
   public var isOrderDependent: Bool { true }
 
+  /// Implementation detail: resolves the multiplier color against a default SSR
+  /// environment and emits a `filter:` referencing the generated SVG matrix.
   public var attributes: [HTMLAttribute: String] {
     // `DOMViewModifier.attributes` has no environment in scope, so seed a default
     // SSR environment (light scheme) the same way the StaticHTML renderers do — a

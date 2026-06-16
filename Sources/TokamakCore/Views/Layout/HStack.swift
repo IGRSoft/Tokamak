@@ -17,6 +17,7 @@
 
 import Foundation
 
+/// The default distance, in points, between adjacent subviews of a stack.
 public let defaultStackSpacing: CGFloat = 8
 
 /// A view that arranges its children in a horizontal line.
@@ -26,13 +27,22 @@ public let defaultStackSpacing: CGFloat = 8
 ///       Text("World")
 ///     }
 public struct HStack<Content>: View where Content: View {
+  /// The guide for aligning the subviews vertically.
   public let alignment: VerticalAlignment
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let spacing: CGFloat?
 
+  /// The content of the stack.
   public let content: Content
 
+  /// Creates a horizontal stack with the given spacing and vertical alignment.
+  /// - Parameters:
+  ///   - alignment: The guide for aligning the subviews vertically.
+  ///   - spacing: The distance between adjacent subviews, or `nil` to use a
+  ///     default distance.
+  ///   - content: A view builder that produces the stacked subviews.
   public init(
     alignment: VerticalAlignment = .center,
     spacing: CGFloat? = nil,
@@ -43,26 +53,34 @@ public struct HStack<Content>: View where Content: View {
     self.content = content()
   }
 
+  /// The content and behavior of the view.
   public var body: Never {
     neverBody("HStack")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     visitor.visit(content)
   }
 }
 
 extension HStack: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _HStackProxy<Content> where Content: View {
+  /// The wrapped `HStack` whose resolved layout values this proxy exposes.
   public let subject: HStack<Content>
 
+  /// Wraps the given `HStack` in a proxy that resolves its default layout values.
+  /// - Parameter subject: The `HStack` to wrap.
   public init(_ subject: HStack<Content>) { self.subject = subject }
 
+  /// The spacing between subviews, resolving `nil` to the default stack spacing.
   public var spacing: CGFloat { subject.spacing ?? defaultStackSpacing }
 }

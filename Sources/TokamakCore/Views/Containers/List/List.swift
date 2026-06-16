@@ -17,11 +17,26 @@
 
 import Foundation
 
+/// A container that presents rows of data arranged in a single column, optionally providing the
+/// ability to select one or more members.
+///
+/// In its simplest form, a list creates its contents statically, as shown in the following
+/// example, where the content closure contains an explicit list of views. Lists can also generate
+/// their rows dynamically from an underlying collection of data.
+///
+///     List {
+///       Text("A List Item")
+///       Text("A Second List Item")
+///       Text("A Third List Item")
+///     }
 public struct List<SelectionValue, Content>: View
   where SelectionValue: Hashable, Content: View
 {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public enum _Selection {
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case one(Binding<SelectionValue?>?)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case many(Binding<Set<SelectionValue>>?)
   }
 
@@ -34,11 +49,13 @@ public struct List<SelectionValue, Content>: View
   @Environment(\.editMode)
   var editMode
 
+  /// Creates a list with the given content that supports selecting multiple rows.
   public init(selection: Binding<Set<SelectionValue>>?, @ViewBuilder content: () -> Content) {
     self.selection = .many(selection)
     self.content = content()
   }
 
+  /// Creates a list with the given content that supports selecting a single row.
   public init(selection: Binding<SelectionValue?>?, @ViewBuilder content: () -> Content) {
     self.selection = .one(selection)
     self.content = content()
@@ -160,6 +177,7 @@ public struct List<SelectionValue, Content>: View
     VStack(alignment: .leading, spacing: 0, content: stackContent)
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     if let style = style as? ListStyleDeferredToRenderer {
@@ -181,6 +199,7 @@ public struct List<SelectionValue, Content>: View
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _ListRow {
   static func buildItems<RowView>(
     _ children: [AnyView],
@@ -194,6 +213,7 @@ public enum _ListRow {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @ViewBuilder
   public static func listRow<V: View>(_ view: V, _ style: ListStyle, isLast: Bool) -> some View {
     (style as? ListStyleDeferredToRenderer)?.listRow(view) ??
@@ -205,15 +225,21 @@ public enum _ListRow {
 }
 
 /// This is a helper type that works around absence of "package private" access control in Swift
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ListProxy<SelectionValue, Content>
   where SelectionValue: Hashable, Content: View
 {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public let subject: List<SelectionValue, Content>
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public init(_ subject: List<SelectionValue, Content>) {
     self.subject = subject
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var content: Content { subject.content }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var selection: List<SelectionValue, Content>._Selection { subject.selection }
 }

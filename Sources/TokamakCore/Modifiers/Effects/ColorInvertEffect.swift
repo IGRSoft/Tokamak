@@ -12,15 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ColorInvertEffect: ViewModifier, Equatable {
+  /// Creates an effect that inverts the colors of the modified view.
   public init() {}
 
+  /// Returns the modifier's body for the given content.
   public func body(content: Content) -> some View {
     content
   }
 }
 
 public extension View {
+  /// Inverts the colors in this view.
+  ///
+  /// - Returns: A view that inverts its colors.
   func colorInvert() -> some View {
     modifier(_ColorInvertEffect())
   }

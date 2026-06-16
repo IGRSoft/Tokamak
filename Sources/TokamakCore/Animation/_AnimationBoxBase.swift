@@ -17,8 +17,11 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class _AnimationBoxBase: Equatable {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public struct _Resolved {
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public var duration: Double {
       switch style {
       case let .timingCurve(_, _, _, _, duration):
@@ -28,15 +31,23 @@ public class _AnimationBoxBase: Equatable {
       }
     }
 
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public var delay: Double
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public var speed: Double
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public var repeatStyle: _RepeatStyle
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public var style: _Style
 
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public enum _Style: Equatable {
+      /// An implementation detail of Tokamak's rendering; not for use in application code.
       case timingCurve(Double, Double, Double, Double, duration: Double)
+      /// An implementation detail of Tokamak's rendering; not for use in application code.
       case solver(_AnimationSolver)
 
+      /// An implementation detail of Tokamak's rendering; not for use in application code.
       public static func == (lhs: Self, rhs: Self) -> Bool {
         switch lhs {
         case let .timingCurve(lhs0, lhs1, lhs2, lhs3, lhsDuration):
@@ -56,10 +67,14 @@ public class _AnimationBoxBase: Equatable {
       }
     }
 
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public enum _RepeatStyle: Equatable {
+      /// An implementation detail of Tokamak's rendering; not for use in application code.
       case fixed(Int, autoreverses: Bool)
+      /// An implementation detail of Tokamak's rendering; not for use in application code.
       case forever(autoreverses: Bool)
 
+      /// An implementation detail of Tokamak's rendering; not for use in application code.
       public var autoreverses: Bool {
         switch self {
         case let .fixed(_, autoreverses),
@@ -78,6 +93,7 @@ public class _AnimationBoxBase: Equatable {
     fatalError("implement \(#function) in subclass")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func == (lhs: _AnimationBoxBase, rhs: _AnimationBoxBase) -> Bool {
     lhs.equals(rhs)
   }

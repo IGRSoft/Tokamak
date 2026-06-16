@@ -15,17 +15,27 @@
 //  Created by Carson Katri on 06/29/2020.
 //
 
+/// The horizontal or vertical dimension in a 2D coordinate system.
 public enum Axis: Int8, CaseIterable, Sendable {
+  /// The horizontal dimension.
   case horizontal
+  /// The vertical dimension.
   case vertical
 
+  /// An efficient set of axes.
   public struct Set: OptionSet, Sendable {
+    /// The element type of the option set.
     public let rawValue: Int8
+    /// Creates a new axis set from the given raw value.
+    ///
+    /// - Parameter rawValue: The raw value of the axis set to create.
     public init(rawValue: Int8) {
       self.rawValue = rawValue
     }
 
+    /// The horizontal dimension.
     public static let horizontal: Axis.Set = .init(rawValue: 1 << 0)
+    /// The vertical dimension.
     public static let vertical: Axis.Set = .init(rawValue: 1 << 1)
   }
 }

@@ -21,6 +21,8 @@ import TokamakCore
 @_spi(TokamakStaticHTML)
 import TokamakStaticHTML
 
+/// Renders a gesture view as a DOM `<div>` stamped with a `data-gesture-id`
+/// attribute so the global pointer observer can route events to it.
 extension TokamakCore._GestureView: DOMPrimitive {
   var renderedBody: AnyView {
     // Stamp the wrapper element with this view's id so the global pointer
@@ -38,15 +40,26 @@ extension TokamakCore._GestureView: DOMPrimitive {
   }
 }
 
+/// Produces the static HTML representation of a gesture view for server-side
+/// rendering, emitting a `<div>` carrying the `data-gesture-id` attribute.
 @_spi(TokamakStaticHTML)
 extension TokamakCore._GestureView: HTMLConvertible {
+  /// The HTML tag name rendered for this gesture view.
   public var tag: String { "div" }
+  /// The event listeners for the static rendering; gesture views attach none.
   public var listeners: [String: Listener] { [:] }
 
+  /// The HTML attributes emitted for the static rendering of this gesture view.
+  /// - Parameter useDynamicLayout: Whether layout-driven attributes should be
+  ///   included.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     ["data-gesture-id": gestureId]
   }
 
+  /// A visitor that renders this gesture view's content subscribed to the
+  /// pointer-event publisher.
+  /// - Parameter useDynamicLayout: Whether layout-driven rendering should be
+  ///   used.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     {
       $0.visit(

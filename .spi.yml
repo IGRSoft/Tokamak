@@ -1,0 +1,11 @@
+# Swift Package Index configuration.
+# Tells SPI which targets to build DocC documentation for, so the API reference
+# is hosted automatically at https://swiftpackageindex.com/<owner>/Tokamak/documentation
+# See https://swiftpackageindex.com/swiftpackageindex/spimanifest/documentation
+version: 1
+builder:
+  configs:
+    - documentation_targets:
+        - TokamakCore
+        - TokamakDOM
+        - TokamakStaticHTML

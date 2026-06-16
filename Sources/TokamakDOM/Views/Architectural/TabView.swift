@@ -16,6 +16,8 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a tab view as a `<div>` containing an ARIA tablist strip of tab
+/// buttons above a panel showing the selected tab's content.
 extension _TabViewContainer: DOMPrimitive {
   var strip: some View {
     let proxy = _TabViewProxy(self)

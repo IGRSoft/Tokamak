@@ -15,17 +15,26 @@
 import Foundation
 import TokamakCore
 
+/// The layout axis along which a `SpacerContainer` lays out its children.
 public enum SpacerContainerAxis {
+  /// The horizontal (`horizontal`, e.g. an `HStack`) and vertical (`vertical`, e.g. a `VStack`)
+  /// layout axes.
   case horizontal, vertical
 }
 
+/// A container view that can report whether it (or a nested container) holds a `Spacer`, used to
+/// drive flexible HTML layout.
 public protocol SpacerContainer {
+  /// Whether this container contains a `Spacer`, directly or via a same-axis nested container.
   var hasSpacer: Bool { get }
+  /// The layout axis along which this container arranges its children.
   var axis: SpacerContainerAxis { get }
+  /// Whether the cross axis must be filled because a cross-axis child contains a `Spacer`.
   var fillCrossAxis: Bool { get }
 }
 
 public extension SpacerContainer where Self: ParentView {
+  /// Whether any direct `Spacer` child, or a same-axis child container with a spacer, is present.
   var hasSpacer: Bool {
     children
       .compactMap {
@@ -46,6 +55,7 @@ public extension SpacerContainer where Self: ParentView {
   // Does a child SpacerContainer along the opposite axis have a spacer?
   // (e.g., an HStack with a child VStack which contains a spacer)
   // If so, we need to fill the cross-axis so the child can show the correct layout.
+  /// Whether a cross-axis child container holds a spacer, requiring the cross axis to be filled.
   var fillCrossAxis: Bool {
     children
       .compactMap {
@@ -57,6 +67,7 @@ public extension SpacerContainer where Self: ParentView {
 }
 
 extension Spacer: _HTMLPrimitive {
+  /// The server-rendered markup for a `Spacer`: a flex-grow `<div>` with an optional minimum width.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("div", [

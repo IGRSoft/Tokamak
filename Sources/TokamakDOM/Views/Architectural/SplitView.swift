@@ -16,6 +16,8 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a horizontal split view as a flexbox `<div>` row, inserting thin
+/// divider elements between adjacent panes.
 extension _HSplitContainer: DOMPrimitive {
   var renderedBody: AnyView {
     let panes = _HSplitViewProxy(self).panes
@@ -41,6 +43,8 @@ extension _HSplitContainer: DOMPrimitive {
   }
 }
 
+/// Renders a vertical split view as a flexbox `<div>` column, inserting thin
+/// divider elements between adjacent panes.
 extension _VSplitContainer: DOMPrimitive {
   var renderedBody: AnyView {
     let panes = _VSplitViewProxy(self).panes

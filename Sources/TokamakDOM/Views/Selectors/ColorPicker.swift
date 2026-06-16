@@ -17,6 +17,8 @@ import JavaScriptKit
 @_spi(TokamakCore) import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a `ColorPicker` as a DOM color `<input>` element, plus a sibling range `<input>` for
+/// opacity when the picker supports an alpha channel.
 extension ColorPicker: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _ColorPickerProxy(self)

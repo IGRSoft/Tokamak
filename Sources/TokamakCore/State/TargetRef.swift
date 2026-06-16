@@ -20,6 +20,7 @@ protocol TargetRefType {
 /** Allows capturing target instance of aclosest descendant host view. The resulting instance
  is written to a given `binding`. The actual assignment to this binding is done within the
  `MountedCompositeView` implementation. */
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _TargetRef<V: View, T>: View, TargetRefType {
   let binding: Binding<T?>
 
@@ -31,13 +32,17 @@ public struct _TargetRef<V: View, T>: View, TargetRefType {
     set { binding.wrappedValue = newValue as? T }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var body: V { view }
 }
 
 public extension View {
-  /** A modifier that returns a `_TargetRef` value, which captures a target instance of a
-   closest descendant host view.
-   The resulting instance is written to a given `binding`. */
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
+  ///
+  /// A modifier that returns a `_TargetRef` value, which captures a target instance of a
+  /// closest descendant host view. The resulting instance is written to a given `binding`.
+  /// - Parameter binding: A binding that receives the captured target instance.
+  /// - Returns: A `_TargetRef` value wrapping the receiver.
   @_spi(TokamakCore)
   func _targetRef<T: Target>(_ binding: Binding<T?>) -> _TargetRef<Self, T> {
     .init(binding: binding, view: self)

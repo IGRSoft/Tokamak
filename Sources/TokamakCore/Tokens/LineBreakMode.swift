@@ -15,11 +15,18 @@
 //  Created by Max Desiatov on 14/02/2019.
 //
 
+/// The strategies for wrapping or truncating text that does not fit on a single line.
 public enum LineBreakMode {
+  /// Wrapping occurs at word boundaries, unless a single word is too long for the line.
   case wordWrap
+  /// Wrapping occurs before the first character that does not fit.
   case charWrap
+  /// Lines are simply not drawn past the edge of the bounding rectangle.
   case clip
+  /// Text is truncated at the beginning of the line, displaying an ellipsis there.
   case truncateHead
+  /// Text is truncated at the end of the line, displaying an ellipsis there.
   case truncateTail
+  /// Text is truncated in the middle of the line, displaying an ellipsis there.
   case truncateMiddle
 }

@@ -21,6 +21,8 @@ import JavaScriptKit
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a `DatePicker` as a DOM `<input>` element whose type matches the displayed
+/// components (`date`, `time`, or `datetime-local`).
 extension DatePicker: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _DatePickerProxy(self)

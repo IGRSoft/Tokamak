@@ -17,6 +17,8 @@
 
 public extension List {
   // - MARK: Collection initializers
+  /// Creates a list that supports multiple selection over identified data, computing its rows on
+  /// demand from the provided collection.
   init<Data, RowContent>(
     _ data: Data,
     selection: Binding<Set<SelectionValue>>?,
@@ -29,6 +31,8 @@ public extension List {
     self.init(selection: selection) { ForEach(data) { row in HStack { rowContent(row) } } }
   }
 
+  /// Creates a list that supports multiple selection, identifying rows by a key path and computing
+  /// them on demand from the provided collection.
   init<Data, ID, RowContent>(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,
@@ -42,6 +46,8 @@ public extension List {
     self.init(selection: selection) { ForEach(data, id: id) { row in HStack { rowContent(row) } } }
   }
 
+  /// Creates a list that supports single selection, identifying rows by a key path and computing
+  /// them on demand from the provided collection.
   init<Data, ID, RowContent>(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,
@@ -58,6 +64,8 @@ public extension List {
     }
   }
 
+  /// Creates a list that supports single selection over identified data, computing its rows on
+  /// demand from the provided collection.
   init<Data, RowContent>(
     _ data: Data,
     selection: Binding<SelectionValue?>?,
@@ -76,6 +84,8 @@ public extension List {
   }
 
   // - MARK: Range initializers
+  /// Creates a list that supports multiple selection, computing its rows on demand from a constant
+  /// range of integers.
   init<RowContent>(
     _ data: Range<Int>,
     selection: Binding<Set<SelectionValue>>?,
@@ -90,6 +100,8 @@ public extension List {
     }
   }
 
+  /// Creates a list that supports single selection, computing its rows on demand from a constant
+  /// range of integers.
   init<RowContent>(
     _ data: Range<Int>,
     selection: Binding<SelectionValue?>?,
@@ -106,6 +118,8 @@ public extension List {
 
   // - MARK: OutlineGroup initializers
 
+  /// Creates a hierarchical list that supports multiple selection over identified tree-structured
+  /// data, reading each element's children through a key path.
   init<Data, RowContent>(
     _ data: Data,
     children: KeyPath<Data.Element, Data?>,
@@ -127,6 +141,8 @@ public extension List {
     }
   }
 
+  /// Creates a hierarchical list that supports multiple selection, identifying elements by a key
+  /// path and reading each element's children through a key path.
   init<Data, ID, RowContent>(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,
@@ -149,6 +165,8 @@ public extension List {
     }
   }
 
+  /// Creates a hierarchical list that supports single selection over identified tree-structured
+  /// data, reading each element's children through a key path.
   init<Data, RowContent>(
     _ data: Data,
     children: KeyPath<Data.Element, Data?>,
@@ -170,6 +188,8 @@ public extension List {
     }
   }
 
+  /// Creates a hierarchical list that supports single selection, identifying elements by a key
+  /// path and reading each element's children through a key path.
   init<Data, ID, RowContent>(
     _ data: Data,
     id: KeyPath<Data.Element, ID>,

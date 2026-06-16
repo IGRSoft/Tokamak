@@ -15,6 +15,7 @@
 #if canImport(JavaScriptKit)
 import TokamakCore
 
+/// Renders a `TextEditor` as a DOM `<textarea>` element wired to its text binding.
 extension TextEditor: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _TextEditorProxy(self)

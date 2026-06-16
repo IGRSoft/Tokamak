@@ -14,21 +14,31 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _FlexFrameLayout: ViewModifier {
+  /// The minimum width of the resulting frame, or `nil` if unconstrained.
   public let minWidth: CGFloat?
+  /// The ideal width of the resulting frame, or `nil` if unconstrained.
   public let idealWidth: CGFloat?
+  /// The maximum width of the resulting frame, or `nil` if unconstrained.
   public let maxWidth: CGFloat?
+  /// The minimum height of the resulting frame, or `nil` if unconstrained.
   public let minHeight: CGFloat?
+  /// The ideal height of the resulting frame, or `nil` if unconstrained.
   public let idealHeight: CGFloat?
+  /// The maximum height of the resulting frame, or `nil` if unconstrained.
   public let maxHeight: CGFloat?
+  /// The alignment of the content within the resulting frame.
   public let alignment: Alignment
 
   // These are special cases in SwiftUI, where the child
   // will request the entire width/height of the parent.
+  /// A Boolean value indicating whether the frame should fill the parent's available width.
   public var fillWidth: Bool {
     (minWidth == 0 || minWidth == nil) && maxWidth == .infinity
   }
 
+  /// A Boolean value indicating whether the frame should fill the parent's available height.
   public var fillHeight: Bool {
     (minHeight == 0 || minHeight == nil) && maxHeight == .infinity
   }
@@ -51,16 +61,32 @@ public struct _FlexFrameLayout: ViewModifier {
     self.alignment = alignment
   }
 
+  /// The content and behavior of the modified view.
   public func body(content: Content) -> some View {
     content
   }
 }
 
 extension _FlexFrameLayout: Animatable {
+  /// The type defining the data to animate. This layout has no animatable data.
   public typealias AnimatableData = EmptyAnimatableData
 }
 
 public extension View {
+  /// Positions this view within an invisible frame having the specified size constraints.
+  ///
+  /// Use this modifier to give a view flexible bounds. The view occupies a frame whose width and
+  /// height fall within the supplied minimum, ideal, and maximum values. Pass `nil` for any
+  /// dimension that should remain unconstrained.
+  /// - Parameters:
+  ///   - minWidth: The minimum width of the resulting frame.
+  ///   - idealWidth: The ideal width of the resulting frame.
+  ///   - maxWidth: The maximum width of the resulting frame.
+  ///   - minHeight: The minimum height of the resulting frame.
+  ///   - idealHeight: The ideal height of the resulting frame.
+  ///   - maxHeight: The maximum height of the resulting frame.
+  ///   - alignment: The alignment of this view inside the resulting frame.
+  /// - Returns: A view with flexible dimensions constrained by the values given.
   func frame(
     minWidth: CGFloat? = nil,
     idealWidth: CGFloat? = nil,

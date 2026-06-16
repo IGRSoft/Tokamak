@@ -18,6 +18,14 @@
 import Foundation
 
 public extension InsettableShape {
+  /// Returns a view that is the result of insetting this shape and stroking the
+  /// resulting shape with a color or gradient.
+  ///
+  /// - Parameters:
+  ///   - content: The style to stroke the border with.
+  ///   - style: The stroke style to apply.
+  ///   - antialiased: Whether to apply antialiasing to the border's edges.
+  /// - Returns: A view representing the stroked border.
   func strokeBorder<S>(
     _ content: S,
     style: StrokeStyle,
@@ -28,6 +36,13 @@ public extension InsettableShape {
       .fill(content, style: FillStyle(antialiased: antialiased))
   }
 
+  /// Returns a view that is the result of insetting this shape and stroking the
+  /// resulting shape with the foreground color.
+  ///
+  /// - Parameters:
+  ///   - style: The stroke style to apply.
+  ///   - antialiased: Whether to apply antialiasing to the border's edges.
+  /// - Returns: A view representing the stroked border.
   @inlinable
   func strokeBorder(style: StrokeStyle, antialiased: Bool = true) -> some View {
     inset(by: style.lineWidth / 2)
@@ -35,6 +50,14 @@ public extension InsettableShape {
       .fill(style: FillStyle(antialiased: antialiased))
   }
 
+  /// Returns a view that is the result of insetting this shape and stroking the
+  /// resulting shape with a color or gradient using the given line width.
+  ///
+  /// - Parameters:
+  ///   - content: The style to stroke the border with.
+  ///   - lineWidth: The width of the stroke.
+  ///   - antialiased: Whether to apply antialiasing to the border's edges.
+  /// - Returns: A view representing the stroked border.
   @inlinable
   func strokeBorder<S>(
     _ content: S,
@@ -48,6 +71,13 @@ public extension InsettableShape {
     )
   }
 
+  /// Returns a view that is the result of insetting this shape and stroking the
+  /// resulting shape with the foreground color using the given line width.
+  ///
+  /// - Parameters:
+  ///   - lineWidth: The width of the stroke.
+  ///   - antialiased: Whether to apply antialiasing to the border's edges.
+  /// - Returns: A view representing the stroked border.
   @inlinable
   func strokeBorder(lineWidth: CGFloat = 1, antialiased: Bool = true) -> some View {
     strokeBorder(

@@ -15,19 +15,26 @@
 //  Created by Szymon on 16/7/2023.
 //
 
+/// A gesture that consists of two gestures where only one of them can succeed.
+///
+/// The `ExclusiveGesture` gives precedence to its first gesture. Create an exclusive gesture with
+/// the ``Gesture/exclusively(before:)`` modifier.
 @frozen
-/// The ExclusiveGesture gives precedence to its first gesture.
 public struct ExclusiveGesture<First, Second>: Gesture
   where First: Gesture, Second: Gesture
 {
   /// The value of an exclusive gesture that indicates which of two gestures succeeded.
   public typealias Value = ExclusiveGesture.ExclusiveValue
 
+  /// The value of an exclusive gesture that indicates which of two gestures succeeded.
   public struct ExclusiveValue {
+    /// The value of the first gesture.
     public var first: First.Value
+    /// The value of the second gesture.
     public var second: First.Value
   }
 
+  /// The content and behavior of the gesture.
   public var body: ExclusiveGesture<First, Second> { self }
 
   /// The first of two gestures.
@@ -41,7 +48,10 @@ public struct ExclusiveGesture<First, Second>: Gesture
     self.second = second
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool { false }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self { self }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self { self }
 }

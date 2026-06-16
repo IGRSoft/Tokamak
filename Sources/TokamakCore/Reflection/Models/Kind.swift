@@ -20,21 +20,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/// The category of a Swift runtime type, as reported by its metadata record.
+///
+/// Tokamak inspects a type's `Kind` while reflecting views so it can decide how to read the
+/// value's stored properties. Reflection is only supported for the `struct` case; the other
+/// cases mirror the kinds the Swift runtime can report.
 public enum Kind {
+  /// A value type declared with `struct`.
   case `struct`
+  /// A value type declared with `enum`.
   case `enum`
+  /// An `Optional` value.
   case optional
+  /// An opaque type, such as the underlying type behind a `some` return.
   case opaque
+  /// A tuple type.
   case tuple
+  /// A function type.
   case function
+  /// An existential type, such as a boxed protocol value.
   case existential
+  /// A metatype, such as `Int.Type`.
   case metatype
+  /// An Objective-C class wrapped for use from Swift.
   case objCClassWrapper
+  /// The metatype of an existential type.
   case existentialMetatype
+  /// A foreign class, such as a Core Foundation type.
   case foreignClass
+  /// A heap-allocated local variable box.
   case heapLocalVariable
+  /// A heap-allocated local variable box with generic layout.
   case heapGenericLocalVariable
+  /// A boxed error value.
   case errorObject
+  /// A reference type declared with `class`.
   case `class`
   init(flag: Int) {
     switch flag {

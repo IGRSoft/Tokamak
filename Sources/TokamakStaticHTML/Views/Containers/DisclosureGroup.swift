@@ -21,6 +21,7 @@ extension DisclosureGroup: _HTMLPrimitive {
   // disclosed content is visible/crawlable without a runtime. This mirrors the
   // `_MenuContainer` SSR treatment (see `Containers/Menu.swift`) and the DOM
   // structure (`role="tree"` outer, `role="treeitem"` content).
+  /// Implementation detail: the SSR markup, the disclosure group rendered always-expanded.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(expandedBody)
@@ -81,9 +82,12 @@ extension DisclosureGroup: _HTMLPrimitive {
 // (`TokamakDOM/Views/Containers/DisclosureGroup.swift`).
 @_spi(TokamakStaticHTML)
 extension DisclosureGroup: HTMLConvertible {
+  /// Implementation detail: the `<div role="tree">` tag wrapping the disclosure group.
   @_spi(TokamakStaticHTML)
   public var tag: String { "div" }
 
+  /// Implementation detail: the `role="tree"` container attributes for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     [
@@ -92,6 +96,8 @@ extension DisclosureGroup: HTMLConvertible {
     ]
   }
 
+  /// Implementation detail: visits the expanded label and content as children on the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func primitiveVisitor<V: ViewVisitor>(useDynamicLayout: Bool) -> ((V) -> ())? {
     let proxy = _DisclosureGroupProxy(self)

@@ -17,13 +17,17 @@
 
 import TokamakCore
 
+/// A view that sets the document `<title>` via a preference.
 public struct HTMLTitle: View {
   var title: String
 
+  /// Creates a title view with the given document title text.
+  /// - Parameter title: The text for the document `<title>`.
   public init(_ title: String) {
     self.title = title
   }
 
+  /// An empty body that publishes the title through the head-title preference key.
   public var body: some View {
     EmptyView()
       .preference(key: HTMLTitlePreferenceKey.self, value: title)
@@ -31,10 +35,16 @@ public struct HTMLTitle: View {
 }
 
 public extension View {
+  /// Sets the document `<title>` to the given string.
+  /// - Parameter title: The text for the document `<title>`.
+  /// - Returns: A view that contributes the title.
   func htmlTitle(_ title: String) -> some View {
     htmlTitle(.init(title))
   }
 
+  /// Adds an existing ``HTMLTitle`` view alongside this view so its title reaches the head.
+  /// - Parameter title: The title view to include.
+  /// - Returns: A group combining this view and the title view.
   func htmlTitle(_ title: HTMLTitle) -> some View {
     Group {
       self

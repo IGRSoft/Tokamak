@@ -19,9 +19,11 @@ import Foundation
 @_spi(TokamakCore)
 import TokamakCore
 
+/// A SwiftUI-compatible `Image` re-exported from TokamakCore.
 public typealias Image = TokamakCore.Image
 
 extension Image: _HTMLPrimitive {
+  /// Implementation detail: the SSR markup, an `<img>` element with resolved source and alt text.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(_HTMLImage(proxy: _ImageProxy(self)))
@@ -105,7 +107,12 @@ struct _HTMLImage: View {
 
 @_spi(TokamakStaticHTML)
 extension Image: HTMLConvertible {
+  /// Implementation detail: the `<img>` tag emitted for an `Image` on the Fiber path.
   public var tag: String { "img" }
+  /// Implementation detail: the `<img>` source, sizing, and accessibility attributes for the
+  /// Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; toggles the
+  ///   `data-loaded` flag and sizing styles.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     let proxy = _ImageProxy(self)
     let resolved = proxy.provider.resolve(in: proxy.environment)

@@ -16,12 +16,23 @@
 //
 
 /// A key that stores a value that can be accessed via a `LayoutSubview`.
+///
+/// Conform to this protocol and use the `layoutValue(key:value:)` modifier to associate
+/// custom per-subview data that a `Layout` can read, mirroring SwiftUI's `LayoutValueKey`.
 public protocol LayoutValueKey {
+  /// The type of value stored under this key.
   associatedtype Value
+  /// The value returned when no value has been set for this key.
   static var defaultValue: Self.Value { get }
 }
 
 public extension View {
+  /// Associates a value with a custom layout value key for this view.
+  ///
+  /// - Parameters:
+  ///   - key: The layout value key type to set.
+  ///   - value: The value to store under `key`.
+  /// - Returns: A view that stores `value` under the given layout value key.
   @inlinable
   func layoutValue<K>(key: K.Type, value: K.Value) -> some View where K: LayoutValueKey {
     // LayoutValueKey uses trait keys under the hood.
@@ -29,7 +40,9 @@ public extension View {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _LayoutTrait<K>: _ViewTraitKey where K: LayoutValueKey {
+  /// The default value for the wrapped layout value key.
   public static var defaultValue: K.Value {
     K.defaultValue
   }

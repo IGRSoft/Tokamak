@@ -18,6 +18,7 @@ extension _MenuContainer: _HTMLPrimitive {
   // SSR cannot toggle open/close, so the label AND items are rendered expanded
   // (regardless of `isOpen`), so the menu's label and all item markup are
   // present in the output.
+  /// Implementation detail: the SSR markup, the menu label and items rendered always-expanded.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(expandedBody)
@@ -51,9 +52,12 @@ extension _MenuContainer: _HTMLPrimitive {
 // `_MenuContainer: DOMPrimitive` mapping (TokamakDOM/Views/Containers/Menu.swift).
 @_spi(TokamakStaticHTML)
 extension _MenuContainer: HTMLConvertible {
+  /// Implementation detail: the `<div role="menu">` tag wrapping the menu.
   @_spi(TokamakStaticHTML)
   public var tag: String { "div" }
 
+  /// Implementation detail: the `role="menu"` container attributes for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     [
@@ -62,6 +66,8 @@ extension _MenuContainer: HTMLConvertible {
     ]
   }
 
+  /// Implementation detail: visits the menu label and items as children on the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func primitiveVisitor<V: ViewVisitor>(useDynamicLayout: Bool) -> ((V) -> ())? {
     { visitor in

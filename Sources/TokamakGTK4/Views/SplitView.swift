@@ -20,6 +20,9 @@ import TokamakCore
 // TODO: map to GtkPaned for true draggable split handles — best-effort, documented
 // per R4 (untested on hosts without GTK system libraries).
 extension _HSplitContainer: GTKPrimitive {
+  /// Renders the panes inline in an `HStack` separated by `Divider`s (best-effort GTK4 output).
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let panes = _HSplitViewProxy(self).panes
@@ -40,6 +43,9 @@ extension _HSplitContainer: GTKPrimitive {
 // TODO: map to GtkPaned for true draggable split handles — best-effort, documented
 // per R4 (untested on hosts without GTK system libraries).
 extension _VSplitContainer: GTKPrimitive {
+  /// Renders the panes inline in a `VStack` separated by `Divider`s (best-effort GTK4 output).
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let panes = _VSplitViewProxy(self).panes
