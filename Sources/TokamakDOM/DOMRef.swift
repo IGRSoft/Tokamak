@@ -17,9 +17,11 @@ import JavaScriptKit
 @_spi(TokamakCore) import TokamakCore
 
 public extension View {
-  /** Allows capturing DOM references of host views. The resulting reference is written
-   to a given `binding`.
-   */
+  /// An implementation detail that binds this host view's underlying DOM node to `binding`.
+  ///
+  /// Allows capturing DOM references of host views. The resulting reference is written
+  /// to the given `binding`.
+  /// - Parameter binding: The binding that receives the captured JavaScript node.
   func _domRef(_ binding: Binding<JSObject?>) -> some View {
     // Convert `Binding<JSObject?>` to `Binding<DOMNode?>` first.
     let targetBinding = Binding(

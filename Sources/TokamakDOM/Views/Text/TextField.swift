@@ -24,6 +24,8 @@ import TokamakCore
 @_spi(TokamakStaticHTML)
 import TokamakStaticHTML
 
+/// Renders a `TextField` as a DOM `<input>` element wired to its text binding and editing
+/// callbacks.
 extension TextField: DOMPrimitive where Label == Text {
   func css(for style: _AnyTextFieldStyle) -> String {
     if style is PlainTextFieldStyle {
@@ -84,12 +86,21 @@ extension TextField: DOMPrimitive where Label == Text {
   }
 }
 
+/// Renders a `TextField` as a static or layout-driven `<input>` element and lets it act as a
+/// leaf `Layout` that sizes itself to its text content.
 @_spi(TokamakStaticHTML)
 extension TextField: HTMLConvertible, DOMNodeConvertible, Layout, _AnyLayout, Animatable
   where Label == Text
 {
+  /// The animatable data for this view, which carries no animated values.
   public typealias AnimatableData = EmptyAnimatableData
+  /// The HTML tag name used for the rendered element.
   public var tag: String { "input" }
+  /// The HTML attributes for the rendered `<input>` element.
+  ///
+  /// - Parameter useDynamicLayout: Pass `true` to add layout-driven styling that removes the
+  ///   default padding and border so the element fits its measured frame.
+  /// - Returns: The attribute dictionary describing the rendered element.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     if useDynamicLayout {
       return attributes
@@ -99,6 +110,13 @@ extension TextField: HTMLConvertible, DOMNodeConvertible, Layout, _AnyLayout, An
     }
   }
 
+  /// Measures the size the text field needs to fit its content and label text.
+  ///
+  /// - Parameters:
+  ///   - proposal: The size proposed by the parent layout.
+  ///   - subviews: The subviews to measure.
+  ///   - cache: Shared layout cache; unused here.
+  /// - Returns: The size that best fits the field's text and label.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -126,6 +144,13 @@ extension TextField: HTMLConvertible, DOMNodeConvertible, Layout, _AnyLayout, An
     )
   }
 
+  /// Places each subview at the origin of the field's bounds.
+  ///
+  /// - Parameters:
+  ///   - bounds: The region in which to place the subviews.
+  ///   - proposal: The size proposed to each subview.
+  ///   - subviews: The subviews to place.
+  ///   - cache: Shared layout cache; unused here.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,

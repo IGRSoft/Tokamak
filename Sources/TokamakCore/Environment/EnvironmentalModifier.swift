@@ -16,9 +16,19 @@
 //
 
 /// A modifier that resolves to a concrete modifier in an environment.
+///
+/// Mirrors SwiftUI's `EnvironmentalModifier`. Conform to this protocol when a
+/// modifier's behavior depends on the environment; ``resolve(in:)`` produces the
+/// concrete ``ResolvedModifier`` once the environment is known.
 public protocol EnvironmentalModifier: ViewModifier {
+  /// The concrete modifier type that this modifier resolves to.
   associatedtype ResolvedModifier: ViewModifier
+  /// Returns the modifier to apply, resolved against the given environment.
+  ///
+  /// - Parameter environment: The environment to resolve the modifier in.
+  /// - Returns: The concrete modifier to apply.
   func resolve(in environment: EnvironmentValues) -> ResolvedModifier
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static var _requiresMainThread: Bool { get }
 }
 
@@ -38,8 +48,10 @@ private struct EnvironmentalModifierResolver<M>: ViewModifier, _EnvironmentReade
 }
 
 public extension EnvironmentalModifier {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static var _requiresMainThread: Bool { true }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func body(content: _ViewModifier_Content<Self>) -> some View {
     content.modifier(EnvironmentalModifierResolver(modifier: self))
   }

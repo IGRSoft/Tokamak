@@ -17,6 +17,8 @@ import JavaScriptKit
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a `Stepper` as a pair of DOM `<button>` elements that invoke its decrement and
+/// increment actions.
 extension Stepper: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _StepperProxy(self)

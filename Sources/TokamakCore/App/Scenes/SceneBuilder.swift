@@ -15,8 +15,16 @@
 //  Created by Carson Katri on 7/16/20.
 //
 
+/// A result builder for composing a collection of scenes into a single combined scene.
+///
+/// You don't call the methods of `SceneBuilder` directly. Instead, the result builder transforms
+/// the scenes you declare in an ``App/body-swift.property`` into a single combined scene.
 @resultBuilder
 public enum SceneBuilder {
+  /// Builds an expression within the builder from a single scene.
+  ///
+  /// - Parameter content: The scene to pass through.
+  /// - Returns: The scene unchanged.
   public static func buildBlock<Content: Scene>(_ content: Content) -> some Scene {
     content
   }
@@ -26,6 +34,9 @@ public enum SceneBuilder {
 // swiftlint:disable function_parameter_count
 
 public extension SceneBuilder {
+  /// Builds a combined scene from two scenes.
+  ///
+  /// - Returns: A single scene that combines the two given scenes.
   static func buildBlock<C0, C1>(_ c0: C0, _ c1: C1) -> some Scene where C0: Scene,
     C1: Scene
   {
@@ -41,6 +52,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from three scenes.
+  ///
+  /// - Returns: A single scene that combines the three given scenes.
   static func buildBlock<C0, C1, C2>(_ c0: C0, _ c1: C1, _ c2: C2) -> some Scene
     where C0: Scene, C1: Scene, C2: Scene
   {
@@ -57,6 +71,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from four scenes.
+  ///
+  /// - Returns: A single scene that combines the four given scenes.
   static func buildBlock<C0, C1, C2, C3>(
     _ c0: C0,
     _ c1: C1,
@@ -77,6 +94,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from five scenes.
+  ///
+  /// - Returns: A single scene that combines the five given scenes.
   static func buildBlock<C0, C1, C2, C3, C4>(
     _ c0: C0,
     _ c1: C1,
@@ -99,6 +119,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from six scenes.
+  ///
+  /// - Returns: A single scene that combines the six given scenes.
   static func buildBlock<C0, C1, C2, C3, C4, C5>(
     _ c0: C0,
     _ c1: C1,
@@ -132,6 +155,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from seven scenes.
+  ///
+  /// - Returns: A single scene that combines the seven given scenes.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6>(
     _ c0: C0,
     _ c1: C1,
@@ -168,6 +194,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from eight scenes.
+  ///
+  /// - Returns: A single scene that combines the eight given scenes.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7>(
     _ c0: C0,
     _ c1: C1,
@@ -207,6 +236,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from nine scenes.
+  ///
+  /// - Returns: A single scene that combines the nine given scenes.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7, C8>(
     _ c0: C0,
     _ c1: C1,
@@ -249,6 +281,9 @@ public extension SceneBuilder {
 }
 
 public extension SceneBuilder {
+  /// Builds a combined scene from ten scenes.
+  ///
+  /// - Returns: A single scene that combines the ten given scenes.
   static func buildBlock<C0, C1, C2, C3, C4, C5, C6, C7, C8, C9>(
     _ c0: C0,
     _ c1: C1,

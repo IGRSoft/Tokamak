@@ -22,10 +22,19 @@ import Foundation
 ///     }
 ///
 public struct ZStack<Content>: _PrimitiveView where Content: View {
+  /// The guide for aligning the subviews in both axes.
   public let alignment: Alignment
+  /// The distance between adjacent subviews, or `nil` to use a default distance.
   public let spacing: CGFloat?
+  /// The content of the stack.
   public let content: Content
 
+  /// Creates an overlaying stack with the given alignment.
+  /// - Parameters:
+  ///   - alignment: The guide for aligning the subviews in both axes.
+  ///   - spacing: The distance between adjacent subviews, or `nil` to use a
+  ///     default distance.
+  ///   - content: A view builder that produces the overlaid subviews.
   public init(
     alignment: Alignment = .center,
     spacing: CGFloat? = nil,
@@ -38,6 +47,7 @@ public struct ZStack<Content>: _PrimitiveView where Content: View {
 }
 
 extension ZStack: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]

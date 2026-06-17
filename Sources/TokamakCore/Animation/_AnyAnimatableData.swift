@@ -13,6 +13,8 @@
 // limitations under the License.
 
 /// A type-eraser for `VectorArithmetic`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _AnyAnimatableData: VectorArithmetic {
   private var box: _AnyAnimatableDataBox?
 
@@ -98,6 +100,7 @@ private struct _ConcreteAnyAnimatableDataBox<
 public extension _AnyAnimatableData {
   // MARK: Equatable
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static func == (lhs: Self, rhs: Self) -> Bool {
     switch (rhs.box, lhs.box) {
     case let (rhsBox?, lhsBox?):
@@ -113,6 +116,7 @@ public extension _AnyAnimatableData {
 
   // MARK: AdditiveArithmetic
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static func + (lhs: Self, rhs: Self) -> Self {
     switch (rhs.box, lhs.box) {
     case let (rhsBox?, lhsBox?):
@@ -126,6 +130,7 @@ public extension _AnyAnimatableData {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static func - (lhs: Self, rhs: Self) -> Self {
     switch (rhs.box, lhs.box) {
     case let (rhsBox?, lhsBox?):
@@ -139,26 +144,31 @@ public extension _AnyAnimatableData {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static var zero: _AnyAnimatableData {
     _AnyAnimatableData(nil)
   }
 
   // MARK: VectorArithmetic
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   mutating func scale(by rhs: Double) {
     box?.scale(by: rhs)
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   var magnitudeSquared: Double {
     box?.magnitudeSquared ?? 0
   }
 }
 
 public extension _AnyAnimatableData {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   init<Data: VectorArithmetic>(_ data: Data) {
     box = _ConcreteAnyAnimatableDataBox(base: data)
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   var value: Any {
     box?.value ?? ()
   }

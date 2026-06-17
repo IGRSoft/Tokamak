@@ -21,6 +21,8 @@
 // legacy SSR path, mirroring the DOM `type="range"` + min/max/step/value attributes. The
 // JS `input`/`pointer` listeners are intentionally dropped — SSR output is static markup.
 extension Slider: _HTMLPrimitive {
+  /// The server-rendered markup for a `Slider`: the min label, an `<input type="range">` carrying
+  /// the min/max/step/value attributes, and the max label, wrapped in an `HStack`.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _SliderProxy(self)

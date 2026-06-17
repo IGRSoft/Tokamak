@@ -15,19 +15,36 @@
 //  Created by Carson Katri on 7/10/21.
 //
 
+/// A type-keyed container for the trait values attached to a view.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public struct _ViewTraitStore {
+  /// The stored trait values, keyed by the identity of their trait key type.
   public var values = [ObjectIdentifier: Any]()
 
+  /// Creates a trait store from the given backing dictionary.
+  ///
+  /// - Parameter values: The initial trait values, keyed by trait key identity.
   public init(values: [ObjectIdentifier: Any] = [:]) {
     self.values = values
   }
 
+  /// Returns the value stored for the given trait key, or its default value.
+  ///
+  /// - Parameter key: The trait key type to look up. Defaults to `Key.self`.
+  /// - Returns: The stored value, or `Key.defaultValue` if none is present.
   public func value<Key>(forKey key: Key.Type = Key.self) -> Key.Value
     where Key: _ViewTraitKey
   {
     values[ObjectIdentifier(key)] as? Key.Value ?? Key.defaultValue
   }
 
+  /// Stores a value for the given trait key, replacing any existing value.
+  ///
+  /// - Parameters:
+  ///   - value: The value to store for the trait key.
+  ///   - key: The trait key type to store under. Defaults to `Key.self`.
   public mutating func insert<Key>(_ value: Key.Value, forKey key: Key.Type = Key.self)
     where Key: _ViewTraitKey
   {

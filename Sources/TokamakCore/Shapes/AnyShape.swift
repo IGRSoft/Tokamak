@@ -48,6 +48,11 @@ private struct ConcreteAnyShapeBox<Base: Shape>: AnyShapeBox {
   }
 }
 
+/// A type-erased shape value.
+///
+/// Use `AnyShape` to wrap a shape whose concrete type can vary, allowing
+/// shapes of different types to be stored together or returned from a single
+/// function.
 public struct AnyShape: Shape {
   var box: AnyShapeBox
 
@@ -57,18 +62,22 @@ public struct AnyShape: Shape {
 }
 
 public extension AnyShape {
+  /// Creates a type-erased shape that wraps the given shape.
   init<S: Shape>(_ shape: S) {
     box = ConcreteAnyShapeBox(base: shape)
   }
 
+  /// Describes this shape as a path within a rectangular frame of reference.
   func path(in rect: CGRect) -> Path {
     box.path(in: rect)
   }
 
+  /// Returns the size that the wrapped shape prefers for the given proposal.
   func sizeThatFits(_ proposal: ProposedViewSize) -> CGSize {
     box.sizeThatFits(proposal)
   }
 
+  /// The type-erased data that drives the wrapped shape's animations.
   var animatableData: _AnyAnimatableData {
     get { box.animatableDataBox }
     set { box.animatableDataBox = newValue }

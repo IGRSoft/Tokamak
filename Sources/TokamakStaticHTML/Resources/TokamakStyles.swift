@@ -14,6 +14,8 @@
 
 import TokamakCore
 
+/// The bundled CSS stylesheet that backs Tokamak's HTML primitives (stacks, lists, toolbars,
+/// form controls, and more), emitted into the document `<head>` by ``StaticHTMLRenderer``.
 public let tokamakStyles = """
 html {
   height: 100%;
@@ -257,6 +259,7 @@ html {
 }
 """
 
+/// The inline CSS applied to the root `<body>` node so it centers and fills the viewport.
 public let rootNodeStyles = """
 display: flex;
 width: 100%;

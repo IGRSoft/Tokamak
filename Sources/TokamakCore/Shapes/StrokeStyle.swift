@@ -21,14 +21,30 @@ import Foundation
 import CoreGraphics
 #endif
 
+/// The characteristics of a stroke that traces a path.
 public struct StrokeStyle: Equatable {
+  /// The width of the stroked line.
   public var lineWidth: CGFloat
+  /// The endpoint style of the stroked line.
   public var lineCap: CGLineCap
+  /// The join style of the stroked line.
   public var lineJoin: CGLineJoin
+  /// The limit on the ratio of the miter length to the line width.
   public var miterLimit: CGFloat
+  /// The lengths of the painted and unpainted segments of a dashed line.
   public var dash: [CGFloat]
+  /// The offset at which the dash pattern begins.
   public var dashPhase: CGFloat
 
+  /// Creates a stroke style with the given characteristics.
+  ///
+  /// - Parameters:
+  ///   - lineWidth: The width of the stroked line.
+  ///   - lineCap: The endpoint style of the stroked line.
+  ///   - lineJoin: The join style of the stroked line.
+  ///   - miterLimit: The limit on the ratio of the miter length to the line width.
+  ///   - dash: The lengths of the painted and unpainted segments of a dashed line.
+  ///   - dashPhase: The offset at which the dash pattern begins.
   public init(
     lineWidth: CGFloat = 1,
     lineCap: CGLineCap = .butt,
@@ -47,6 +63,7 @@ public struct StrokeStyle: Equatable {
 }
 
 extension StrokeStyle: Animatable {
+  /// The data that drives this stroke style's animations.
   public var animatableData: AnimatablePair<CGFloat, AnimatablePair<CGFloat, CGFloat>> {
     get {
       .init(lineWidth, .init(miterLimit, dashPhase))

@@ -14,8 +14,12 @@
 
 import TokamakCore
 
+/// Renders `fixedSize` by emitting `width`/`height: max-content` CSS so the element sizes
+/// to its content along the fixed axes.
 extension _FixedSizeLayout: DOMViewModifier {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
+  /// The inline `style` attribute applying `max-content` sizing on the fixed axes.
   public var attributes: [HTMLAttribute: String] {
     [
       "style": "\(horizontal ? "width: max-content; " : "")"

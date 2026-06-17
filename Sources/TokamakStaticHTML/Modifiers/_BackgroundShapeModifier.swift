@@ -14,8 +14,12 @@
 
 import TokamakCore
 
+/// Renders a rectangular `background(_:in:)` shape by delegating to ``_BackgroundStyleModifier`` to
+/// emit the fill style.
 extension _BackgroundShapeModifier: DOMViewModifier where Bounds == Rectangle {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
+  /// The inline `style` attribute produced by resolving the shape's fill style.
   public var attributes: [HTMLAttribute: String] {
     var backgroundStyleModifier = _BackgroundStyleModifier(style: style)
     backgroundStyleModifier.environment = environment

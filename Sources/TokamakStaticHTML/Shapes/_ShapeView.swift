@@ -177,6 +177,7 @@ extension _ShapeView: _HTMLPrimitive {
       "\(cssStops.joined(separator: ", ")));"
   }
 
+  /// Renders the shaped view as an SVG element with its resolved fill, stroke, or gradient.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let path = shape.path(in: .zero).renderedBody
@@ -226,8 +227,11 @@ extension _ShapeView: _HTMLPrimitive {
 
 @_spi(TokamakStaticHTML)
 extension _ShapeView: HTMLConvertible {
+  /// Renders a shaped view as an `<svg>` element.
   public var tag: String { "svg" }
+  /// The SVG XML namespace.
   public var namespace: String? { "http://www.w3.org/2000/svg" }
+  /// Fill, stroke, or gradient attributes derived from the resolved shape style.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     let resolvedStyle = style.resolve(
       for: .resolveStyle(levels: 0..<1),
@@ -237,6 +241,7 @@ extension _ShapeView: HTMLConvertible {
     return attributes(resolvedStyle: resolvedStyle)
   }
 
+  /// Emits the SVG geometry plus any gradient definitions or clip paths for the shape.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     let resolvedStyle = style.resolve(
       for: .resolveStyle(levels: 0..<1),

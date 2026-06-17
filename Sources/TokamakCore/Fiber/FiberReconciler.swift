@@ -102,6 +102,10 @@ public final class FiberReconciler<Renderer: FiberRenderer> {
     }
   }
 
+  /// Creates a reconciler that renders the given root `View` using `renderer`.
+  ///
+  /// - Parameter renderer: The renderer that mounts and updates elements on screen.
+  /// - Parameter view: The root view of the hierarchy to render.
   public init<V: View>(_ renderer: Renderer, _ view: V) {
     self.renderer = renderer
     if renderer.useDynamicLayout {
@@ -130,6 +134,10 @@ public final class FiberReconciler<Renderer: FiberRenderer> {
     }
   }
 
+  /// Creates a reconciler that renders the given root `App` using `renderer`.
+  ///
+  /// - Parameter renderer: The renderer that mounts and updates elements on screen.
+  /// - Parameter app: The root app of the hierarchy to render.
   public init<A: App>(_ renderer: Renderer, _ app: A) {
     self.renderer = renderer
     if renderer.useDynamicLayout {

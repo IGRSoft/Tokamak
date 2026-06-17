@@ -25,12 +25,15 @@ import Foundation
 ///       }
 ///     }
 public struct Form<Content>: View where Content: View {
+  /// The content displayed within the form.
   public let content: Content
 
+  /// Creates a form with the provided content.
   public init(@ViewBuilder content: () -> Content) {
     self.content = content()
   }
 
+  /// The content and behavior of the view.
   public var body: some View {
     List {
       content

@@ -17,6 +17,7 @@
 extension _HSplitContainer: _HTMLPrimitive {
   // SSR lays the panes out along the horizontal axis with a static divider
   // between adjacent panes (draggable dividers are out of scope).
+  /// Implementation detail: the SSR markup, a horizontal flex row of panes with static dividers.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(expandedBody)
@@ -52,6 +53,7 @@ extension _HSplitContainer: _HTMLPrimitive {
 extension _VSplitContainer: _HTMLPrimitive {
   // SSR lays the panes out along the vertical axis with a static divider
   // between adjacent panes (draggable dividers are out of scope).
+  /// Implementation detail: the SSR markup, a vertical flex column of panes with static dividers.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(expandedBody)
@@ -91,9 +93,12 @@ extension _VSplitContainer: _HTMLPrimitive {
 // mappings (TokamakDOM/Views/Architectural/SplitView.swift).
 @_spi(TokamakStaticHTML)
 extension _HSplitContainer: HTMLConvertible {
+  /// Implementation detail: the `<div>` tag wrapping the horizontal split layout.
   @_spi(TokamakStaticHTML)
   public var tag: String { "div" }
 
+  /// Implementation detail: the horizontal flex-row container attributes for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     [
@@ -102,6 +107,8 @@ extension _HSplitContainer: HTMLConvertible {
     ]
   }
 
+  /// Implementation detail: visits the panes and dividers as children on the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func primitiveVisitor<V: ViewVisitor>(useDynamicLayout: Bool) -> ((V) -> ())? {
     { visitor in
@@ -128,9 +135,12 @@ extension _HSplitContainer: HTMLConvertible {
 
 @_spi(TokamakStaticHTML)
 extension _VSplitContainer: HTMLConvertible {
+  /// Implementation detail: the `<div>` tag wrapping the vertical split layout.
   @_spi(TokamakStaticHTML)
   public var tag: String { "div" }
 
+  /// Implementation detail: the vertical flex-column container attributes for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     [
@@ -139,6 +149,8 @@ extension _VSplitContainer: HTMLConvertible {
     ]
   }
 
+  /// Implementation detail: visits the panes and dividers as children on the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func primitiveVisitor<V: ViewVisitor>(useDynamicLayout: Bool) -> ((V) -> ())? {
     { visitor in

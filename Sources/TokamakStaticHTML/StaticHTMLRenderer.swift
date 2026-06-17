@@ -34,10 +34,15 @@ extension EnvironmentValues {
   }
 }
 
+/// A node in the legacy SSR render tree, pairing a view with the `AnyHTML` it produces.
+///
+/// `HTMLTarget`s are linked into a tree by ``StaticHTMLRenderer`` and serialized to markup
+/// via `outerHTML`.
 public final class HTMLTarget: Target {
   var html: AnyHTML
   var children: [HTMLTarget] = []
 
+  /// The type-erased view backing this target node.
   public var view: AnyView
 
   init<V: View>(_ view: V, _ html: AnyHTML) {
@@ -59,6 +64,7 @@ extension HTMLTarget {
 
 struct HTMLBody: AnyHTML {
   let tag: String = "body"
+  /// The `<body>` element has no inner HTML of its own; children are serialized separately.
   public func innerHTML(shouldSortAttributes: Bool) -> String? { nil }
   let attributes: [HTMLAttribute: String] = [
     "style": "margin: 0;" + rootNodeStyles,
@@ -66,6 +72,7 @@ struct HTMLBody: AnyHTML {
 }
 
 public extension HTMLMeta.MetaTag {
+  /// Serializes the meta tag to its `<meta …>` HTML string.
   func outerHTML() -> String {
     switch self {
     case let .charset(charset):
@@ -107,6 +114,18 @@ public enum SSREngine {
   case fiber
 }
 
+/// Renders a SwiftUI-compatible view or app tree to a complete static HTML document string.
+///
+/// This is the headline entry point for server-side rendering in TokamakStaticHTML: it mounts
+/// the tree once (with no statefulness), then serializes it via ``render(shouldSortAttributes:)``
+/// or ``renderRoot(shouldSortAttributes:)``. The reconciliation engine is selected internally
+/// (legacy `StackReconciler` by default, or the Fiber engine via the `TOKAMAK_SSR_ENGINE`
+/// environment variable).
+///
+/// ```swift
+/// let renderer = StaticHTMLRenderer(Text("Hello, world!"))
+/// let document = renderer.render()
+/// ```
 public final class StaticHTMLRenderer: Renderer {
   private var reconciler: StackReconciler<StaticHTMLRenderer>?
 
@@ -138,6 +157,8 @@ public final class StaticHTMLRenderer: Renderer {
     return .legacy
   }
 
+  /// Renders the full HTML document, including the `<head>` with title, meta tags, and styles.
+  /// - Parameter shouldSortAttributes: Sort element attributes for deterministic output.
   public func render(shouldSortAttributes: Bool = false) -> String {
     """
     <!DOCTYPE html>
@@ -156,10 +177,15 @@ public final class StaticHTMLRenderer: Renderer {
   }
 
   /// Renders only the root child of the top level `<body>` tag.
+  /// - Parameter shouldSortAttributes: Sort element attributes for deterministic output.
   public func renderRoot(shouldSortAttributes: Bool = false) -> String {
     rootTarget.children.first?.outerHTML(shouldSortAttributes: shouldSortAttributes) ?? ""
   }
 
+  /// Creates a renderer that mounts `view`, selecting the engine from the environment.
+  /// - Parameters:
+  ///   - view: The root view to render.
+  ///   - rootEnvironment: Environment values merged over the default SSR environment.
   public init<V: View>(_ view: V, _ rootEnvironment: EnvironmentValues? = nil) {
     rootTarget = HTMLTarget(view, HTMLBody())
     _mount(view, rootEnvironment, engine: Self._selectEngine())
@@ -198,6 +224,10 @@ public final class StaticHTMLRenderer: Renderer {
     }
   }
 
+  /// Creates a renderer that mounts `app`, selecting the engine from the environment.
+  /// - Parameters:
+  ///   - app: The root app to render.
+  ///   - rootEnvironment: Environment values merged over the default SSR environment.
   public init<A: App>(_ app: A, _ rootEnvironment: EnvironmentValues? = nil) {
     rootTarget = HTMLTarget(HTMLBody())
     _mount(app, rootEnvironment, engine: Self._selectEngine())
@@ -236,6 +266,8 @@ public final class StaticHTMLRenderer: Renderer {
     }
   }
 
+  /// Mounts a host view as a new ``HTMLTarget`` child of `parent`, or returns `parent`
+  /// for transparent containers such as `TupleView`.
   public func mountTarget(
     before _: HTMLTarget?,
     to parent: HTMLTarget,
@@ -258,10 +290,12 @@ public final class StaticHTMLRenderer: Renderer {
     return node
   }
 
+  /// Unsupported in static rendering; traps because SSR has no state updates.
   public func update(target: HTMLTarget, with host: MountedHost) {
     fatalError("Stateful apps cannot be created with TokamakStaticHTML")
   }
 
+  /// Unsupported in static rendering; traps because SSR never unmounts targets.
   public func unmount(
     target: HTMLTarget,
     from parent: HTMLTarget,
@@ -270,15 +304,22 @@ public final class StaticHTMLRenderer: Renderer {
     fatalError("Stateful apps cannot be created with TokamakStaticHTML")
   }
 
+  /// Returns `true` when the view type conforms to `_HTMLPrimitive`.
   public func isPrimitiveView(_ type: Any.Type) -> Bool {
     type is _HTMLPrimitive.Type
   }
 
+  /// Returns a primitive view's `renderedBody`, or `nil` when it is not a primitive.
   public func primitiveBody(for view: Any) -> AnyView? {
     (view as? _HTMLPrimitive)?.renderedBody
   }
 }
 
+/// A view that renders directly to HTML by providing its own `renderedBody`.
+///
+/// Renderer-specific machinery: primitive views adopt this so ``StaticHTMLRenderer`` can mount
+/// them as HTML nodes instead of recursing into a `body`.
 public protocol _HTMLPrimitive {
+  /// The HTML node tree this primitive renders to.
   var renderedBody: AnyView { get }
 }

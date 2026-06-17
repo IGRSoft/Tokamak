@@ -18,11 +18,22 @@
 import Foundation
 
 public extension View {
+  /// Sets the unique tag value of this view, used for programmatic selection.
+  ///
+  /// Use this modifier to differentiate among views inside a container that
+  /// supports selection, such as a `Picker` or a `TabView`.
+  ///
+  /// - Parameter tag: A `Hashable` value to use as the view's tag.
+  /// - Returns: A view with the given tag value attached as a trait.
   @inlinable
   func tag<V>(_ tag: V) -> some View where V: Hashable {
     _trait(TagValueTraitKey<V>.self, .tagged(tag))
   }
 
+  /// Marks this view as auxiliary content that should not receive a selection tag.
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in
+  /// application code.
   @inlinable
   func _untagged() -> some View {
     _trait(IsAuxiliaryContentTraitKey.self, true)

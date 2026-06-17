@@ -15,19 +15,24 @@
 //  Created by Carson Katri on 11/26/20.
 //
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PreferenceWritingModifier<Key>: _PreferenceWritingModifierProtocol
   where Key: PreferenceKey
 {
+  /// The value to write into the preference store for `Key`.
   public let value: Key.Value
+  /// Creates a modifier that writes `value` into the preference store for `Key`.
   public init(key: Key.Type = Key.self, value: Key.Value) {
     self.value = value
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func body(_ content: Content, with preferenceStore: inout _PreferenceStore) -> AnyView {
     preferenceStore.insert(value, forKey: Key.self)
     return content.view
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _makeView(_ inputs: ViewInputs<Self>) -> ViewOutputs {
     .init(
       inputs: inputs,
@@ -38,12 +43,19 @@ public struct _PreferenceWritingModifier<Key>: _PreferenceWritingModifierProtoco
 }
 
 extension _PreferenceWritingModifier: Equatable where Key.Value: Equatable {
+  /// Returns a Boolean value indicating whether two modifiers write equal values.
   public static func == (a: Self, b: Self) -> Bool {
     a.value == b.value
   }
 }
 
 public extension View {
+  /// Sets a value for the given preference.
+  ///
+  /// - Parameters:
+  ///   - key: The preference key type to set.
+  ///   - value: The value to assign to the preference.
+  /// - Returns: A view that sets the value of `key` to `value`.
   func preference<K>(key: K.Type = K.self, value: K.Value) -> some View
     where K: PreferenceKey
   {

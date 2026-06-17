@@ -13,6 +13,15 @@
 // limitations under the License.
 
 public extension View {
+  /// Adds an asynchronous task to perform before this view appears.
+  ///
+  /// Use this modifier to perform an asynchronous task with a lifetime that matches that of the
+  /// modified view. The task starts when the view appears and is cancelled when it disappears.
+  /// - Parameters:
+  ///   - priority: The task priority to use when creating the asynchronous task. The default
+  ///     priority is `userInitiated`.
+  ///   - action: A closure that runs asynchronously when the view appears.
+  /// - Returns: A view that runs the specified action asynchronously when the view appears.
   func task(
     priority: TaskPriority = .userInitiated,
     _ action: @escaping @Sendable () async -> ()

@@ -36,6 +36,7 @@ extension CGPoint {
 }
 
 #if !canImport(CoreGraphics)
+  /// The shape used to draw the endpoints of a stroked path.
   public enum CGLineCap {
     /// A line with a squared-off end. Extends to the endpoint of the Path.
     case butt
@@ -45,7 +46,9 @@ extension CGPoint {
     case square
   }
 
+  /// The shape used to join two connected segments of a stroked path.
   public enum CGLineJoin {
+    /// A join with a sharp, angled corner formed by extending the outer edges.
     case miter
     /// A join with a rounded end. Extends past the endpoint of the Path.
     case round
@@ -265,6 +268,10 @@ public extension _CGAffineTransform {
 }
 
 extension _CGAffineTransform: Codable {
+  /// Creates an affine transform by decoding its six values from the decoder.
+  ///
+  /// - Parameter decoder: The decoder to read the matrix values from.
+  /// - Throws: An error if any of the six values cannot be decoded.
   public init(from decoder: Decoder) throws {
     var container = try decoder.unkeyedContainer()
     self.init(
@@ -277,6 +284,10 @@ extension _CGAffineTransform: Codable {
     )
   }
 
+  /// Encodes the transform's six matrix values into the encoder.
+  ///
+  /// - Parameter encoder: The encoder to write the matrix values to.
+  /// - Throws: An error if any of the six values cannot be encoded.
   public func encode(to encoder: Encoder) throws {
     var container = encoder.unkeyedContainer()
     try container.encode(a)

@@ -48,21 +48,34 @@ enum GridCellUnsizedAxes: LayoutValueKey {
 }
 
 public extension View {
+  /// Tells a view that acts as a cell in a grid to span the specified number of
+  /// columns.
+  /// - Parameter count: The number of columns that the view should consume.
   @inlinable
   func gridCellColumns(_ count: Int) -> some View {
     layoutValue(key: GridCellColumns.self, value: count)
   }
 
+  /// Overrides the default horizontal and vertical alignment of a grid cell with
+  /// the given anchor point.
+  /// - Parameter anchor: The unit point that defines how to place the view within
+  ///   the bounds of its grid cell.
   @inlinable
   func gridCellAnchor(_ anchor: UnitPoint) -> some View {
     layoutValue(key: GridCellAnchor.self, value: anchor)
   }
 
+  /// Overrides the default horizontal alignment of the grid column that the view
+  /// appears in.
+  /// - Parameter guide: The horizontal alignment guide to use for the column.
   @inlinable
   func gridColumnAlignment(_ guide: HorizontalAlignment) -> some View {
     layoutValue(key: GridColumnAlignment.self, value: guide)
   }
 
+  /// Asks a grid to not offer the view extra size in the specified axes.
+  /// - Parameter axes: The axes along which the grid should not offer the view a
+  ///   share of any available space.
   @inlinable
   func gridCellUnsizedAxes(_ axes: Axis.Set) -> some View {
     layoutValue(key: GridCellUnsizedAxes.self, value: axes)
@@ -84,6 +97,7 @@ public extension View {
   }
 }
 
+/// A horizontal row in a two-dimensional grid container.
 @frozen
 public struct GridRow<Content: View>: View {
   @usableFromInline
@@ -91,18 +105,41 @@ public struct GridRow<Content: View>: View {
   @usableFromInline
   let content: Content
 
+  /// Creates a horizontal row of cells in a grid.
+  /// - Parameters:
+  ///   - alignment: An optional vertical alignment that overrides the grid's
+  ///     vertical alignment for this row.
+  ///   - content: A view builder that produces the cells of the row.
   @inlinable
   public init(alignment: VerticalAlignment? = nil, @ViewBuilder content: () -> Content) {
     id = .init(alignment: alignment)
     self.content = content()
   }
 
+  /// The content and behavior of the row.
   public var body: some View {
     content
       .layoutValue(key: GridRowKey.self, value: id)
   }
 }
 
+/// A container view that arranges other views in a two-dimensional layout.
+///
+/// Create a grid by laying out its content as a series of ``GridRow`` views,
+/// where each row contains the cells for that line of the grid.
+///
+/// ```swift
+/// Grid {
+///   GridRow {
+///     Text("Row 1")
+///     Image(systemName: "1.circle")
+///   }
+///   GridRow {
+///     Text("Row 2")
+///     Image(systemName: "2.circle")
+///   }
+/// }
+/// ```
 @frozen
 public struct Grid<Content>: View, Layout where Content: View {
   @usableFromInline
@@ -114,6 +151,16 @@ public struct Grid<Content>: View, Layout where Content: View {
   @usableFromInline
   let content: Content
 
+  /// Creates a grid with the given spacing, alignment, and child views.
+  /// - Parameters:
+  ///   - alignment: The guide for aligning the child views within the space
+  ///     allocated for a given cell.
+  ///   - horizontalSpacing: The horizontal distance between each cell, or `nil`
+  ///     to use a default distance.
+  ///   - verticalSpacing: The vertical distance between each row, or `nil` to use
+  ///     a default distance.
+  ///   - content: A view builder that produces the grid's child content,
+  ///     typically a series of ``GridRow`` views.
   @inlinable
   public init(
     alignment: Alignment = .center,
@@ -127,10 +174,13 @@ public struct Grid<Content>: View, Layout where Content: View {
     self.content = content()
   }
 
+  /// The content and behavior of the grid.
   public var body: some View {
     LayoutView(layout: self, content: content)
   }
 
+  /// A cache that stores intermediate layout measurements computed for the grid's
+  /// rows, columns, and spacing.
   public struct Cache {
     struct Row {
       let id: GridRowID?
@@ -151,6 +201,10 @@ public struct Grid<Content>: View, Layout where Content: View {
     var columnAlignments = [Int: HorizontalAlignment]()
   }
 
+  /// Creates and initializes a cache of layout measurements for the grid's
+  /// subviews.
+  /// - Parameter subviews: A collection of proxies for the grid's child views.
+  /// - Returns: A cache grouping the subviews into rows for later layout passes.
   public func makeCache(subviews: Subviews) -> Cache {
     subviews.reduce(into: Cache()) { partialResult, subview in
       let id = subview[GridRowKey.self]
@@ -168,6 +222,13 @@ public struct Grid<Content>: View, Layout where Content: View {
     }
   }
 
+  /// Returns the size of the grid, computed from the proposed size and the
+  /// subviews' size preferences.
+  /// - Parameters:
+  ///   - proposal: A size proposal for the grid from its parent.
+  ///   - subviews: A collection of proxies for the grid's child views.
+  ///   - cache: A cache of layout measurements maintained across layout passes.
+  /// - Returns: The size that the grid needs to arrange its subviews.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -325,6 +386,12 @@ public struct Grid<Content>: View, Layout where Content: View {
     )
   }
 
+  /// Assigns positions to each of the grid's subviews within the given bounds.
+  /// - Parameters:
+  ///   - bounds: The region into which to place the grid's subviews.
+  ///   - proposal: A size proposal for the grid from its parent.
+  ///   - subviews: A collection of proxies for the grid's child views.
+  ///   - cache: A cache of layout measurements maintained across layout passes.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -376,6 +443,14 @@ public struct Grid<Content>: View, Layout where Content: View {
 }
 
 public extension Grid where Content == EmptyView {
+  /// Creates an empty grid with the given spacing and alignment.
+  /// - Parameters:
+  ///   - alignment: The guide for aligning the child views within the space
+  ///     allocated for a given cell.
+  ///   - horizontalSpacing: The horizontal distance between each cell, or `nil`
+  ///     to use a default distance.
+  ///   - verticalSpacing: The vertical distance between each row, or `nil` to use
+  ///     a default distance.
   init(
     alignment: Alignment = .center,
     horizontalSpacing: CGFloat? = nil,

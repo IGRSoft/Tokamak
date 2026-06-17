@@ -17,6 +17,19 @@
 
 import Foundation
 
+/// An angular gradient.
+///
+/// An angular gradient (sometimes called a conic gradient) sweeps its color
+/// stops around a center point, from a start angle to an end angle. When used
+/// as a ``ShapeStyle``, it fills the shape with the gradient; when used as a
+/// ``View``, it fills the entire view.
+///
+/// ```swift
+/// AngularGradient(
+///   gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .red]),
+///   center: .center
+/// )
+/// ```
 @frozen
 public struct AngularGradient: ShapeStyle, View {
   internal var gradient: Gradient
@@ -24,6 +37,13 @@ public struct AngularGradient: ShapeStyle, View {
   internal var startAngle: Angle
   internal var endAngle: Angle
 
+  /// Creates an angular gradient from a gradient and a range of angles.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startAngle: The angle at which the gradient begins.
+  ///   - endAngle: The angle at which the gradient ends.
   public init(
     gradient: Gradient,
     center: UnitPoint,
@@ -36,6 +56,13 @@ public struct AngularGradient: ShapeStyle, View {
     self.endAngle = endAngle
   }
 
+  /// Creates an angular gradient from colors and a range of angles.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startAngle: The angle at which the gradient begins.
+  ///   - endAngle: The angle at which the gradient ends.
   public init(colors: [Color], center: UnitPoint, startAngle: Angle, endAngle: Angle) {
     self.init(
       gradient: Gradient(colors: colors),
@@ -45,6 +72,13 @@ public struct AngularGradient: ShapeStyle, View {
     )
   }
 
+  /// Creates an angular gradient from color stops and a range of angles.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - startAngle: The angle at which the gradient begins.
+  ///   - endAngle: The angle at which the gradient ends.
   public init(stops: [Gradient.Stop], center: UnitPoint, startAngle: Angle, endAngle: Angle) {
     self.init(
       gradient: Gradient(stops: stops),
@@ -54,6 +88,12 @@ public struct AngularGradient: ShapeStyle, View {
     )
   }
 
+  /// Creates a conic gradient from a gradient that sweeps a full turn around a center.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - angle: The angle at which the gradient's full sweep begins.
   public init(gradient: Gradient, center: UnitPoint, angle: Angle = .zero) {
     self.init(
       gradient: gradient,
@@ -63,6 +103,12 @@ public struct AngularGradient: ShapeStyle, View {
     )
   }
 
+  /// Creates a conic gradient from colors that sweeps a full turn around a center.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - angle: The angle at which the gradient's full sweep begins.
   public init(colors: [Color], center: UnitPoint, angle: Angle = .zero) {
     self.init(
       gradient: Gradient(colors: colors),
@@ -71,6 +117,12 @@ public struct AngularGradient: ShapeStyle, View {
     )
   }
 
+  /// Creates a conic gradient from color stops that sweeps a full turn around a center.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - angle: The angle at which the gradient's full sweep begins.
   public init(stops: [Gradient.Stop], center: UnitPoint, angle: Angle = .zero) {
     self.init(
       gradient: Gradient(stops: stops),
@@ -79,8 +131,10 @@ public struct AngularGradient: ShapeStyle, View {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public typealias Body = _ShapeView<Rectangle, Self>
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     shape.result = .resolved(
       .gradient(
@@ -90,10 +144,18 @@ public struct AngularGradient: ShapeStyle, View {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to type: inout _ShapeStyle_ShapeType) {}
 }
 
 public extension ShapeStyle where Self == AngularGradient {
+  /// Returns an angular gradient style from a gradient and a range of angles.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startAngle: The angle at which the gradient begins.
+  ///   - endAngle: The angle at which the gradient ends.
   static func angularGradient(
     _ gradient: Gradient,
     center: UnitPoint,
@@ -106,6 +168,13 @@ public extension ShapeStyle where Self == AngularGradient {
     )
   }
 
+  /// Returns an angular gradient style from colors and a range of angles.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - startAngle: The angle at which the gradient begins.
+  ///   - endAngle: The angle at which the gradient ends.
   static func angularGradient(
     colors: [Color],
     center: UnitPoint,
@@ -118,6 +187,13 @@ public extension ShapeStyle where Self == AngularGradient {
     )
   }
 
+  /// Returns an angular gradient style from color stops and a range of angles.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - startAngle: The angle at which the gradient begins.
+  ///   - endAngle: The angle at which the gradient ends.
   static func angularGradient(
     stops: [Gradient.Stop],
     center: UnitPoint,
@@ -132,6 +208,12 @@ public extension ShapeStyle where Self == AngularGradient {
 }
 
 public extension ShapeStyle where Self == AngularGradient {
+  /// Returns a conic gradient style from a gradient that completes a full turn.
+  ///
+  /// - Parameters:
+  ///   - gradient: The gradient describing the color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - angle: The angle at which the gradient's full sweep begins.
   static func conicGradient(
     _ gradient: Gradient,
     center: UnitPoint,
@@ -140,6 +222,12 @@ public extension ShapeStyle where Self == AngularGradient {
     .init(gradient: gradient, center: center, angle: angle)
   }
 
+  /// Returns a conic gradient style from colors that completes a full turn.
+  ///
+  /// - Parameters:
+  ///   - colors: The colors of the gradient, evenly spaced as color stops.
+  ///   - center: The relative center of the gradient.
+  ///   - angle: The angle at which the gradient's full sweep begins.
   static func conicGradient(
     colors: [Color],
     center: UnitPoint,
@@ -148,6 +236,12 @@ public extension ShapeStyle where Self == AngularGradient {
     .init(colors: colors, center: center, angle: angle)
   }
 
+  /// Returns a conic gradient style from color stops that completes a full turn.
+  ///
+  /// - Parameters:
+  ///   - stops: The color stops of the gradient.
+  ///   - center: The relative center of the gradient.
+  ///   - angle: The angle at which the gradient's full sweep begins.
   static func conicGradient(
     stops: [Gradient.Stop],
     center: UnitPoint,

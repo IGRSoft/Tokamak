@@ -17,7 +17,13 @@
 
 import Foundation
 
+/// A gesture that recognizes one or more taps.
+///
+/// To recognize a tap gesture on a view, create and configure a `TapGesture`, then add it to the
+/// view using the `gesture(_:)` modifier. For the common case of running an action on tap, use the
+/// `onTapGesture(count:perform:)` view modifier instead.
 public struct TapGesture: Gesture {
+  /// The type representing the gesture's value.
   public typealias Value = ()
   /// The required number of taps to complete the tap gesture.
   private var count: Int
@@ -37,6 +43,7 @@ public struct TapGesture: Gesture {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool {
     switch phase {
     case .cancelled:
@@ -69,6 +76,7 @@ public struct TapGesture: Gesture {
     return false
   }
 
+  /// The content and behavior of the gesture.
   public var body: TapGesture {
     self
   }
@@ -79,12 +87,14 @@ public struct TapGesture: Gesture {
     self.count = count
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self {
     var gesture = self
     gesture.onEndedAction = action
     return gesture
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self {
     // TapGesture in SwiftUI have no change update nor events
     self
@@ -95,6 +105,10 @@ public struct TapGesture: Gesture {
 
 public extension View {
   /// Adds an action to perform when this view recognizes a tap gesture.
+  /// - Parameters:
+  ///   - count: The number of taps required to trigger the action.
+  ///   - action: The action to perform when the tap gesture is recognized.
+  /// - Returns: A view that triggers `action` when it recognizes a tap gesture.
   func onTapGesture(count: Int = 1, perform action: @escaping () -> ()) -> some View {
     gesture(
       TapGesture(count: count).onEnded(action)

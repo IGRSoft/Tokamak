@@ -14,10 +14,15 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `blur(radius:opaque:)` as a CSS `filter: blur()` declaration.
 extension _BlurEffect: DOMViewModifier {
   // Order-dependent so stacked filters render as separate nested wrappers
   // instead of being flattened into a single (clobbering) `filter:` style.
+  /// Implementation detail: keeps stacked filters in separate DOM wrappers so a
+  /// later `filter:` style does not clobber an earlier one.
   public var isOrderDependent: Bool { true }
+  /// Implementation detail: emits the `filter: blur()` style, adding an opaque
+  /// white backdrop when `opaque` is `true`.
   public var attributes: [HTMLAttribute: String] {
     var style = "filter: blur(\(radius)px); "
     if opaque { style += "background-color: white; " }

@@ -127,6 +127,7 @@ private struct FlexFrameLayout: Layout {
 }
 
 public extension _FlexFrameLayout {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V>(_ visitor: V, content: Content) where V: ViewVisitor {
     visitor.visit(FlexFrameLayout(
       minWidth: minWidth, idealWidth: idealWidth, maxWidth: maxWidth,

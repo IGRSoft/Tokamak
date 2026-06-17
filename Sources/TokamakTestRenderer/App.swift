@@ -15,12 +15,18 @@
 import OpenCombineShim
 import TokamakCore
 
+/// Test-renderer hooks that satisfy ``App``'s platform requirements without producing
+/// any real window or scene output.
 public extension App {
+  /// Implementation detail: no-op window-title hook for the test renderer.
   static func _setTitle(_ title: String) {}
 
+  /// Implementation detail: no-op launch hook for the test renderer.
   static func _launch(_ app: Self, with configuration: _AppConfiguration) {}
 
+  /// Implementation detail: a never-emitting `ScenePhase` publisher for the test renderer.
   var _phasePublisher: AnyPublisher<ScenePhase, Never> { Empty().eraseToAnyPublisher() }
 
+  /// Implementation detail: a never-emitting ``ColorScheme`` publisher for the test renderer.
   var _colorSchemePublisher: AnyPublisher<ColorScheme, Never> { Empty().eraseToAnyPublisher() }
 }

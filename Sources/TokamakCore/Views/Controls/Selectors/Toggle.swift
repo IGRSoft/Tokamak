@@ -15,6 +15,11 @@
 //  Created by Jed Fox on 07/04/2020.
 //
 
+/// A control that toggles between on and off states.
+///
+///     Toggle(isOn: $vibrateOnRing) {
+///       Text("Vibrate on Ring")
+///     }
 public struct Toggle<Label>: View where Label: View {
   @Binding
   var isOn: Bool
@@ -24,11 +29,17 @@ public struct Toggle<Label>: View where Label: View {
   @Environment(\.toggleStyle)
   var toggleStyle
 
+  /// Creates a toggle with a custom label that is on when `isOn` is `true`.
+  ///
+  /// - Parameters:
+  ///   - isOn: A binding to a property that indicates whether the toggle is on.
+  ///   - label: A view builder that produces the toggle's label.
   public init(isOn: Binding<Bool>, label: () -> Label) {
     _isOn = isOn
     self.label = label()
   }
 
+  /// The content and behavior of the toggle.
   @_spi(TokamakCore)
   public var body: AnyView {
     toggleStyle.makeBody(
@@ -38,6 +49,11 @@ public struct Toggle<Label>: View where Label: View {
 }
 
 public extension Toggle where Label == Text {
+  /// Creates a toggle that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the toggle.
+  ///   - isOn: A binding to a property that indicates whether the toggle is on.
   init<S>(_ title: S, isOn: Binding<Bool>) where S: StringProtocol {
     self.init(isOn: isOn) {
       Text(title)
@@ -46,6 +62,9 @@ public extension Toggle where Label == Text {
 }
 
 public extension Toggle where Label == AnyView {
+  /// Creates a toggle based on a toggle style configuration.
+  ///
+  /// - Parameter configuration: The properties of the toggle, as provided by a toggle style.
   init(_ configuration: ToggleStyleConfiguration) {
     label = configuration.label
     _isOn = configuration.$isOn
@@ -53,6 +72,7 @@ public extension Toggle where Label == AnyView {
 }
 
 extension Toggle: ParentView {
+  /// The toggle's label views.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (label as? GroupView)?.children ?? [AnyView(label)]

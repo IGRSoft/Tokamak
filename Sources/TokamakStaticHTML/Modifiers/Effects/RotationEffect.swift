@@ -17,7 +17,11 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `rotationEffect(_:anchor:)` as a CSS `transform: rotate()`
+/// declaration with a matching `transform-origin`.
 extension _RotationEffect: DOMViewModifier {
+  /// Implementation detail: emits the `transform: rotate()` and `transform-origin`
+  /// styles from the effect's angle and anchor.
   public var attributes: [HTMLAttribute: String] {
     [
       "style": """

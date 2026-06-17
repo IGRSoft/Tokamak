@@ -19,6 +19,9 @@ import CGTK4
 import TokamakCore
 
 extension ScrollView: GTKPrimitive {
+  /// Renders the scroll view's content inside a `GtkScrolledWindow` widget.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(

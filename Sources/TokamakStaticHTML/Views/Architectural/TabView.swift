@@ -17,6 +17,7 @@
 extension _TabViewContainer: _HTMLPrimitive {
   // SSR renders the full tab strip (all labels, the initially-selected one
   // marked active) plus the initially-selected panel's content.
+  /// Implementation detail: the SSR markup, a tab strip plus the selected tab's panel content.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _TabViewProxy(self)

@@ -17,14 +17,27 @@
 
 import Foundation
 
+/// The type-erased base class for boxed ``AnyTransition`` values.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 // Single-threaded (Wasm/DOM) runtime: box hierarchy holds closures never shared across threads.
 public class _AnyTransitionBox: AnyTokenBox, @unchecked Sendable {
+  /// The resolved value type produced when the box is evaluated in an environment.
   public typealias ResolvedValue = ResolvedTransition
 
+  /// The concrete insertion and removal effects and animations of a transition.
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in
+  /// application code.
   public struct ResolvedTransition {
+    /// The transitions applied while the view is being inserted.
     public var insertion: [Transition]
+    /// The transitions applied while the view is being removed.
     public var removal: [Transition]
+    /// The animation used to drive insertion, if any.
     public var insertionAnimation: Animation?
+    /// The animation used to drive removal, if any.
     public var removalAnimation: Animation?
 
     init(
@@ -48,12 +61,22 @@ public class _AnyTransitionBox: AnyTokenBox, @unchecked Sendable {
       )
     }
 
+    /// A pair of closures producing the active and identity states of a single
+    /// transition step.
     public typealias Transition = (
       active: (AnyView) -> AnyView,
       identity: (AnyView) -> AnyView
     )
   }
 
+  /// Resolves the boxed transition against the given environment.
+  ///
+  /// Subclasses override this method to produce their concrete transition. The
+  /// base implementation traps.
+  ///
+  /// - Parameter environment: The environment values used to resolve the
+  ///   transition.
+  /// - Returns: The resolved insertion and removal transitions and animations.
   public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     fatalError("implement \(#function) in subclass")
   }

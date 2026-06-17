@@ -19,17 +19,20 @@
 ///
 /// Mainly for use with `@ViewBuilder`.
 public struct TupleView<T>: _PrimitiveView {
+  /// The tuple of view values that this view wraps.
   public let value: T
 
   let _children: [AnyView]
   private let visit: (ViewVisitor) -> ()
 
+  /// Creates a tuple view from the given tuple of view values.
   public init(_ value: T) {
     self.value = value
     _children = []
     visit = { _ in }
   }
 
+  /// Creates a tuple view from the given tuple of view values and its type-erased children.
   public init(_ value: T, children: [AnyView]) {
     self.value = value
     _children = children
@@ -40,6 +43,7 @@ public struct TupleView<T>: _PrimitiveView {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     visit(visitor)
   }
@@ -266,5 +270,6 @@ public struct TupleView<T>: _PrimitiveView {
 }
 
 extension TupleView: GroupView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var children: [AnyView] { _children }
 }

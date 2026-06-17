@@ -73,6 +73,9 @@ private func bindAction(to entry: UnsafeMutablePointer<GtkWidget>, textBinding: 
 }
 
 extension SecureField: GTKPrimitive where Label == Text {
+  /// Renders the secure field as a masked `GtkText` entry bound to its text value.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _SecureFieldProxy(self)
@@ -91,6 +94,9 @@ extension SecureField: GTKPrimitive where Label == Text {
 }
 
 extension TextField: GTKPrimitive where Label == Text {
+  /// Renders the text field as a `GtkText` entry bound to its text value.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _TextFieldProxy(self)

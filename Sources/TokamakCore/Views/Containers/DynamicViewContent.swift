@@ -61,6 +61,7 @@ public struct _DynamicViewContentWrapper<Content>: _PrimitiveView, ParentView,
   DynamicViewContent, _DynamicViewContentProtocol
   where Content: DynamicViewContent
 {
+  /// The wrapped dynamic view content whose rows are rendered.
   public let content: Content
   let onDelete: ((IndexSet) -> ())?
   let onMove: ((IndexSet, Int) -> ())?
@@ -83,20 +84,26 @@ public struct _DynamicViewContentWrapper<Content>: _PrimitiveView, ParentView,
     }
   }
 
+  /// The underlying collection of data, re-exposed from the wrapped content.
   public var data: Content.Data { content.data }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? ParentView)?.children ?? [AnyView(content)]
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     content._visitChildren(visitor)
   }
 
   // _DynamicViewContentProtocol
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var _count: Int { content.data.count }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var _onDelete: ((IndexSet) -> ())? { onDelete }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var _onMove: ((IndexSet, Int) -> ())? { onMove }
 }
 

@@ -14,15 +14,25 @@
 
 import OpenCombineShim
 
+/// A collection of environment values propagated through a view hierarchy.
+///
+/// Mirrors SwiftUI's `EnvironmentValues`. Tokamak passes an instance down the
+/// view tree, where views read individual values with the ``Environment``
+/// property wrapper and write them with the ``View/environment(_:_:)`` modifier.
+/// Extend this structure with computed properties backed by an ``EnvironmentKey``
+/// to add custom environment values.
 public struct EnvironmentValues: CustomStringConvertible {
+  /// A textual description of the environment values.
   public var description: String {
     "EnvironmentValues: \(values.count)"
   }
 
   private var values: [ObjectIdentifier: Any] = [:]
 
+  /// Creates an environment values instance populated with default values.
   public init() {}
 
+  /// Accesses the environment value associated with the given environment key.
   public subscript<K>(key: K.Type) -> K.Value where K: EnvironmentKey {
     get {
       if let val = values[ObjectIdentifier(key)] as? K.Value {
@@ -44,6 +54,7 @@ public struct EnvironmentValues: CustomStringConvertible {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public mutating func merge(_ other: Self?) {
     if let other = other {
@@ -53,6 +64,7 @@ public struct EnvironmentValues: CustomStringConvertible {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public func merging(_ other: Self?) -> Self {
     var merged = self
@@ -66,6 +78,8 @@ struct IsEnabledKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// A Boolean value that indicates whether the view associated with this
+  /// environment allows user interaction.
   var isEnabled: Bool {
     get {
       self[IsEnabledKey.self]
@@ -89,6 +103,10 @@ struct _EnvironmentValuesWritingModifier: ViewModifier, _EnvironmentModifier {
 }
 
 public extension View {
+  /// Replaces the environment of this view with the given values.
+  ///
+  /// - Parameter values: The environment values to set for the view's hierarchy.
+  /// - Returns: A view that uses the given environment values.
   func environmentValues(_ values: EnvironmentValues) -> some View {
     modifier(_EnvironmentValuesWritingModifier(environmentValues: values))
   }

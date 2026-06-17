@@ -16,6 +16,8 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a menu as an ARIA `menu` `<div>` with a label button that toggles a
+/// popup and a conditionally shown list of menu items.
 extension _MenuContainer: DOMPrimitive {
   var labelButton: some View {
     DynamicHTML(

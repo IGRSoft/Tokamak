@@ -42,6 +42,12 @@ public struct SecureField<Label>: _PrimitiveView where Label: View {
 }
 
 public extension SecureField where Label == Text {
+  /// Creates a secure field with a title string and a binding to its secure text.
+  ///
+  /// - Parameters:
+  ///   - title: The title of the secure field, describing its purpose.
+  ///   - text: The text to display and edit.
+  ///   - onCommit: An action to perform when the user commits the entered text.
   init<S>(
     _ title: S, text: Binding<String>,
     onCommit: @escaping () -> () = {}
@@ -53,19 +59,27 @@ public extension SecureField where Label == Text {
 }
 
 extension SecureField: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (label as? GroupView)?.children ?? [AnyView(label)]
   }
 }
 
-/// This is a helper type that works around absence of "package private" access control in Swift
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
+///
+/// This is a helper type that works around absence of "package private" access control in Swift.
 public struct _SecureFieldProxy {
+  /// The `SecureField` value this proxy exposes to renderers.
   public let subject: SecureField<Text>
 
+  /// Creates a proxy for the given secure field.
   public init(_ subject: SecureField<Text>) { self.subject = subject }
 
+  /// A text proxy for the secure field's label.
   public var label: _TextProxy { _TextProxy(subject.label) }
+  /// The binding to the secure field's text.
   public var textBinding: Binding<String> { subject.textBinding }
+  /// The action to perform when the user commits the entered text.
   public var onCommit: () -> () { subject.onCommit }
 }

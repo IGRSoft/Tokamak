@@ -15,17 +15,33 @@
 //  Created by Jed Fox on 06/30/2020.
 //
 
+/// An observable object that tracks the currently presented destination of a ``NavigationView``.
 public final class NavigationContext: ObservableObject {
   @Published
   var destination = NavigationLinkDestination(EmptyView())
 }
 
+/// A view for presenting a stack of views representing a visible path in a navigation hierarchy.
+///
+/// Use a navigation view to create a navigation-based app in which the user can traverse a
+/// collection of views, presenting destinations through ``NavigationLink``.
+///
+/// ```swift
+/// NavigationView {
+///   List(items) { item in
+///     NavigationLink(item.name, destination: DetailView(item))
+///   }
+/// }
+/// ```
 public struct NavigationView<Content>: _PrimitiveView where Content: View {
   let content: Content
 
   @StateObject
   var context = NavigationContext()
 
+  /// Creates a navigation view from the given content.
+  ///
+  /// - Parameter content: A view builder that produces the navigation view's root content.
   public init(@ViewBuilder content: () -> Content) {
     self.content = content()
   }
@@ -49,15 +65,23 @@ private struct ToolbarReader<Content>: View where Content: View {
 }
 
 /// This is a helper type that works around absence of "package private" access control in Swift
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _NavigationViewProxy<Content: View> {
+  /// The navigation view being proxied.
   public let subject: NavigationView<Content>
 
+  /// Wraps the given navigation view so renderers can access its content and toolbar.
   public init(_ subject: NavigationView<Content>) { self.subject = subject }
 
+  /// The navigation context shared with the wrapped view's content.
   public var context: NavigationContext { subject.context }
 
   /// Builds the content of the `NavigationView` by passing in the title and toolbar if present.
   /// If `toolbarContent` is `nil`, you shouldn't render a toolbar.
+  ///
+  /// - Parameter content: A view builder that receives the navigation title and the toolbar
+  ///   items, returning the rendered bar.
   public func makeToolbar<DeferredBar>(
     @ViewBuilder _ content: @escaping (_ title: AnyView?, _ toolbarContent: [AnyToolbarItem]?)
       -> DeferredBar
@@ -65,11 +89,13 @@ public struct _NavigationViewProxy<Content: View> {
     ToolbarReader(content: content)
   }
 
+  /// The navigation view's root content, with the navigation context injected.
   public var content: some View {
     subject.content
       .environmentObject(context)
   }
 
+  /// The currently presented destination view, with the navigation context injected.
   public var destination: some View {
     subject.context.destination.view
       .environmentObject(context)

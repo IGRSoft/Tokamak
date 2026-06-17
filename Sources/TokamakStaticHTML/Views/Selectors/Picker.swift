@@ -24,6 +24,8 @@
 // `<option>`s. The JS `change` listener that updates the selection binding is intentionally
 // dropped — SSR output is static markup.
 extension _PickerContainer: _HTMLPrimitive {
+  /// The server-rendered markup for a picker: a `<label>` holding the label and a
+  /// `<select class="_tokamak-formcontrol">` of `<option>`s.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("label") {
@@ -37,6 +39,7 @@ extension _PickerContainer: _HTMLPrimitive {
 }
 
 extension _PickerElement: _HTMLPrimitive {
+  /// The server-rendered markup for a single picker choice: an `<option>` carrying its value index.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let attributes: [HTMLAttribute: String]

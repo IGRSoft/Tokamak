@@ -15,6 +15,11 @@
 //  Created by Carson Katri on 7/6/21.
 //
 
+/// A background material type.
+///
+/// Use a material to add a blurred, translucent background to a shape or view,
+/// for example as a backdrop behind controls. Choose one of the standard
+/// thicknesses such as ``regular``, ``thin``, or ``ultraThick``.
 public struct Material: Sendable {
   private let style: _MaterialStyle
 
@@ -22,22 +27,34 @@ public struct Material: Sendable {
     self.style = style
   }
 
+  /// A material with normal translucency.
   public static let regular = Self(.regular)
+  /// A material that's more opaque than ``regular``.
   public static let thick = Self(.thick)
+  /// A material that's more translucent than ``regular``.
   public static let thin = Self(.thin)
+  /// A mostly translucent material.
   public static let ultraThin = Self(.ultraThin)
+  /// A mostly opaque material.
   public static let ultraThick = Self(.ultraThick)
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _MaterialStyle: Sendable {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case regular
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case thick
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case thin
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case ultraThin
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case ultraThick
 }
 
 extension Material: ShapeStyle {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     shape.result = .resolved(
       .foregroundMaterial(
@@ -49,18 +66,26 @@ extension Material: ShapeStyle {
     )
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to shape: inout _ShapeStyle_ShapeType) {}
 }
 
 public extension Material {
+  /// A material matching the style of system toolbars.
   static let bar = Self.regular
 }
 
 public extension ShapeStyle where Self == Material {
+  /// A material with normal translucency.
   static var regularMaterial: Self { .regular }
+  /// A material that's more opaque than ``regularMaterial``.
   static var thickMaterial: Self { .thick }
+  /// A material that's more translucent than ``regularMaterial``.
   static var thinMaterial: Self { .thin }
+  /// A mostly translucent material.
   static var ultraThinMaterial: Self { .ultraThin }
+  /// A mostly opaque material.
   static var ultraThickMaterial: Self { .ultraThick }
+  /// A material matching the style of system toolbars.
   static var bar: Self { .bar }
 }

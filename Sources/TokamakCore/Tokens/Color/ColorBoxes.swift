@@ -36,17 +36,33 @@
 ///     }
 ///
 public protocol AnyColorBoxDeferredToRenderer: AnyColorBox {
+  /// Resolves the color into a renderer-specific value using the given environment.
   func deferredResolve(in environment: EnvironmentValues) -> AnyColorBox.ResolvedValue
 }
 
 // Single-threaded (Wasm/DOM) runtime: box hierarchy is effectively immutable and never shared across threads.
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class AnyColorBox: AnyTokenBox, Hashable, @unchecked Sendable {
+  /// The resolved red, green, blue, and opacity components of a color.
   public struct _RGBA: Hashable, Equatable {
+    /// The amount of red in the color, in the range `0` to `1`.
     public let red: Double
+    /// The amount of green in the color, in the range `0` to `1`.
     public let green: Double
+    /// The amount of blue in the color, in the range `0` to `1`.
     public let blue: Double
+    /// The opacity of the color, in the range `0` to `1`.
     public let opacity: Double
+    /// The color space used to interpret the components.
     public let space: Color.RGBColorSpace
+    /// Creates resolved color components from the given values.
+    ///
+    /// - Parameters:
+    ///   - red: The amount of red in the color.
+    ///   - green: The amount of green in the color.
+    ///   - blue: The amount of blue in the color.
+    ///   - opacity: The opacity of the color.
+    ///   - space: The color space used to interpret the components.
     public init(
       red: Double,
       green: Double,
@@ -62,6 +78,7 @@ public class AnyColorBox: AnyTokenBox, Hashable, @unchecked Sendable {
     }
   }
 
+  /// Returns a Boolean value indicating whether two color boxes are equal.
   public static func == (lhs: AnyColorBox, rhs: AnyColorBox) -> Bool {
     lhs.equals(rhs)
   }
@@ -71,24 +88,30 @@ public class AnyColorBox: AnyTokenBox, Hashable, @unchecked Sendable {
     fatalError("implement \(#function) in subclass")
   }
 
+  /// Hashes the essential components of the color box into the given hasher.
   public func hash(into hasher: inout Hasher) {
     fatalError("implement \(#function) in subclass")
   }
 
+  /// Resolves the box into concrete color components using the given environment.
   public func resolve(in environment: EnvironmentValues) -> _RGBA {
     fatalError("implement \(#function) in subclass")
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class _ConcreteColorBox: AnyColorBox, @unchecked Sendable {
+  /// The fixed color components stored by this box.
   public let rgba: AnyColorBox._RGBA
 
+  /// Returns a Boolean value indicating whether this box equals another color box.
   override public func equals(_ other: AnyColorBox) -> Bool {
     guard let other = other as? _ConcreteColorBox
     else { return false }
     return rgba == other.rgba
   }
 
+  /// Hashes the essential components of the color box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(rgba)
   }
@@ -97,20 +120,25 @@ public final class _ConcreteColorBox: AnyColorBox, @unchecked Sendable {
     self.rgba = rgba
   }
 
+  /// Resolves the box into concrete color components using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     rgba
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class _EnvironmentDependentColorBox: AnyColorBox, @unchecked Sendable {
+  /// A closure that produces a color from the current environment.
   public let resolver: (EnvironmentValues) -> Color
 
+  /// Returns a Boolean value indicating whether this box equals another color box.
   override public func equals(_ other: AnyColorBox) -> Bool {
     guard let other = other as? _EnvironmentDependentColorBox
     else { return false }
     return resolver(EnvironmentValues()) == other.resolver(EnvironmentValues())
   }
 
+  /// Hashes the essential components of the color box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(resolver(EnvironmentValues()))
   }
@@ -119,21 +147,27 @@ public final class _EnvironmentDependentColorBox: AnyColorBox, @unchecked Sendab
     self.resolver = resolver
   }
 
+  /// Resolves the box into concrete color components using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     resolver(environment).provider.resolve(in: environment)
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class _OpacityColorBox: AnyColorBox, @unchecked Sendable {
+  /// The underlying color box whose opacity is overridden.
   public let parent: AnyColorBox
+  /// The opacity applied to the parent color, in the range `0` to `1`.
   public let opacity: Double
 
+  /// Returns a Boolean value indicating whether this box equals another color box.
   override public func equals(_ other: AnyColorBox) -> Bool {
     guard let other = other as? _OpacityColorBox
     else { return false }
     return parent.equals(other.parent) && opacity == other.opacity
   }
 
+  /// Hashes the essential components of the color box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(parent)
     hasher.combine(opacity)
@@ -144,6 +178,7 @@ public final class _OpacityColorBox: AnyColorBox, @unchecked Sendable {
     self.opacity = opacity
   }
 
+  /// Resolves the box into concrete color components using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     let resolved = parent.resolve(in: environment)
     return .init(
@@ -156,8 +191,11 @@ public final class _OpacityColorBox: AnyColorBox, @unchecked Sendable {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class _SystemColorBox: AnyColorBox, CustomStringConvertible, @unchecked Sendable {
+  /// The set of named system colors that this box can represent.
   public enum SystemColor: String, Equatable, Hashable {
+    /// The named system colors.
     case clear
     case black
     case white
@@ -173,18 +211,22 @@ public final class _SystemColorBox: AnyColorBox, CustomStringConvertible, @unche
     case secondary
   }
 
+  /// A textual representation of the system color.
   public var description: String {
     value.rawValue
   }
 
+  /// The named system color stored by this box.
   public let value: SystemColor
 
+  /// Returns a Boolean value indicating whether this box equals another color box.
   override public func equals(_ other: AnyColorBox) -> Bool {
     guard let other = other as? _SystemColorBox
     else { return false }
     return value == other.value
   }
 
+  /// Hashes the essential components of the color box into the given hasher.
   override public func hash(into hasher: inout Hasher) {
     hasher.combine(value)
   }
@@ -193,6 +235,7 @@ public final class _SystemColorBox: AnyColorBox, CustomStringConvertible, @unche
     self.value = value
   }
 
+  /// Resolves the box into concrete color components using the given environment.
   override public func resolve(in environment: EnvironmentValues) -> ResolvedValue {
     switch environment.colorScheme {
     case .light:

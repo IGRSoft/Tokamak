@@ -31,11 +31,13 @@ public struct GroupBox<Label, Content>: View where Label: View, Content: View {
   @Environment(\.groupBoxStyle)
   var style
 
+  /// Creates a group box with the provided label and content.
   public init(@ViewBuilder content: () -> Content, @ViewBuilder label: () -> Label) {
     self.label = label()
     self.content = content()
   }
 
+  /// The content and behavior of the view.
   public var body: some View {
     style.makeBody(
       configuration: .init(
@@ -68,11 +70,17 @@ public extension GroupBox where Label == EmptyView {
 }
 
 /// A helper type that works around the absence of "package private" access control in Swift.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _GroupBoxProxy<Label, Content> where Label: View, Content: View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public let subject: GroupBox<Label, Content>
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public init(_ subject: GroupBox<Label, Content>) { self.subject = subject }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var label: Label { subject.label }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var content: Content { subject.content }
 }

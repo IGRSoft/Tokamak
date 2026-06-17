@@ -15,10 +15,15 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
+/// The size classes, like regular or small, that you can apply to controls within a view.
 public enum ControlSize: CaseIterable, Hashable, Sendable {
+  /// A control version that is minimally sized.
   case mini
+  /// A control version that is proportionally smaller size for space-constrained views.
   case small
+  /// A control version that is appropriately sized for the platform.
   case regular
+  /// A control version that is prominently sized.
   case large
 }
 
@@ -28,6 +33,7 @@ extension EnvironmentValues {
     nonisolated(unsafe) static var defaultValue: ControlSize = .regular
   }
 
+  /// The size to apply to controls within a view.
   public var controlSize: ControlSize {
     get {
       self[ControlSizeKey.self]
@@ -39,6 +45,10 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the size for controls within this view.
+  ///
+  /// - Parameter controlSize: The size to apply to controls within the view.
+  /// - Returns: A view that uses the given control size.
   @inlinable
   func controlSize(
     _ controlSize: ControlSize

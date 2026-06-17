@@ -59,6 +59,9 @@ protocol GtkStackProtocol {}
 // }
 
 extension NavigationView: GTKPrimitive {
+  /// Renders the navigation content and destination side by side in an `HStack`.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _NavigationViewProxy(self)
@@ -73,6 +76,9 @@ extension NavigationView: GTKPrimitive {
 }
 
 extension NavigationLink: GTKPrimitive {
+  /// Renders the link's label as a `Button` that activates the navigation on tap.
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _NavigationLinkProxy(self)

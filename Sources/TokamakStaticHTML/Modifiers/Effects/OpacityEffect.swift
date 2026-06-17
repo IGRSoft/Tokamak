@@ -17,7 +17,9 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `opacity(_:)` as a CSS `opacity` declaration.
 extension _OpacityEffect: DOMViewModifier {
+  /// Implementation detail: emits the `opacity` style for the effect's value.
   public var attributes: [HTMLAttribute: String] {
     ["style": "opacity: \(opacity); "]
   }

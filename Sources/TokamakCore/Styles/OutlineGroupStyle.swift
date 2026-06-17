@@ -15,13 +15,27 @@
 //  Created by Carson Katri on 7/4/20.
 //
 
+/// A type that applies a custom appearance to all outline groups within a view.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public protocol _OutlineGroupStyle {}
 
+/// The default outline group style.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public struct _DefaultOutlineGroupStyle: _OutlineGroupStyle {
+  /// Creates a default outline group style.
   public init() {}
 }
 
+/// An outline group style that renders its content as part of a list.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public struct _ListOutlineGroupStyle: _OutlineGroupStyle {
+  /// Creates a list outline group style.
   public init() {}
 }
 

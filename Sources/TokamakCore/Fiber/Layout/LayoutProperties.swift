@@ -17,8 +17,10 @@
 
 /// Metadata about a `Layout`.
 public struct LayoutProperties {
+  /// The axis along which a stack layout arranges its subviews, or `nil` for non-stack layouts.
   public var stackOrientation: Axis?
 
+  /// Creates layout properties with no stack orientation.
   public init() {
     stackOrientation = nil
   }

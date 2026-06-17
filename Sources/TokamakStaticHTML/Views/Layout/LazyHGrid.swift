@@ -18,8 +18,11 @@
 import TokamakCore
 
 extension LazyHGrid: SpacerContainer {
+  /// Lays out spacers along the horizontal axis.
   public var axis: SpacerContainerAxis { .horizontal }
+  /// Grids never reserve spacer space, so this is always `false`.
   public var hasSpacer: Bool { false }
+  /// `true` when any row uses an adaptive size and should fill the cross axis.
   public var fillCrossAxis: Bool {
     _LazyHGridProxy(self).rows.contains {
       if case .adaptive(minimum: _, maximum: _) = $0.size {
@@ -32,6 +35,7 @@ extension LazyHGrid: SpacerContainer {
 }
 
 extension LazyHGrid: _HTMLPrimitive {
+  /// The last configured row, whose alignment is applied to the whole CSS grid.
   public var lastRow: GridItem? {
     _LazyHGridProxy(self).rows.last
   }
@@ -57,6 +61,7 @@ extension LazyHGrid: _HTMLPrimitive {
     return styles
   }
 
+  /// Renders the grid as a CSS `display: grid` `<div>` flowing items into columns of rows.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("div", ["style": styles]) {
@@ -67,12 +72,15 @@ extension LazyHGrid: _HTMLPrimitive {
 
 @_spi(TokamakStaticHTML)
 extension LazyHGrid: HTMLConvertible {
+  /// The HTML element used to host the grid: a `div`.
   public var tag: String { "div" }
+  /// The grid's CSS `style` attribute, omitted when dynamic layout drives positioning.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return ["style": styles]
   }
 
+  /// Visits the grid's content so the renderer can walk its child views.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     {
       $0.visit(_LazyHGridProxy(self).content)

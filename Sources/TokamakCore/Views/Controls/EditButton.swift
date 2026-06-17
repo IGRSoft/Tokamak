@@ -33,8 +33,10 @@ public struct EditButton: View {
   @State
   private var editMode: EditMode = .inactive
 
+  /// Creates an edit button that toggles the edit mode of its subtree.
   public init() {}
 
+  /// The content and behavior of the edit button.
   @_spi(TokamakCore)
   public var body: some View {
     let binding = Binding<EditMode>(

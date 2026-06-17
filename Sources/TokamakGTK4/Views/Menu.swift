@@ -19,6 +19,9 @@ import TokamakCore
 // vertical box rather than in a pop-out popover.
 // TODO: map to GtkPopoverMenu for a true menu — best-effort, documented per R5/R6.
 extension _MenuContainer: GTKPrimitive {
+  /// Renders the menu's label and items inline in a vertical box (best-effort GTK4 output).
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(

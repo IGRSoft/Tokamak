@@ -20,7 +20,10 @@ import TokamakCore
 import TokamakStaticHTML
 import JavaScriptKit
 
+/// Renders a `Button` as a DOM `<button>` element wired up with pointer
+/// listeners that track the pressed state and fire its action.
 extension _Button: DOMPrimitive {
+  /// The DOM element tree rendered for this button.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let listeners: [String: Listener] = [
@@ -47,7 +50,10 @@ extension _Button: DOMPrimitive {
   }
 }
 
+/// Renders a styled button body as a DOM `<button>`, applying the CSS classes,
+/// font, and label styling derived from its button style and control size.
 extension _PrimitiveButtonStyleBody: DOMPrimitive {
+  /// The DOM element tree rendered for this styled button body.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let listeners: [String: Listener] = [

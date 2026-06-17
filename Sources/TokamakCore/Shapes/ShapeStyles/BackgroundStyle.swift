@@ -15,9 +15,15 @@
 //  Created by Carson Katri on 7/6/21.
 //
 
+/// A style that reflects the current background of a view.
+///
+/// Resolve this style with the ``View/background(_:)`` modifier to fill a shape
+/// with the container's background material or color.
 public struct BackgroundStyle: ShapeStyle {
+  /// Creates a background style.
   public init() {}
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     if let backgroundStyle = shape.environment._backgroundStyle {
       backgroundStyle._apply(to: &shape)
@@ -26,6 +32,7 @@ public struct BackgroundStyle: ShapeStyle {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to shape: inout _ShapeStyle_ShapeType) {}
 }
 
@@ -35,6 +42,7 @@ extension EnvironmentValues {
     nonisolated(unsafe) static let defaultValue: AnyShapeStyle? = nil
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var _backgroundStyle: AnyShapeStyle? {
     get {
       self[BackgroundStyleKey.self]
@@ -46,35 +54,46 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the view's background to the default background style.
   @inlinable
   func background() -> some View {
     modifier(_BackgroundStyleModifier(style: BackgroundStyle()))
   }
 
+  /// Sets the view's background to the given shape style.
+  ///
+  /// - Parameter style: The shape style used to fill the background.
   @inlinable
   func background<S>(_ style: S) -> some View where S: ShapeStyle {
     modifier(_BackgroundStyleModifier(style: style))
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @frozen
 public struct _BackgroundStyleModifier<Style>: ViewModifier, _EnvironmentModifier
   where Style: ShapeStyle
 {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var environment: EnvironmentValues!
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var style: Style
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @inlinable
   public init(style: Style) {
     self.style = style
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public typealias Body = Never
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _setContent(from values: EnvironmentValues) {
     environment = values
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func modifyEnvironment(_ values: inout EnvironmentValues) {
     values._backgroundStyle = .init(
       styles: (primary: style, secondary: style, tertiary: style, quaternary: style),
@@ -84,6 +103,7 @@ public struct _BackgroundStyleModifier<Style>: ViewModifier, _EnvironmentModifie
 }
 
 public extension ShapeStyle where Self == BackgroundStyle {
+  /// A style that reflects the current background of a view.
   static var background: Self { .init() }
 }
 

@@ -28,9 +28,11 @@ import TokamakCore
 @_spi(TokamakStaticHTML)
 import TokamakStaticHTML
 
+/// A live DOM element managed by ``DOMFiberRenderer``, backed by a JavaScript node reference.
 public final class DOMElement: FiberElement {
   var reference: JSObject?
 
+  /// The immutable description of a ``DOMElement``: its tag, attributes, and event listeners.
   public struct Content: FiberElementContent {
     let tag: String
     let namespace: String?
@@ -39,6 +41,7 @@ public final class DOMElement: FiberElement {
     let listeners: [String: Listener]
     let debugData: [String: ConvertibleToJSValue]
 
+    /// Compares two element descriptions by tag, namespace, attributes, and inner HTML.
     public static func == (lhs: Self, rhs: Self) -> Bool {
       lhs.tag == rhs.tag
         && lhs.namespace == rhs.namespace
@@ -47,18 +50,27 @@ public final class DOMElement: FiberElement {
     }
   }
 
+  /// The current description applied to this element.
   public var content: Content
 
+  /// Creates an element from the given content description.
+  /// - Parameter content: The description used to populate the element.
   public init(from content: Content) {
     self.content = content
   }
 
+  /// Replaces this element's content with the given description.
+  /// - Parameter content: The new description to apply.
   public func update(with content: Content) {
     self.content = content
   }
 }
 
 public extension DOMElement.Content {
+  /// Derives element content from an HTML-convertible primitive view.
+  /// - Parameters:
+  ///   - primitiveView: The primitive view that produces the HTML tag and attributes.
+  ///   - useDynamicLayout: Whether attributes are computed for Tokamak's dynamic layout.
   init<V>(from primitiveView: V, useDynamicLayout: Bool) where V: View {
     guard let primitiveView = primitiveView as? HTMLConvertible else { fatalError() }
     tag = primitiveView.tag
@@ -82,14 +94,28 @@ protocol DOMNodeConvertible: HTMLConvertible {
   var listeners: [String: Listener] { get }
 }
 
+/// The Fiber-based renderer that mounts a Tokamak view tree as live DOM nodes in the browser.
+///
+/// `DOMFiberRenderer` is the entry point for running a Tokamak app on the web using the Fiber
+/// reconciler. It measures text and images through the DOM, performs Tokamak's own layout when
+/// `useDynamicLayout` is enabled, and commits reconciler mutations to ``DOMElement`` nodes.
+///
+/// ```swift
+/// let renderer = DOMFiberRenderer("#root", useDynamicLayout: true)
+/// renderer.render(MyApp())
+/// ```
 public struct DOMFiberRenderer: FiberRenderer {
+  /// The element bound to the document node selected at initialization.
   public let rootElement: DOMElement
 
   private let resizeObserver: JSObject?
+  /// Publishes the current size of the rendering surface, updating on browser resize.
   public let sceneSize: CurrentValueSubject<CGSize, Never>
 
+  /// Whether Tokamak computes layout itself instead of deferring to the browser.
   public let useDynamicLayout: Bool
 
+  /// The environment values seeded into the view tree, including the default web storage.
   public var defaultEnvironment: EnvironmentValues {
     var environment = EnvironmentValues()
     environment[_ColorSchemeKey.self] = .light
@@ -98,6 +124,11 @@ public struct DOMFiberRenderer: FiberRenderer {
     return environment
   }
 
+  /// Creates a renderer bound to the document element matching the given selector.
+  /// - Parameters:
+  ///   - rootSelector: A CSS selector identifying the host element in the page.
+  ///   - useDynamicLayout: Whether Tokamak performs layout itself rather than relying on
+  ///     browser flow layout. Defaults to `true`.
   public init(_ rootSelector: String, useDynamicLayout: Bool = true) {
     if #available(macOS 10.15, *) {
       JavaScriptEventLoop.installGlobalExecutor()
@@ -151,11 +182,17 @@ public struct DOMFiberRenderer: FiberRenderer {
     GestureEventsObserver.observe(reference)
   }
 
+  /// Reports whether the given view renders directly to an HTML element.
+  /// - Parameter view: The view to test.
+  /// - Returns: `true` if the view maps to a DOM primitive rather than composing other views.
   public static func isPrimitive<V>(_ view: V) -> Bool where V: View {
     !(view is AnyOptional) &&
       (view is HTMLConvertible || view is DOMNodeConvertible)
   }
 
+  /// Returns a visitor that walks the primitive children produced by an HTML-convertible view.
+  /// - Parameter view: The primitive view whose children should be visited.
+  /// - Returns: A visitor function, or `nil` if the view is not HTML-convertible.
   public func visitPrimitiveChildren<Primitive, Visitor>(
     _ view: Primitive
   ) -> ViewVisitorF<Visitor>? where Primitive: View, Visitor: ViewVisitor {
@@ -175,6 +212,12 @@ public struct DOMFiberRenderer: FiberRenderer {
     return result
   }
 
+  /// Measures the size a `Text` view occupies by laying it out in a detached DOM element.
+  /// - Parameters:
+  ///   - text: The text to measure.
+  ///   - proposal: The size proposed for the text.
+  ///   - environment: The environment values in effect for the measurement.
+  /// - Returns: The measured size in points.
   public func measureText(
     _ text: Text,
     proposal: ProposedViewSize,
@@ -222,6 +265,12 @@ public struct DOMFiberRenderer: FiberRenderer {
     }.jsValue
   }
 
+  /// Measures the size an `Image` view occupies, loading its natural dimensions when needed.
+  /// - Parameters:
+  ///   - image: The image to measure.
+  ///   - proposal: The size proposed for the image.
+  ///   - environment: The environment values in effect for the measurement.
+  /// - Returns: The measured size in points, or `.zero` until the natural size is available.
   public func measureImage(
     _ image: Image,
     proposal: ProposedViewSize,
@@ -288,6 +337,8 @@ public struct DOMFiberRenderer: FiberRenderer {
     _ = element.style.setProperty("top", "\(geometry.origin.y)px")
   }
 
+  /// Applies a batch of reconciler mutations to the live DOM tree.
+  /// - Parameter mutations: The insert, remove, update, and layout operations to perform.
   public func commit(_ mutations: [Mutation<Self>]) {
     for mutation in mutations {
       switch mutation {
@@ -326,6 +377,8 @@ public struct DOMFiberRenderer: FiberRenderer {
   }
 
   private let head = Head()
+  /// Syncs document `<head>` metadata and title with the latest preference values.
+  /// - Parameter preferenceStore: The store holding the new HTML meta and title preferences.
   public func preferencesChanged(_ preferenceStore: _PreferenceStore) {
     if let newMetaTags = preferenceStore.newValue(forKey: HTMLMetaPreferenceKey.self) {
       for oldTag in head.metaTags {
@@ -352,13 +405,19 @@ public struct DOMFiberRenderer: FiberRenderer {
   }
 
   private let scheduler = JSScheduler()
+  /// Schedules `action` to run on the JavaScript event loop.
+  /// - Parameter action: The work to perform on the next scheduled tick.
   public func schedule(_ action: @escaping () -> ()) {
     scheduler.schedule(options: nil, action)
   }
 }
 
 extension _PrimitiveButtonStyleBody: DOMNodeConvertible {
+  /// The HTML tag (`button`) produced for a primitive button style body.
   public var tag: String { "button" }
+  /// Returns the HTML attributes for the button element (none by default).
+  /// - Parameter useDynamicLayout: Whether attributes are computed for dynamic layout.
+  /// - Returns: An empty attribute dictionary.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     [:]
   }

@@ -38,6 +38,7 @@ public struct Text: _PrimitiveView, Equatable {
   @Environment(\.self)
   var _environment: EnvironmentValues
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var environmentOverride: EnvironmentValues?
 
@@ -45,15 +46,20 @@ public struct Text: _PrimitiveView, Equatable {
     environmentOverride ?? _environment
   }
 
+  /// Returns a Boolean value indicating whether two `Text` values are equal.
   public static func == (lhs: Text, rhs: Text) -> Bool {
     lhs.storage == rhs.storage
       && lhs.modifiers == rhs.modifiers
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public enum _Storage: Equatable {
+    /// Text stored as a literal, unmodified string.
     case verbatim(String)
+    /// Text composed of multiple segments, each with its own storage and modifiers.
     case segmentedText([(storage: _Storage, modifiers: [_Modifier])])
 
+    /// Returns a Boolean value indicating whether two storage values are equal.
     public static func == (lhs: Text._Storage, rhs: Text._Storage) -> Bool {
       switch lhs {
       case let .verbatim(lhsVerbatim):
@@ -70,16 +76,27 @@ public struct Text: _PrimitiveView, Equatable {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public enum _Modifier: Equatable {
+    /// Applies a foreground color to the text.
     case color(Color?)
+    /// Applies a font to the text.
     case font(Font?)
+    /// Renders the text in italics.
     case italic
+    /// Applies a font weight to the text.
     case weight(Font.Weight?)
+    /// Sets the spacing between individual characters.
     case kerning(CGFloat)
+    /// Sets the tracking (uniform spacing) applied across the text.
     case tracking(CGFloat)
+    /// Shifts the text vertically relative to its baseline.
     case baseline(CGFloat)
+    /// Renders the text using a rounded design variant of its font.
     case rounded
+    /// Draws a line through the text, optionally in the given color.
     case strikethrough(Bool, Color?) // Note: Not in SwiftUI
+    /// Draws a line under the text, optionally in the given color.
     case underline(Bool, Color?) // Note: Not in SwiftUI
   }
 
@@ -94,16 +111,19 @@ public struct Text: _PrimitiveView, Equatable {
     self.modifiers = modifiers
   }
 
+  /// Creates a text view that displays a string literal without localization.
   public init(verbatim content: String) {
     self.init(storage: .verbatim(content))
   }
 
+  /// Creates a text view that displays the contents of a string.
   public init<S>(_ content: S) where S: StringProtocol {
     self.init(storage: .verbatim(String(content)))
   }
 }
 
 public extension Text._Storage {
+  /// The concatenated plain-text content of this storage, ignoring any modifiers.
   var rawText: String {
     switch self {
     case let .segmentedText(segments):
@@ -116,10 +136,14 @@ public extension Text._Storage {
   }
 }
 
-/// This is a helper type that works around absence of "package private" access control in Swift
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
+///
+/// This is a helper type that works around absence of "package private" access control in Swift.
 public struct _TextProxy {
+  /// The `Text` value this proxy exposes to renderers.
   public let subject: Text
 
+  /// Creates a proxy for the given text, resolving its foreground style if present.
   public init(_ subject: Text) {
     // Resolve the foregroundStyle.
     if let foregroundStyle = subject.environment._foregroundStyle {
@@ -137,11 +161,14 @@ public struct _TextProxy {
     self.subject = subject
   }
 
+  /// The underlying storage of the proxied text.
   public var storage: Text._Storage { subject.storage }
+  /// The concatenated plain-text content of the proxied text.
   public var rawText: String {
     subject.storage.rawText
   }
 
+  /// The resolved modifiers for the proxied text, including environment font and color.
   public var modifiers: [Text._Modifier] {
     [
       .font(subject.environment.font),
@@ -149,52 +176,74 @@ public struct _TextProxy {
     ] + subject.modifiers
   }
 
+  /// The environment values in effect for the proxied text.
   public var environment: EnvironmentValues { subject.environment }
 }
 
 public extension Text {
+  /// Sets the default font for text in this view.
   func font(_ font: Font?) -> Text {
     .init(storage: storage, modifiers: modifiers + [.font(font)])
   }
 
+  /// Sets the color of the text displayed by this view.
   func foregroundColor(_ color: Color?) -> Text {
     .init(storage: storage, modifiers: modifiers + [.color(color)])
   }
 
+  /// Sets the font weight of the text.
   func fontWeight(_ weight: Font.Weight?) -> Text {
     .init(storage: storage, modifiers: modifiers + [.weight(weight)])
   }
 
+  /// Applies a bold font weight to the text.
   func bold() -> Text {
     .init(storage: storage, modifiers: modifiers + [.weight(.bold)])
   }
 
+  /// Applies italics to the text.
   func italic() -> Text {
     .init(storage: storage, modifiers: modifiers + [.italic])
   }
 
+  /// Applies a strikethrough to the text.
+  ///
+  /// - Parameters:
+  ///   - active: A Boolean value that indicates whether the text has a strikethrough applied.
+  ///   - color: The color of the strikethrough. If `nil`, the text color is used.
+  /// - Returns: Text with a line through its center.
   func strikethrough(_ active: Bool = true, color: Color? = nil) -> Text {
     .init(storage: storage, modifiers: modifiers + [.strikethrough(active, color)])
   }
 
+  /// Applies an underline to the text.
+  ///
+  /// - Parameters:
+  ///   - active: A Boolean value that indicates whether the text has an underline.
+  ///   - color: The color of the underline. If `nil`, the text color is used.
+  /// - Returns: Text with a line running along its baseline.
   func underline(_ active: Bool = true, color: Color? = nil) -> Text {
     .init(storage: storage, modifiers: modifiers + [.underline(active, color)])
   }
 
+  /// Sets the spacing, or kerning, between characters.
   func kerning(_ kerning: CGFloat) -> Text {
     .init(storage: storage, modifiers: modifiers + [.kerning(kerning)])
   }
 
+  /// Sets the tracking for the text.
   func tracking(_ tracking: CGFloat) -> Text {
     .init(storage: storage, modifiers: modifiers + [.tracking(tracking)])
   }
 
+  /// Sets the vertical offset for the text relative to its baseline.
   func baselineOffset(_ baselineOffset: CGFloat) -> Text {
     .init(storage: storage, modifiers: modifiers + [.baseline(baselineOffset)])
   }
 }
 
 public extension Text {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static func _concatenating(lhs: Self, rhs: Self) -> Self {
     .init(storage: .segmentedText([
       (lhs.storage, lhs.modifiers),
@@ -204,6 +253,7 @@ public extension Text {
 }
 
 extension Text: Layout {
+  /// Returns the size of the text that fits within the given proposed size.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -212,6 +262,7 @@ extension Text: Layout {
     environment.measureText(self, proposal, environment)
   }
 
+  /// Assigns positions to the text's subviews within the given bounds.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,

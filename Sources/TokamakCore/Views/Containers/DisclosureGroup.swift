@@ -15,6 +15,16 @@
 //  Created by Carson Katri on 7/3/20.
 //
 
+/// A view that shows or hides another content view, based on the state of a disclosure control.
+///
+/// A disclosure group consists of a label that the user taps to expand or collapse the associated
+/// content. Provide the content to disclose and a label that describes it.
+///
+///     DisclosureGroup {
+///       Text("Hidden detail")
+///     } label: {
+///       Text("More")
+///     }
 public struct DisclosureGroup<Label, Content>: _PrimitiveView where Label: View, Content: View {
   @State
   var isExpanded: Bool = false
@@ -26,12 +36,16 @@ public struct DisclosureGroup<Label, Content>: _PrimitiveView where Label: View,
   let label: Label
   let content: () -> Content
 
+  /// Creates a disclosure group with the given content and label, managing its expanded state
+  /// internally.
   public init(@ViewBuilder content: @escaping () -> Content, @ViewBuilder label: () -> Label) {
     isExpandedBinding = nil
     self.label = label()
     self.content = content
   }
 
+  /// Creates a disclosure group with the given content and label, binding its expanded state to
+  /// an external value.
   public init(
     isExpanded: Binding<Bool>,
     @ViewBuilder content: @escaping () -> Content,
@@ -51,6 +65,8 @@ public extension DisclosureGroup where Label == Text {
 //              isExpanded: SwiftUI.Binding<Swift.Bool>,
 //              @SwiftUI.ViewBuilder content: @escaping () -> Content)
 
+  /// Creates a disclosure group with a string label and the given content, managing its expanded
+  /// state internally.
   @_disfavoredOverload
   init<S>(_ label: S, @ViewBuilder content: @escaping () -> Content)
     where S: StringProtocol
@@ -58,6 +74,8 @@ public extension DisclosureGroup where Label == Text {
     self.init(content: content, label: { Text(label) })
   }
 
+  /// Creates a disclosure group with a string label and the given content, binding its expanded
+  /// state to an external value.
   @_disfavoredOverload
   init<S>(
     _ label: S,
@@ -68,20 +86,28 @@ public extension DisclosureGroup where Label == Text {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _DisclosureGroupProxy<Label, Content>
   where Label: View, Content: View
 {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var subject: DisclosureGroup<Label, Content>
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public init(_ subject: DisclosureGroup<Label, Content>) { self.subject = subject }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var label: Label { subject.label }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var content: () -> Content { subject.content }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var style: _OutlineGroupStyle { subject.style }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var isExpanded: Bool {
     subject.isExpandedBinding?.wrappedValue ?? subject.isExpanded
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func toggleIsExpanded() {
     subject.isExpandedBinding?.wrappedValue.toggle()
     subject.isExpanded.toggle()

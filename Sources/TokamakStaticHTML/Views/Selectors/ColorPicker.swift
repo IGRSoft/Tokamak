@@ -23,6 +23,8 @@
 // (`<input type="color">` cannot carry alpha). The JS `input` listeners are intentionally
 // dropped — SSR output is static markup.
 extension ColorPicker: _HTMLPrimitive {
+  /// The server-rendered markup for a `ColorPicker`: the label, an `<input type="color">`
+  /// carrying the resolved `#RRGGBB` value, and an alpha range input when opacity is supported.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _ColorPickerProxy(self)

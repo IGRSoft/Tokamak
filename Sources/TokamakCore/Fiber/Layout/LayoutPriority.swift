@@ -24,6 +24,13 @@ enum LayoutPriorityTraitKey: _ViewTraitKey {
 }
 
 public extension View {
+  /// Sets the priority by which a parent layout apportions space to this child view.
+  ///
+  /// Views typically have a default priority of `0`, causing space to be apportioned
+  /// proportionally. Raising a view's priority gives it a larger share of the available space.
+  ///
+  /// - Parameter value: The priority by which a parent layout apportions space to the view.
+  /// - Returns: A view that sets its layout priority to `value`.
   @inlinable
   func layoutPriority(_ value: Double) -> some View {
     _trait(LayoutPriorityTraitKey.self, value)

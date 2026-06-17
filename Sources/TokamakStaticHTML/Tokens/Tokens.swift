@@ -21,12 +21,14 @@ extension Color {
 }
 
 public extension AnyColorBox.ResolvedValue {
+  /// The resolved color expressed as a CSS `rgba(...)` string.
   var cssValue: String {
     "rgba(\(red * 255), \(green * 255), \(blue * 255), \(opacity))"
   }
 }
 
 extension GridItem: CustomStringConvertible {
+  /// The grid item expressed as a CSS grid track sizing function.
   public var description: String {
     switch size {
     case let .adaptive(minimum: min, maximum: max):

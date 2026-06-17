@@ -14,15 +14,25 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _Rotation3DEffect: ViewModifier, Equatable {
+  /// The angle by which to rotate the modified view in three dimensions.
   public var angle: Angle
+  /// The x-component of the axis of rotation.
   public var axisX: CGFloat
+  /// The y-component of the axis of rotation.
   public var axisY: CGFloat
+  /// The z-component of the axis of rotation.
   public var axisZ: CGFloat
+  /// The location with a default of `center` that defines a point in 3D space about which
+  /// the rotation is anchored.
   public var anchor: UnitPoint
+  /// The z-position of the rotation anchor point.
   public var anchorZ: CGFloat
+  /// The relative vanishing point for the rotation.
   public var perspective: CGFloat
 
+  /// Creates a 3D rotation effect with the given angle, axis, and anchoring.
   public init(
     angle: Angle,
     axis: (x: CGFloat, y: CGFloat, z: CGFloat),
@@ -39,16 +49,31 @@ public struct _Rotation3DEffect: ViewModifier, Equatable {
     self.perspective = perspective
   }
 
+  /// The axis of rotation as a tuple of its x, y, and z components.
   public var axis: (x: CGFloat, y: CGFloat, z: CGFloat) {
     (axisX, axisY, axisZ)
   }
 
+  /// Returns the modifier's body for the given content.
   public func body(content: Content) -> some View {
     content
   }
 }
 
 public extension View {
+  /// Rotates this view's rendered output in three dimensions around the given
+  /// axis of rotation.
+  ///
+  /// - Parameters:
+  ///   - angle: The angle by which to rotate the view.
+  ///   - axis: The x, y, and z components that define the axis of rotation.
+  ///   - anchor: The location with a default of `center` that defines a point
+  ///     in 3D space about which the rotation is anchored.
+  ///   - anchorZ: The location with a default of 0 that defines a point in 3D
+  ///     space about which the rotation is anchored.
+  ///   - perspective: The relative vanishing point with a default of 1 for the
+  ///     rotation.
+  /// - Returns: A view that rotates this view in three dimensions.
   func rotation3DEffect(
     _ angle: Angle,
     axis: (x: CGFloat, y: CGFloat, z: CGFloat),

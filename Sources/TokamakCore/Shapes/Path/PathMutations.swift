@@ -56,30 +56,60 @@ public extension Path {
     }
   }
 
+  /// Begins a new subpath at the given point.
+  ///
+  /// - Parameter p: The point at which to begin the new subpath.
   mutating func move(to p: CGPoint) {
     append([.move(to: p)])
   }
 
+  /// Adds a line from the current point to the given point.
+  ///
+  /// - Parameter p: The point to draw a line to.
   mutating func addLine(to p: CGPoint) {
     append([.line(to: p)])
   }
 
+  /// Adds a quadratic Bézier curve from the current point to the given point.
+  ///
+  /// - Parameters:
+  ///   - p: The endpoint of the curve.
+  ///   - cp: The control point of the curve.
   mutating func addQuadCurve(to p: CGPoint, control cp: CGPoint) {
     append([.quadCurve(to: p, control: cp)])
   }
 
+  /// Adds a cubic Bézier curve from the current point to the given point.
+  ///
+  /// - Parameters:
+  ///   - p: The endpoint of the curve.
+  ///   - cp1: The first control point of the curve.
+  ///   - cp2: The second control point of the curve.
   mutating func addCurve(to p: CGPoint, control1 cp1: CGPoint, control2 cp2: CGPoint) {
     append([.curve(to: p, control1: cp1, control2: cp2)])
   }
 
+  /// Closes the current subpath.
   mutating func closeSubpath() {
     append([.closeSubpath])
   }
 
+  /// Adds a rectangle to the path.
+  ///
+  /// - Parameters:
+  ///   - rect: The rectangle to add.
+  ///   - transform: A transform applied to the rectangle before adding it.
   mutating func addRect(_ rect: CGRect, transform: CGAffineTransform = .identity) {
     append(.rect(rect), transform: transform)
   }
 
+  /// Adds a rounded rectangle to the path.
+  ///
+  /// - Parameters:
+  ///   - rect: The rectangle to round and add.
+  ///   - cornerSize: The width and height of the rounded corners.
+  ///   - style: The style of corners drawn by the rounded rectangle.
+  ///   - transform: A transform applied to the rounded rectangle before adding it.
   mutating func addRoundedRect(
     in rect: CGRect,
     cornerSize: CGSize,
@@ -92,18 +122,39 @@ public extension Path {
     )
   }
 
+  /// Adds an ellipse inscribed in the given rectangle to the path.
+  ///
+  /// - Parameters:
+  ///   - rect: The rectangle that bounds the ellipse.
+  ///   - transform: A transform applied to the ellipse before adding it.
   mutating func addEllipse(in rect: CGRect, transform: CGAffineTransform = .identity) {
     append(.ellipse(rect), transform: transform)
   }
 
+  /// Adds a sequence of rectangles to the path.
+  ///
+  /// - Parameters:
+  ///   - rects: The rectangles to add.
+  ///   - transform: A transform applied to each rectangle before adding it.
   mutating func addRects(_ rects: [CGRect], transform: CGAffineTransform = .identity) {
     rects.forEach { addRect($0, transform: transform) }
   }
 
+  /// Adds a sequence of connected straight lines to the path.
+  ///
+  /// - Parameter lines: The points to connect with lines.
   mutating func addLines(_ lines: [CGPoint]) {
     lines.forEach { addLine(to: $0) }
   }
 
+  /// Adds an arc described by a center, radius, start angle, and angular delta.
+  ///
+  /// - Parameters:
+  ///   - center: The center of the arc.
+  ///   - radius: The radius of the arc.
+  ///   - startAngle: The angle at which the arc begins.
+  ///   - delta: The angular span of the arc, measured from the start angle.
+  ///   - transform: A transform applied to the arc before adding it.
   mutating func addRelativeArc(
     center: CGPoint,
     radius: CGFloat,
@@ -124,6 +175,15 @@ public extension Path {
   // There's a great article on bezier curves here:
   // https://pomax.github.io/bezierinfo
   // FIXME: Handle negative delta
+  /// Adds an arc described by a center, radius, start angle, and end angle.
+  ///
+  /// - Parameters:
+  ///   - center: The center of the arc.
+  ///   - radius: The radius of the arc.
+  ///   - startAngle: The angle at which the arc begins.
+  ///   - endAngle: The angle at which the arc ends.
+  ///   - clockwise: Whether the arc is drawn in the clockwise direction.
+  ///   - transform: A transform applied to the arc before adding it.
   mutating func addArc(
     center: CGPoint,
     radius: CGFloat,
@@ -143,6 +203,13 @@ public extension Path {
   }
 
   // FIXME: How does this arc method work?
+  /// Adds an arc that is tangent to the two lines defined by the given points.
+  ///
+  /// - Parameters:
+  ///   - p1: The endpoint of the first tangent line.
+  ///   - p2: The endpoint of the second tangent line.
+  ///   - radius: The radius of the arc.
+  ///   - transform: A transform applied to the arc before adding it.
   mutating func addArc(
     tangent1End p1: CGPoint,
     tangent2End p2: CGPoint,
@@ -150,6 +217,11 @@ public extension Path {
     transform: CGAffineTransform = .identity
   ) {}
 
+  /// Appends another path to this path.
+  ///
+  /// - Parameters:
+  ///   - path: The path to append.
+  ///   - transform: A transform applied to the appended path before adding it.
   mutating func addPath(_ path: Path, transform: CGAffineTransform = .identity) {
     append(path.storage, transform: transform)
   }

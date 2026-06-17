@@ -17,25 +17,46 @@
 
 import Foundation
 
+/// A color gradient represented as an array of color stops, each having a
+/// parametric location value.
+///
+/// A gradient on its own only describes its colors. Combine it with a gradient
+/// type such as ``LinearGradient``, ``RadialGradient``, ``AngularGradient``, or
+/// ``EllipticalGradient`` to render it.
 @frozen
 public struct Gradient: Equatable {
+  /// One color stop in a gradient.
   @frozen
   public struct Stop: Equatable {
+    /// The color for the stop.
     public var color: Color
+    /// The parametric location of the stop, normally in the range `0` to `1`.
     public var location: CGFloat
 
+    /// Creates a color stop with a color and location.
+    ///
+    /// - Parameters:
+    ///   - color: The color for the stop.
+    ///   - location: The parametric location of the stop, normally between `0` and `1`.
     public init(color: Color, location: CGFloat) {
       self.color = color
       self.location = location.isNaN ? .zero : location
     }
   }
 
+  /// The array of color stops.
   public var stops: [Gradient.Stop]
 
+  /// Creates a gradient from an array of color stops.
+  ///
+  /// - Parameter stops: The color stops describing the gradient.
   public init(stops: [Gradient.Stop]) {
     self.stops = stops
   }
 
+  /// Creates a gradient from an array of colors, evenly spaced.
+  ///
+  /// - Parameter colors: The colors, evenly distributed between locations `0` and `1`.
   public init(colors: [Color]) {
     stops = colors.enumerated().map {
       .init(
@@ -46,18 +67,23 @@ public struct Gradient: Equatable {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public enum _GradientStyle: Hashable {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case linear(startPoint: UnitPoint, endPoint: UnitPoint)
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case radial(
     center: UnitPoint,
     startRadius: CGFloat,
     endRadius: CGFloat
   )
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case elliptical(
     center: UnitPoint,
     startRadiusFraction: CGFloat,
     endRadiusFraction: CGFloat
   )
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case angular(
     center: UnitPoint,
     startAngle: Angle,

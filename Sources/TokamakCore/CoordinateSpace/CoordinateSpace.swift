@@ -17,9 +17,16 @@
 
 import Foundation
 
+/// A resolved coordinate space for geometry such as frames and points.
+///
+/// Use a coordinate space to express a geometric measurement relative to the
+/// whole screen, the local view, or a named ancestor.
 public enum CoordinateSpace {
+  /// The coordinate space of the root view, spanning the entire display.
   case global
+  /// The local coordinate space of the current view.
   case local
+  /// A custom coordinate space identified by a name.
   case named(AnyHashable)
 }
 
@@ -28,6 +35,7 @@ extension CoordinateSpace: Equatable, Hashable {
 }
 
 public extension CoordinateSpace {
+  /// A Boolean value indicating whether this is the global coordinate space.
   var isGlobal: Bool {
     switch self {
     case .global:
@@ -37,6 +45,7 @@ public extension CoordinateSpace {
     }
   }
 
+  /// A Boolean value indicating whether this is the local coordinate space.
   var isLocal: Bool {
     switch self {
     case .local:

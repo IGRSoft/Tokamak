@@ -17,19 +17,25 @@
 
 import Foundation
 
+/// A protocol that adds vector math operators to an ``Animatable`` type via its animatable data.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public protocol _VectorMath: Animatable {}
 
 public extension _VectorMath {
+  /// The length of the value's animatable data.
   @inlinable
   var magnitude: Double {
     animatableData.magnitudeSquared.squareRoot()
   }
 
+  /// Replaces this value with its additive inverse.
   @inlinable
   mutating func negate() {
     animatableData = .zero - animatableData
   }
 
+  /// Returns the additive inverse of the value.
   @inlinable
   static prefix func - (operand: Self) -> Self {
     var result = operand
@@ -37,11 +43,13 @@ public extension _VectorMath {
     return result
   }
 
+  /// Adds two values component-wise, storing the result in the left-hand value.
   @inlinable
   static func += (lhs: inout Self, rhs: Self) {
     lhs.animatableData += rhs.animatableData
   }
 
+  /// Returns the component-wise sum of two values.
   @inlinable
   static func + (lhs: Self, rhs: Self) -> Self {
     var result = lhs
@@ -49,11 +57,14 @@ public extension _VectorMath {
     return result
   }
 
+  /// Subtracts the second value from the first component-wise, storing the result in the left-hand
+  /// value.
   @inlinable
   static func -= (lhs: inout Self, rhs: Self) {
     lhs.animatableData -= rhs.animatableData
   }
 
+  /// Returns the component-wise difference of two values.
   @inlinable
   static func - (lhs: Self, rhs: Self) -> Self {
     var result = lhs
@@ -61,11 +72,13 @@ public extension _VectorMath {
     return result
   }
 
+  /// Multiplies the value by the given scalar, storing the result in the left-hand value.
   @inlinable
   static func *= (lhs: inout Self, rhs: Double) {
     lhs.animatableData.scale(by: rhs)
   }
 
+  /// Returns the value scaled by the given scalar.
   @inlinable
   static func * (lhs: Self, rhs: Double) -> Self {
     var result = lhs
@@ -73,11 +86,13 @@ public extension _VectorMath {
     return result
   }
 
+  /// Divides the value by the given scalar, storing the result in the left-hand value.
   @inlinable
   static func /= (lhs: inout Self, rhs: Double) {
     lhs *= 1 / rhs
   }
 
+  /// Returns the value divided by the given scalar.
   @inlinable
   static func / (lhs: Self, rhs: Double) -> Self {
     var result = lhs

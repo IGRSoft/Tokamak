@@ -22,6 +22,10 @@ import TokamakCore
 import TokamakStaticHTML
 
 public extension App {
+  /// An implementation detail that launches the app using the reconciler from `configuration`.
+  /// - Parameters:
+  ///   - app: The app instance to launch.
+  ///   - configuration: The configuration selecting the stack or Fiber reconciler.
   static func _launch(_ app: Self, with configuration: _AppConfiguration) {
     switch configuration.reconciler {
     case .stack:
@@ -64,6 +68,8 @@ public extension App {
     GestureEventsObserver.observe(body)
   }
 
+  /// An implementation detail that sets the document title by appending a `<title>` element.
+  /// - Parameter title: The title text to display for the page.
   static func _setTitle(_ title: String) {
     let titleTag = document.createElement!("title").object!
     titleTag.id = "_tokamak-app-title"
@@ -71,10 +77,12 @@ public extension App {
     _ = head.appendChild!(titleTag)
   }
 
+  /// An implementation detail publishing scene-phase changes from page visibility events.
   var _phasePublisher: AnyPublisher<ScenePhase, Never> {
     ScenePhaseObserver.publisher.eraseToAnyPublisher()
   }
 
+  /// An implementation detail publishing color-scheme changes from the system media query.
   var _colorSchemePublisher: AnyPublisher<ColorScheme, Never> {
     ColorSchemeObserver.publisher.eraseToAnyPublisher()
   }

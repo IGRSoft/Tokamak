@@ -28,6 +28,13 @@ public struct Stepper<Label>: _PrimitiveView where Label: View {
   let onDecrement: (() -> ())?
 
   /// Closure-form initializer.
+  ///
+  /// - Parameters:
+  ///   - onIncrement: The action to perform when the user increments the stepper, or `nil`
+  ///     to disable incrementing.
+  ///   - onDecrement: The action to perform when the user decrements the stepper, or `nil`
+  ///     to disable decrementing.
+  ///   - label: A view builder that produces the stepper's label.
   public init(
     onIncrement: (() -> ())?,
     onDecrement: (() -> ())?,
@@ -39,6 +46,12 @@ public struct Stepper<Label>: _PrimitiveView where Label: View {
   }
 
   /// Value-binding form: clamps `value ± step` against `bounds`.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the value the stepper adjusts.
+  ///   - bounds: The inclusive range the value is clamped to.
+  ///   - step: The amount to increment or decrement the value by.
+  ///   - label: A view builder that produces the stepper's label.
   public init<V>(
     value: Binding<V>,
     in bounds: ClosedRange<V>,
@@ -57,6 +70,11 @@ public struct Stepper<Label>: _PrimitiveView where Label: View {
   }
 
   /// Value-binding form without bounds.
+  ///
+  /// - Parameters:
+  ///   - value: A binding to the value the stepper adjusts.
+  ///   - step: The amount to increment or decrement the value by.
+  ///   - label: A view builder that produces the stepper's label.
   public init<V>(
     value: Binding<V>,
     step: V.Stride = 1,
@@ -69,6 +87,14 @@ public struct Stepper<Label>: _PrimitiveView where Label: View {
 }
 
 public extension Stepper where Label == Text {
+  /// Creates a stepper with closure actions that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the stepper.
+  ///   - onIncrement: The action to perform when the user increments the stepper, or `nil`
+  ///     to disable incrementing.
+  ///   - onDecrement: The action to perform when the user decrements the stepper, or `nil`
+  ///     to disable decrementing.
   @_disfavoredOverload
   init<S>(
     _ title: S,
@@ -78,6 +104,13 @@ public extension Stepper where Label == Text {
     self.init(onIncrement: onIncrement, onDecrement: onDecrement) { Text(title) }
   }
 
+  /// Creates a bounded value-binding stepper that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the stepper.
+  ///   - value: A binding to the value the stepper adjusts.
+  ///   - bounds: The inclusive range the value is clamped to.
+  ///   - step: The amount to increment or decrement the value by.
   @_disfavoredOverload
   init<S, V>(
     _ title: S,
@@ -88,6 +121,12 @@ public extension Stepper where Label == Text {
     self.init(value: value, in: bounds, step: step) { Text(title) }
   }
 
+  /// Creates an unbounded value-binding stepper that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the stepper.
+  ///   - value: A binding to the value the stepper adjusts.
+  ///   - step: The amount to increment or decrement the value by.
   @_disfavoredOverload
   init<S, V>(
     _ title: S,
@@ -99,12 +138,21 @@ public extension Stepper where Label == Text {
 }
 
 /// A helper type that works around the absence of "package private" access control in Swift.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _StepperProxy<Label> where Label: View {
+  /// The stepper this proxy reads from.
   public let subject: Stepper<Label>
 
+  /// Creates a proxy that exposes the internals of the given stepper.
+  ///
+  /// - Parameter subject: The stepper to wrap.
   public init(_ subject: Stepper<Label>) { self.subject = subject }
 
+  /// The stepper's label view.
   public var label: Label { subject.label }
+  /// The action to perform when the stepper is incremented, if any.
   public var onIncrement: (() -> ())? { subject.onIncrement }
+  /// The action to perform when the stepper is decremented, if any.
   public var onDecrement: (() -> ())? { subject.onDecrement }
 }

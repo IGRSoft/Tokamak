@@ -17,11 +17,21 @@
 
 import Foundation
 
+/// A rounded rectangle resolved to a concrete frame and corner size.
 public struct FixedRoundedRect: Equatable {
+  /// The rectangle that bounds the rounded rectangle.
   public let rect: CGRect
+  /// The size of the rounded corners, or `nil` when the shape is a capsule.
   public let cornerSize: CGSize?
+  /// The style of corners drawn by the rounded rectangle.
   public let style: RoundedCornerStyle
 
+  /// Creates a rounded rectangle with the given frame, corner size, and style.
+  ///
+  /// - Parameters:
+  ///   - rect: The rectangle that bounds the rounded rectangle.
+  ///   - cornerSize: The size of the rounded corners.
+  ///   - style: The style of corners drawn by the rounded rectangle.
   public init(rect: CGRect, cornerSize: CGSize, style: RoundedCornerStyle) {
     (self.rect, self.cornerSize, self.style) = (rect, cornerSize, style)
   }

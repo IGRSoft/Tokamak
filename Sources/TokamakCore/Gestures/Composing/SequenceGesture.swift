@@ -15,6 +15,10 @@
 //  Created by Szymon on 16/7/2023.
 //
 
+/// A gesture that's a sequence of two gestures.
+///
+/// The second gesture only receives events after the first gesture succeeds. Create a sequence
+/// gesture with the ``Gesture/sequenced(before:)`` modifier.
 @frozen
 public struct SequenceGesture<First, Second>: Gesture
   where First: Gesture, Second: Gesture
@@ -23,11 +27,15 @@ public struct SequenceGesture<First, Second>: Gesture
   /// the second gesture can start.
   public typealias Value = SequenceGesture.SequenceValue
 
+  /// The value of a sequence gesture, indicating the progress of the two gestures in sequence.
   public struct SequenceValue {
+    /// The value of the first gesture.
     public var first: First.Value
+    /// The value of the second gesture.
     public var second: First.Value
   }
 
+  /// The content and behavior of the gesture.
   public var body: SequenceGesture<First, Second> { self }
 
   /// The first gesture in a sequence of two gestures.
@@ -41,7 +49,10 @@ public struct SequenceGesture<First, Second>: Gesture
     self.second = second
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _onPhaseChange(_ phase: _GesturePhase) -> Bool { false }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onEnded(perform action: @escaping (Value) -> ()) -> Self { self }
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _onChanged(perform action: @escaping (Value) -> ()) -> Self { self }
 }

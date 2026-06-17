@@ -25,6 +25,7 @@ import TokamakCore
 nonisolated(unsafe) private let rootPublisher = ObservableObjectPublisher()
 nonisolated(unsafe) private let localStorage = JSObject.global.localStorage.object!
 
+/// A storage provider backed by the browser's `localStorage`, persisting `AppStorage` values.
 public class LocalStorage: WebStorage, _StorageProvider {
   nonisolated(unsafe) static let closure = JSClosure { _ in
     rootPublisher.send()
@@ -38,10 +39,12 @@ public class LocalStorage: WebStorage, _StorageProvider {
     publisher = rootPublisher
   }
 
+  /// The shared `localStorage`-backed provider used as the default app storage.
   public static var standard: _StorageProvider {
     Self()
   }
 
+  /// Publishes a change whenever a stored value is written.
   public let publisher: ObservableObjectPublisher
 }
 

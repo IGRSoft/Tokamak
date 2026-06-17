@@ -17,6 +17,21 @@
 
 import OpenCombineShim
 
+/// A property wrapper type that reflects a value from the app's persistent storage and
+/// invalidates a view on a change in value in that storage.
+///
+/// Use `AppStorage` to read and write values that persist across launches, keyed by a string. The
+/// wrapped value is backed by a `_StorageProvider` supplied by the renderer.
+///
+/// ```swift
+/// struct SettingsView: View {
+///   @AppStorage("username") var username: String = "Anonymous"
+///
+///   var body: some View {
+///     TextField("Username", text: $username)
+///   }
+/// }
+/// ```
 @propertyWrapper
 public struct AppStorage<Value>: DynamicProperty {
   let provider: _StorageProvider?
@@ -37,6 +52,7 @@ public struct AppStorage<Value>: DynamicProperty {
     unwrappedProvider.publisher.eraseToAnyPublisher()
   }
 
+  /// The underlying value referenced by the stored-value property.
   public var wrappedValue: Value {
     get {
       read(unwrappedProvider, key) ?? defaultValue
@@ -46,6 +62,7 @@ public struct AppStorage<Value>: DynamicProperty {
     }
   }
 
+  /// A binding to the stored value.
   public var projectedValue: Binding<Value> {
     .init {
       wrappedValue
@@ -58,6 +75,12 @@ public struct AppStorage<Value>: DynamicProperty {
 extension AppStorage: ObservedProperty {}
 
 public extension AppStorage {
+  /// Creates a property that can read and write to a boolean stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a boolean value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == Bool
   {
@@ -68,6 +91,12 @@ public extension AppStorage {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can read and write to an integer stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if an integer value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == Int
   {
@@ -78,6 +107,12 @@ public extension AppStorage {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can read and write to a double stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a double value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == Double
   {
@@ -88,6 +123,12 @@ public extension AppStorage {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can read and write to a string stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a string value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == String
   {
@@ -98,6 +139,13 @@ public extension AppStorage {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can save and restore an integer, transforming it to a
+  /// `RawRepresentable` data type.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if an integer value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value: RawRepresentable, Value.RawValue == Int
   {
@@ -113,6 +161,13 @@ public extension AppStorage {
     }
   }
 
+  /// Creates a property that can save and restore a string, transforming it to a
+  /// `RawRepresentable` data type.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a string value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value: RawRepresentable, Value.RawValue == String
   {
@@ -130,6 +185,12 @@ public extension AppStorage {
 }
 
 public extension AppStorage where Value: ExpressibleByNilLiteral {
+  /// Creates a property that can read and write an optional boolean stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a boolean value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == Bool?
   {
@@ -140,6 +201,12 @@ public extension AppStorage where Value: ExpressibleByNilLiteral {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can read and write an optional integer stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if an integer value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == Int?
   {
@@ -150,6 +217,12 @@ public extension AppStorage where Value: ExpressibleByNilLiteral {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can read and write an optional double stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a double value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == Double?
   {
@@ -160,6 +233,12 @@ public extension AppStorage where Value: ExpressibleByNilLiteral {
     read = { $0.read(key: $1) }
   }
 
+  /// Creates a property that can read and write an optional string stored value.
+  ///
+  /// - Parameters:
+  ///   - wrappedValue: The default value if a string value is not specified for the given key.
+  ///   - key: The key to read and write the value to in the stored value.
+  ///   - store: The storage provider to read and write to, or `nil` to use the default provider.
   init(wrappedValue: Value, _ key: String, store: _StorageProvider? = nil)
     where Value == String?
   {
@@ -178,6 +257,7 @@ struct DefaultAppStorageEnvironmentKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   var _defaultAppStorage: _StorageProvider? {
     get {
@@ -190,6 +270,9 @@ public extension EnvironmentValues {
 }
 
 public extension View {
+  /// The default store used by `AppStorage` contained within the view.
+  ///
+  /// - Parameter store: The storage provider to use as the default for `AppStorage` properties.
   func defaultAppStorage(_ store: _StorageProvider) -> some View {
     environment(\._defaultAppStorage, store)
   }

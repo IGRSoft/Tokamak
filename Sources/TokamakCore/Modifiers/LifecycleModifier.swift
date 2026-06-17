@@ -14,16 +14,19 @@
 
 // FIXME: these should have standalone implementations
 public extension View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   func _onMount(perform action: (() -> ())? = nil) -> some View {
     modifier(_AppearanceActionModifier(appear: action))
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   func _onUpdate(perform action: (() -> ())? = nil) -> some View {
     modifier(_LifecycleActionModifier(update: action))
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   func _onUnmount(perform action: (() -> ())? = nil) -> some View {
     modifier(_AppearanceActionModifier(disappear: action))

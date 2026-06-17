@@ -18,8 +18,11 @@
 import TokamakCore
 
 extension LazyVGrid: SpacerContainer {
+  /// Lays out spacers along the vertical axis.
   public var axis: SpacerContainerAxis { .vertical }
+  /// Grids never reserve spacer space, so this is always `false`.
   public var hasSpacer: Bool { false }
+  /// `true` when any column uses an adaptive size and should fill the cross axis.
   public var fillCrossAxis: Bool {
     _LazyVGridProxy(self).columns.contains {
       if case .adaptive(minimum: _, maximum: _) = $0.size {
@@ -57,6 +60,7 @@ extension LazyVGrid: _HTMLPrimitive {
     return styles
   }
 
+  /// Renders the grid as a CSS `display: grid` `<div>` flowing items into rows of columns.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(HTML("div", ["style": styles]) {
@@ -67,12 +71,15 @@ extension LazyVGrid: _HTMLPrimitive {
 
 @_spi(TokamakStaticHTML)
 extension LazyVGrid: HTMLConvertible {
+  /// The HTML element used to host the grid: a `div`.
   public var tag: String { "div" }
+  /// The grid's CSS `style` attribute, omitted when dynamic layout drives positioning.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return ["style": styles]
   }
 
+  /// Visits the grid's content so the renderer can walk its child views.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     {
       $0.visit(_LazyVGridProxy(self).content)

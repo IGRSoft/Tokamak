@@ -67,6 +67,8 @@ func createPath(from elements: [Path.Element], in cr: OpaquePointer) {
 }
 
 extension _ShapeView: GTKPrimitive {
+  /// Implementation detail: renders the shape into a GTK `GtkDrawingArea`, painting its path
+  /// with Cairo (filling or stroking it with the resolved style).
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     AnyView(

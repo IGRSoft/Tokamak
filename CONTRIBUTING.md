@@ -84,3 +84,27 @@ and installation instructions for other platforms.
 SwiftFormat and SwiftLint also run on CI for every PR and thus a CI build can
 fail with inconsistent formatting or style. We require CI builds to pass for all
 PRs before merging.
+
+### Documentation
+
+The API reference is generated from in-source documentation comments with
+[DocC](https://www.swift.org/documentation/docc/). When you add or change a public symbol, document
+it:
+
+- Give every `public` type, initializer, method, and property a one-line `///` summary. Add a
+  discussion paragraph and a fenced Swift example for user-facing entry points.
+- For `_`-prefixed symbols that are `public` only so a renderer can reach them, a one-line note that
+  they are an implementation detail is enough.
+- Keep `- Parameter`/`- Returns` lines in sync with the actual signature — DocC warns on mismatches.
+
+Narrative guides live in the DocC catalog at `Sources/TokamakCore/Tokamak.docc/`; the renderer
+products carry their own landing pages (`Sources/TokamakDOM/TokamakDOM.docc/`,
+`Sources/TokamakStaticHTML/TokamakStaticHTML.docc/`). Build and preview locally with:
+
+```sh
+swift package generate-documentation --target TokamakCore        # build an archive
+swift package --disable-sandbox preview-documentation --target TokamakCore   # live preview
+```
+
+A documentation build should finish with no DocC warnings. See [`docs/README.md`](docs/README.md)
+for the full documentation map.

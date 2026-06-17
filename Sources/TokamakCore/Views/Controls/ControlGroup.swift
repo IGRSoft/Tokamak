@@ -15,22 +15,31 @@
 //  Created by Carson Katri on 7/12/21.
 //
 
+/// A container view that displays semantically related controls in a visually
+/// appropriate manner for the context.
 public struct ControlGroup<Content>: View where Content: View {
   let content: Content
 
   @Environment(\.controlGroupStyle)
   var style
 
+  /// Creates a new control group with the specified content.
+  ///
+  /// - Parameter content: A view builder that produces the controls to group together.
   public init(@ViewBuilder content: () -> Content) {
     self.content = content()
   }
 
+  /// The content and behavior of the control group.
   public var body: some View {
     style.makeBody(configuration: .init(content: .init(body: AnyView(content))))
   }
 }
 
 public extension ControlGroup where Content == ControlGroupStyleConfiguration.Content {
+  /// Creates a control group based on a style configuration.
+  ///
+  /// - Parameter configuration: The properties of the control group to create.
   init(_ configuration: ControlGroupStyleConfiguration) {
     content = configuration.content
   }

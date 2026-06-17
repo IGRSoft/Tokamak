@@ -17,24 +17,46 @@
 
 import Foundation
 
+/// A type that applies a custom appearance to all control groups within a view
+/// hierarchy.
+///
+/// To configure the current control group style for a view hierarchy, use the
+/// ``View/controlGroupStyle(_:)`` modifier.
 public protocol ControlGroupStyle {
+  /// A view that represents the body of a control group.
   associatedtype Body: View
+  /// Creates a view that represents the body of a control group.
+  ///
+  /// - Parameter configuration: The properties of the control group.
+  /// - Returns: A view that describes the appearance of the control group.
   @ViewBuilder
   func makeBody(configuration: Self.Configuration) -> Self.Body
+  /// The properties of a control group.
   typealias Configuration = ControlGroupStyleConfiguration
 }
 
+/// The properties of a control group.
 public struct ControlGroupStyleConfiguration {
+  /// A type-erased content of a control group.
   public struct Content: View {
+    /// The content and behavior of the view.
     public let body: AnyView
   }
 
+  /// A view that represents the content of the control group.
   public let content: ControlGroupStyleConfiguration.Content
 }
 
+/// The default control group style, which renders its content as a segmented
+/// control.
 public struct AutomaticControlGroupStyle: ControlGroupStyle {
+  /// Creates an automatic control group style.
   public init() {}
 
+  /// Creates a view that represents the body of a control group.
+  ///
+  /// - Parameter configuration: The properties of the control group.
+  /// - Returns: A view that describes the appearance of the control group.
   public func makeBody(configuration: Self.Configuration) -> some View {
     Picker(
       selection: .constant(AnyHashable?.none),
@@ -52,9 +74,16 @@ public struct AutomaticControlGroupStyle: ControlGroupStyle {
   }
 }
 
+/// A control group style that arranges its content in a horizontal line, for
+/// use within a navigation bar.
 public struct NavigationControlGroupStyle: ControlGroupStyle {
+  /// Creates a navigation control group style.
   public init() {}
 
+  /// Creates a view that represents the body of a control group.
+  ///
+  /// - Parameter configuration: The properties of the control group.
+  /// - Returns: A view that describes the appearance of the control group.
   public func makeBody(configuration: Self.Configuration) -> some View {
     HStack {
       configuration.content
@@ -62,12 +91,21 @@ public struct NavigationControlGroupStyle: ControlGroupStyle {
   }
 }
 
+/// A type-erased ``ControlGroupStyle``.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in
+/// application code.
 public struct _AnyControlGroupStyle: ControlGroupStyle {
+  /// A view that represents the body of a control group.
   public typealias Body = AnyView
 
   private let bodyClosure: (ControlGroupStyleConfiguration) -> AnyView
+  /// The concrete type of the wrapped style.
   public let type: Any.Type
 
+  /// Creates a type-erased control group style that wraps the given style.
+  ///
+  /// - Parameter style: The control group style to type-erase.
   public init<S: ControlGroupStyle>(_ style: S) {
     type = S.self
     bodyClosure = { configuration in
@@ -75,6 +113,10 @@ public struct _AnyControlGroupStyle: ControlGroupStyle {
     }
   }
 
+  /// Creates a view that represents the body of a control group.
+  ///
+  /// - Parameter configuration: The properties of the control group.
+  /// - Returns: A type-erased view describing the appearance of the control group.
   public func makeBody(configuration: ControlGroupStyleConfiguration) -> AnyView {
     bodyClosure(configuration)
   }
@@ -97,6 +139,10 @@ extension EnvironmentValues {
 }
 
 public extension View {
+  /// Sets the style for control groups within this view.
+  ///
+  /// - Parameter style: The control group style to apply.
+  /// - Returns: A view that uses the specified control group style.
   func controlGroupStyle<S>(
     _ style: S
   ) -> some View where S: ControlGroupStyle {

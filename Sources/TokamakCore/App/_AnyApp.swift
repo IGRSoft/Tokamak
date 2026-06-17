@@ -17,12 +17,14 @@
 
 import OpenCombineShim
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _AnyApp: App {
   var app: Any
   let type: Any.Type
   let bodyClosure: (Any) -> _AnyScene
   let bodyType: Any.Type
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public init<A: App>(_ app: A) {
     self.app = app
     type = A.self
@@ -31,35 +33,42 @@ public struct _AnyApp: App {
     bodyType = A.Body.self
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: Never {
     neverScene("_AnyApp")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public init() {
     fatalError("`_AnyApp` cannot be initialized without an underlying `App` type.")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public static func _launch(_ app: Self, with configuration: _AppConfiguration) {
     fatalError("`_AnyApp` cannot be launched. Access underlying `app` value.")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public static func _setTitle(_ title: String) {
     fatalError("`title` cannot be set for `AnyApp`. Access underlying `app` value.")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static var _configuration: _AppConfiguration {
     fatalError("`configuration` cannot be set for `AnyApp`. Access underlying `app` value.")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var _phasePublisher: AnyPublisher<ScenePhase, Never> {
     fatalError("`_AnyApp` cannot monitor scenePhase. Access underlying `app` value.")
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var _colorSchemePublisher: AnyPublisher<ColorScheme, Never> {
     fatalError("`_AnyApp` cannot monitor colorScheme. Access underlying `app` value.")

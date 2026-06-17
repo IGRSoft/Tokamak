@@ -15,13 +15,29 @@
 //  Created by Carson Katri on 11/26/20.
 //
 
+/// A named value produced by a view.
+///
+/// Mirrors SwiftUI's `PreferenceKey`. A view conveys a value up the view tree by
+/// setting a preference, and an ancestor reads the combined value. Conform a type
+/// to this protocol to define a new preference, providing a ``defaultValue`` and a
+/// ``reduce(value:nextValue:)`` function that combines values from multiple views.
 public protocol PreferenceKey {
+  /// The type of value produced by this preference.
   associatedtype Value
+  /// The default value of the preference.
   static var defaultValue: Value { get }
+  /// Combines a sequence of values by modifying the previously-accumulated value
+  /// with the result of the next value.
+  ///
+  /// - Parameters:
+  ///   - value: The value accumulated through previous calls to this method. The
+  ///     implementation should modify this value.
+  ///   - nextValue: A closure that returns the next value in the sequence.
   static func reduce(value: inout Value, nextValue: () -> Value)
 }
 
 public extension PreferenceKey where Self.Value: ExpressibleByNilLiteral {
+  /// The default value of the preference, `nil`, for nil-expressible value types.
   static var defaultValue: Value { nil }
 }
 
@@ -50,6 +66,7 @@ final class _PreferenceValueStorage: CustomDebugStringConvertible {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PreferenceValue<Key> where Key: PreferenceKey {
   var storage: _PreferenceValueStorage
 
@@ -70,6 +87,7 @@ public struct _PreferenceValue<Key> where Key: PreferenceKey {
 }
 
 public extension _PreferenceValue {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _force<V>(
     _ transform: @escaping (Key.Value) -> V
   ) -> _PreferenceReadingView<Key, V> where V: View {
@@ -77,6 +95,7 @@ public extension _PreferenceValue {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public final class _PreferenceStore: CustomDebugStringConvertible {
   /// The values of the `_PreferenceStore` on the last update.
   private var previousValues: [ObjectIdentifier: _PreferenceValueStorage]
@@ -85,6 +104,7 @@ public final class _PreferenceStore: CustomDebugStringConvertible {
 
   weak var parent: _PreferenceStore?
 
+  /// A textual representation of the preference store, suitable for debugging.
   public var debugDescription: String {
     "Preferences (\(ObjectIdentifier(self))): \(values)"
   }
@@ -172,11 +192,13 @@ public final class _PreferenceStore: CustomDebugStringConvertible {
 /// calls `preferenceStore` during the current render, and `_PreferenceWritingViewProtocol`
 /// waits until the current render finishes.
 public protocol _PreferenceReadingViewProtocol {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func preferenceStore(_ preferenceStore: _PreferenceStore)
 }
 
 /// A protocol that allows a `View` to modify values from the current `_PreferenceStore`.
 public protocol _PreferenceWritingViewProtocol {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func modifyPreferenceStore(_ preferenceStore: inout _PreferenceStore) -> AnyView
 }
 
@@ -184,10 +206,12 @@ public protocol _PreferenceWritingViewProtocol {
 public protocol _PreferenceWritingModifierProtocol: ViewModifier
   where Body == AnyView
 {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func body(_ content: Self.Content, with preferenceStore: inout _PreferenceStore) -> AnyView
 }
 
 public extension _PreferenceWritingModifierProtocol {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func body(content: Content) -> AnyView {
     content.view
   }
@@ -196,6 +220,7 @@ public extension _PreferenceWritingModifierProtocol {
 extension ModifiedContent: _PreferenceWritingViewProtocol
   where Content: View, Modifier: _PreferenceWritingModifierProtocol
 {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func modifyPreferenceStore(_ preferenceStore: inout _PreferenceStore) -> AnyView {
     AnyView(
       modifier

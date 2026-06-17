@@ -29,6 +29,13 @@ public struct ColorPicker<Label>: _PrimitiveView where Label: View {
   @Environment(\.self)
   var environment
 
+  /// Creates a color picker with a custom label.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the selected color.
+  ///   - supportsOpacity: A Boolean value that indicates whether the picker allows
+  ///     adjusting the selected color's opacity.
+  ///   - label: A view builder that produces the picker's label.
   public init(
     selection: Binding<Color>,
     supportsOpacity: Bool = true,
@@ -41,6 +48,13 @@ public struct ColorPicker<Label>: _PrimitiveView where Label: View {
 }
 
 public extension ColorPicker where Label == Text {
+  /// Creates a color picker that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the picker.
+  ///   - selection: A binding to the selected color.
+  ///   - supportsOpacity: A Boolean value that indicates whether the picker allows
+  ///     adjusting the selected color's opacity.
   @_disfavoredOverload
   init<S>(
     _ title: S,
@@ -54,20 +68,35 @@ public extension ColorPicker where Label == Text {
 }
 
 /// A helper type that works around the absence of "package private" access control in Swift.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ColorPickerProxy<Label> where Label: View {
+  /// The color picker this proxy reads from.
   public let subject: ColorPicker<Label>
 
+  /// Creates a proxy that exposes the internals of the given color picker.
+  ///
+  /// - Parameter subject: The color picker to wrap.
   public init(_ subject: ColorPicker<Label>) { self.subject = subject }
 
+  /// The picker's label view.
   public var label: Label { subject.label }
+  /// A binding to the selected color.
   public var selection: Binding<Color> { subject.selection }
+  /// A Boolean value indicating whether the picker supports adjusting opacity.
   public var supportsOpacity: Bool { subject.supportsOpacity }
+  /// The environment values captured by the picker.
   public var environment: EnvironmentValues { subject.environment }
 }
 
 public extension Color {
   /// Resolves this color to a `#RRGGBB` hex string (alpha is dropped — `<input type="color">`
   /// and `Color(hex:)` are both alpha-free). Pairs with `Color(hex:)` for a round-trip.
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
+  ///
+  /// - Parameter environment: The environment values used to resolve the color.
+  /// - Returns: A `#RRGGBB` hex string representing the resolved color.
   @_spi(TokamakCore)
   func _hexString(in environment: EnvironmentValues) -> String {
     let rgba = _ColorProxy(self).resolve(in: environment)

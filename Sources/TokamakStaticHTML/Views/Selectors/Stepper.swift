@@ -22,6 +22,8 @@
 // holding two `_tokamak-stepper-button` `<button>`s. The JS `pointerup` listeners that fire
 // `onDecrement`/`onIncrement` are intentionally dropped — SSR output is static markup.
 extension Stepper: _HTMLPrimitive {
+  /// The server-rendered markup for a `Stepper`: the label plus a `_tokamak-stepper` box holding
+  /// the decrement and increment `<button>`s.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _StepperProxy(self)

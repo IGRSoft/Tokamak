@@ -50,13 +50,13 @@ struct OnChangeModifier<V: Equatable>: ViewModifier {
 
 public extension View {
   /// Adds a modifier for this view that fires an action when a specific value changes.
+  ///
+  /// The `action` closure receives two arguments: the old value (or the initial value when
+  /// `initial` is requested) and the new value that triggered the change.
   /// - Parameters:
   ///   - value: The value to check against when determining whether to run the closure.
   ///   - initial: Whether the action should be run when this view initially appears.
   ///   - action: A closure to run when the value changes.
-  ///   - oldValue: The old value that failed the comparison check (or the initial value when
-  /// requested).
-  ///   - newValue: The new value that failed the comparison check.
   /// - Returns: A view that fires an action when the specified value changes.
   func onChange<V>(
     of value: V,

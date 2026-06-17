@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public protocol _PickerContainerProtocol {
+  /// The identified child views the picker can select among.
   var elements: [_AnyIDView] { get }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PickerContainer<
   Label: View,
   SelectionValue: Hashable,
@@ -23,16 +26,28 @@ public struct _PickerContainer<
 >: _PrimitiveView,
   _PickerContainerProtocol
 {
+  /// A binding to the currently selected value.
   @Binding
   public var selection: SelectionValue
 
+  /// The picker's label view.
   public let label: Label
+  /// The picker's option content.
   public let content: Content
+  /// The identified child views the picker can select among.
   public let elements: [_AnyIDView]
 
+  /// The picker style resolved from the environment.
   @Environment(\.pickerStyle)
   public var style
 
+  /// Creates a picker container with the given selection, label, elements, and content.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the currently selected value.
+  ///   - label: The picker's label view.
+  ///   - elements: The identified child views the picker can select among.
+  ///   - content: A view builder that produces the picker's option content.
   public init(
     selection: Binding<SelectionValue>,
     label: Label,
@@ -46,19 +61,35 @@ public struct _PickerContainer<
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PickerElement: _PrimitiveView {
+  /// The index of the selectable value this element represents, if any.
   public let valueIndex: Int?
+  /// The content view of the picker option.
   public let content: AnyView
 
+  /// The picker style resolved from the environment.
   @Environment(\.pickerStyle)
   public var style
 }
 
+/// A control for selecting from a set of mutually exclusive values.
+///
+///     Picker("Flavor", selection: $selectedFlavor) {
+///       Text("Chocolate").tag(Flavor.chocolate)
+///       Text("Vanilla").tag(Flavor.vanilla)
+///     }
 public struct Picker<Label: View, SelectionValue: Hashable, Content: View>: View {
   let selection: Binding<SelectionValue>
   let label: Label
   let content: Content
 
+  /// Creates a picker with a custom label and content.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the currently selected value.
+  ///   - label: The picker's label view.
+  ///   - content: A view builder that produces the picker's options.
   public init(
     selection: Binding<SelectionValue>,
     label: Label,
@@ -69,6 +100,7 @@ public struct Picker<Label: View, SelectionValue: Hashable, Content: View>: View
     self.content = content()
   }
 
+  /// The content and behavior of the picker.
   @_spi(TokamakCore)
   public var body: some View {
     let children = self.children
@@ -95,6 +127,12 @@ public struct Picker<Label: View, SelectionValue: Hashable, Content: View>: View
 }
 
 public extension Picker where Label == Text {
+  /// Creates a picker that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the picker.
+  ///   - selection: A binding to the currently selected value.
+  ///   - content: A view builder that produces the picker's options.
   @_disfavoredOverload
   init<S: StringProtocol>(
     _ title: S,
@@ -108,6 +146,7 @@ public extension Picker where Label == Text {
 }
 
 extension Picker: ParentView {
+  /// The picker's option views.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]
@@ -116,6 +155,7 @@ extension Picker: ParentView {
 
 @_spi(TokamakCore)
 extension Picker: _PickerContainerProtocol {
+  /// The identified child views the picker can select among.
   @_spi(TokamakCore)
   public var elements: [_AnyIDView] {
     (content as? ForEachProtocol)?.children

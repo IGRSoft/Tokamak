@@ -19,18 +19,22 @@ import OpenCombineShim
 import TokamakCore
 
 public extension App {
+  /// Implementation detail: static HTML has no runtime app loop, so this traps.
   static func _launch(_ app: Self, with configuration: _AppConfiguration) {
     fatalError("TokamakStaticHTML does not support default `App._launch`")
   }
 
+  /// Implementation detail: a no-op; set the document title via the `Title` view.
   static func _setTitle(_ title: String) {
     // no-op: use Title view
   }
 
+  /// Implementation detail: publishes a constant `.active` scene phase for SSR.
   var _phasePublisher: AnyPublisher<ScenePhase, Never> {
     CurrentValueSubject<ScenePhase, Never>(.active).eraseToAnyPublisher()
   }
 
+  /// Implementation detail: publishes a constant `.light` color scheme for SSR.
   var _colorSchemePublisher: AnyPublisher<ColorScheme, Never> {
     CurrentValueSubject<ColorScheme, Never>(.light).eraseToAnyPublisher()
   }

@@ -133,6 +133,12 @@ import CGTK4
 // FIXME: I would put this inside TokamakCore, but for
 // some reason it doesn't get exported with the typealias
 extension Text {
+  /// Concatenates two `Text` values into a single run, preserving each side's styling.
+  ///
+  /// - Parameters:
+  ///   - lhs: The leading `Text` value.
+  ///   - rhs: The trailing `Text` value appended after `lhs`.
+  /// - Returns: A combined `Text` containing both runs.
   public static func + (lhs: Self, rhs: Self) -> Self {
     _concatenating(lhs: lhs, rhs: rhs)
   }

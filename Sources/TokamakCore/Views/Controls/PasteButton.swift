@@ -34,16 +34,22 @@
 public struct PasteButton: View {
   let payloadAction: ([String]) -> Void
 
+  /// Creates a paste button that forwards pasted strings to the given action.
+  ///
+  /// - Parameter payloadAction: A closure that receives the plain-text strings read
+  ///   from the pasteboard when the button is activated.
   public init(payloadAction: @escaping ([String]) -> Void) {
     self.payloadAction = payloadAction
   }
 
+  /// The content and behavior of the paste button.
   @_spi(TokamakCore)
   public var body: some View {
     _PasteButtonContainer(payloadAction: payloadAction)
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PasteButtonContainer: _PrimitiveView {
   let payloadAction: ([String]) -> Void
 
@@ -52,11 +58,17 @@ public struct _PasteButtonContainer: _PrimitiveView {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PasteButtonProxy {
+  /// The paste button container this proxy reads from.
   public var subject: _PasteButtonContainer
 
+  /// Creates a proxy that exposes the internals of the given paste button container.
+  ///
+  /// - Parameter subject: The paste button container to wrap.
   public init(_ subject: _PasteButtonContainer) { self.subject = subject }
 
+  /// The closure invoked with strings read from the pasteboard.
   public var payloadAction: ([String]) -> Void { subject.payloadAction }
 
   /// Forward pasted strings to the wrapped payload action.

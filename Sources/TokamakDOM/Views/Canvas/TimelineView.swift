@@ -122,6 +122,7 @@ private struct _TimelineView<Content: View, Schedule: TimelineSchedule>: View {
 }
 
 extension TimelineView: DOMPrimitive where Content: View {
+  /// The view rendered into the DOM, scheduling content updates on its timeline.
   public var renderedBody: AnyView {
     AnyView(_TimelineView(parent: self))
   }

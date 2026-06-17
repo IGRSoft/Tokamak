@@ -15,6 +15,7 @@
 @_spi(TokamakStaticHTML) import TokamakCore
 
 extension ScrollViewReader: _HTMLPrimitive {
+  /// Renders the content unchanged in a class-tagged `<div>` with an inert scroll proxy.
   // Transparent wrapper: the content renders unchanged inside a single
   // class-tagged `<div>` (a stable hook). The SSR proxy is inert — programmatic
   // scrolling only has meaning in the browser (DOM) path.

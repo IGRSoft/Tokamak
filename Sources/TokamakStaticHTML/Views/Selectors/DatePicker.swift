@@ -26,6 +26,8 @@ import Foundation
 // `en_US_POSIX` locale) to match the HTML5 control wire format. The JS `input` listener is
 // intentionally dropped — SSR output is static markup.
 extension DatePicker: _HTMLPrimitive {
+  /// The server-rendered markup for a `DatePicker`: the label plus an `<input>` whose
+  /// `type` and `min`/`max`/`value` derive from the selected `DatePickerComponents`.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _DatePickerProxy(self)

@@ -17,10 +17,12 @@
 
 /// A type that can visit a `Scene`.
 public protocol SceneVisitor: ViewVisitor {
+  /// Visits the given scene.
   func visit<S: Scene>(_ scene: S)
 }
 
 public extension Scene {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V: SceneVisitor>(_ visitor: V) {
     visitor.visit(body)
   }

@@ -17,5 +17,6 @@
 
 /// A type that can visit an `App`.
 public protocol AppVisitor: ViewVisitor {
+  /// Visits the given app.
   func visit<A: App>(_ app: A)
 }

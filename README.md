@@ -167,12 +167,17 @@ struct CounterApp: App {
 
 ### For app developers
 
-- macOS 11 and Xcode 13.2 or later when using VS Code. macOS 12 and Xcode 13.3 or later are recommended if
-  you'd like to use Xcode for auto-completion, or when developing multi-platform apps that target WebAssembly
-  and macOS at the same time.
-- [Swift 5.6 or later](https://swift.org/download/) and Ubuntu 18.04/20.04 if you'd like to use Linux.
-  Other Linux distributions are currently not supported.
-- [`carton` 0.15.x](https://carton.dev) (carton is our build tool, see the ["Getting started" section](#getting-started) for installation steps)
+- A **Swift 6.3 toolchain** from [swift.org](https://swift.org/download/). The open-source toolchain
+  is needed to cross-compile to WebAssembly: the wasm C dependencies require a clang with the
+  WebAssembly target, which Apple's Xcode toolchain does not ship.
+- A **Swift SDK for WebAssembly** matching the toolchain, installed with `swift sdk install`. This
+  repository builds against `swift-6.3.2-RELEASE_wasm` (see [`Makefile`](Makefile) and
+  [`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
+- For native macOS/iOS builds, the platform deployment targets declared in
+  [`Package.swift`](Package.swift) apply.
+
+> The [`carton`](https://carton.dev) workflow below is the upstream SwiftWasm app-template path; this
+> fork's own demo builds use the Swift SDK commands shown at the end of the next section.
 
 ### For users of apps depending on Tokamak
 
@@ -245,11 +250,38 @@ carton dev
    running. You can edit the app source code in your favorite editor and save it, `carton`
    will immediately rebuild the app and reload all browser tabs that have the app open.
 
-You can also clone this repository and run `carton dev --product TokamakDemo` in its root
-directory. This will build the demo app that shows almost all of the currently implemented APIs.
+### Building the demo from this repository
+
+To build the bundled `TokamakDemo` (which exercises almost every implemented API) from a clone of
+this repository, use the WebAssembly Swift SDK directly:
+
+```sh
+# Install the matching Swift SDK once:
+swift sdk install \
+  https://download.swift.org/swift-6.3.2-release/wasm-sdk/swift-6.3.2-RELEASE/swift-6.3.2-RELEASE_wasm.artifactbundle.tar.gz
+
+# Build, or bundle a runnable site with PackageToJS:
+make wasm                                                  # swift build --swift-sdk …
+swift package --swift-sdk swift-6.3.2-RELEASE_wasm js --product TokamakDemo
+```
+
+See [`docs/DemoCatalog.md`](docs/DemoCatalog.md) for the other demo entry points (native macOS/iOS,
+static HTML, GTK4).
 
 If you have any questions, pleaes check out the [FAQ](docs/FAQ.md) document, and/or join the
 #tokamak channel on [the SwiftWasm Discord server](https://discord.gg/ashJW8T8yp).
+
+## Documentation
+
+- **API reference** — generated with [DocC](https://www.swift.org/documentation/docc/). Build it
+  locally with `swift package generate-documentation --target TokamakCore`, or browse the hosted
+  reference on [Swift Package Index](https://swiftpackageindex.com) (see [`.spi.yml`](.spi.yml)).
+- **Guides** — Getting Started, Architecture, State & Data Flow, Layout, Renderers, SwiftUI
+  Compatibility, and Working with HTML live in the DocC catalog
+  ([`Sources/TokamakCore/Tokamak.docc/`](Sources/TokamakCore/Tokamak.docc)).
+- **Documentation index** — [`docs/README.md`](docs/README.md) maps every guide, the
+  [renderers guide](docs/RenderersGuide.md), the [demo catalog guide](docs/DemoCatalog.md), the
+  [feature matrix](docs/progress.md), and the [FAQ](docs/FAQ.md).
 
 ## Security
 

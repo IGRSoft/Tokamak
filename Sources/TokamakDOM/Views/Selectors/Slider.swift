@@ -17,6 +17,8 @@ import JavaScriptKit
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a `Slider` as a DOM range `<input>` element, updating its value binding and editing
+/// state from pointer and input events.
 extension Slider: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _SliderProxy(self)

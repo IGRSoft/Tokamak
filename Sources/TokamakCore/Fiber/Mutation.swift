@@ -17,17 +17,22 @@
 
 import Foundation
 
+/// A change the reconciler asks a renderer to apply to its rendered output.
 public enum Mutation<Renderer: FiberRenderer> {
+  /// Insert `element` into `parent` at the given child `index`.
   case insert(
     element: Renderer.ElementType,
     parent: Renderer.ElementType,
     index: Int
   )
+  /// Remove `element` from `parent`.
   case remove(element: Renderer.ElementType, parent: Renderer.ElementType?)
+  /// Replace the content and geometry of an existing element in place.
   case update(
     previous: Renderer.ElementType,
     newContent: Renderer.ElementType.Content,
     geometry: ViewGeometry
   )
+  /// Reposition `element` to match the given geometry.
   case layout(element: Renderer.ElementType, geometry: ViewGeometry)
 }

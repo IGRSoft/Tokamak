@@ -16,7 +16,10 @@ import Foundation
 @_spi(TokamakCore)
 import TokamakCore
 
+/// Renders `background(_:)` shape-style fills by emitting a CSS `background-color`, including a
+/// blurred translucent fill for SwiftUI materials.
 extension _BackgroundStyleModifier: DOMViewModifier {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
   private func attributes(
     for material: _MaterialStyle,
@@ -47,6 +50,7 @@ extension _BackgroundStyleModifier: DOMViewModifier {
     ]
   }
 
+  /// The inline `style` attribute encoding the resolved background color or material.
   public var attributes: [HTMLAttribute: String] {
     if let resolved = style.resolve(
       for: .resolveStyle(levels: 0..<1),
@@ -65,11 +69,16 @@ extension _BackgroundStyleModifier: DOMViewModifier {
   }
 }
 
+/// Renders the background style under static layout: materials emit blur attributes inline, while
+/// solid fills are layered behind the content via a `_BackgroundStyleLayout`.
 @_spi(TokamakStaticHTML)
 extension _BackgroundStyleModifier: HTMLConvertible,
   HTMLModifierConvertible
 {
+  /// The HTML tag hosting the background.
   public var tag: String { "div" }
+  /// The material blur attributes, or empty for non-material fills handled by the child visitor.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     let resolved = style.resolve(
       for: .resolveStyle(levels: 0..<1),
@@ -83,6 +92,11 @@ extension _BackgroundStyleModifier: HTMLConvertible,
     }
   }
 
+  /// Visits a `_BackgroundStyleLayout` that layers a solid fill behind the content; `nil` for
+  /// materials, which are handled by ``attributes(useDynamicLayout:)``.
+  /// - Parameters:
+  ///   - content: The view the background is applied to.
+  ///   - useDynamicLayout: Whether the renderer computes layout dynamically.
   public func primitiveVisitor<V, Content>(
     content: Content,
     useDynamicLayout: Bool

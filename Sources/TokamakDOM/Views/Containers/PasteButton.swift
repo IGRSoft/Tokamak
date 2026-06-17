@@ -17,6 +17,8 @@ import JavaScriptKit
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a paste button as a DOM `<button>` that reads plain text from the
+/// browser Clipboard API and forwards it to the paste action when clicked.
 extension _PasteButtonContainer: DOMPrimitive {
   var renderedBody: AnyView {
     AnyView(DynamicHTML(

@@ -23,9 +23,23 @@
 // `StaticHTMLFiberRenderer`). It emits the same `<label><input type="checkbox">…label…</label>`
 // shape as the DOM `CheckboxToggleStyle`, but with a static `HTML("input")` (no JS `change`
 // listener) since SSR output is static markup.
+/// The JS-free `ToggleStyle` that renders a `Toggle` to static HTML for server-side rendering.
+///
+/// TokamakStaticHTML installs this into its default environment so that a `Toggle` rendered under
+/// SSR resolves to a `<label><input type="checkbox">…label…</label>`, mirroring the DOM
+/// `CheckboxToggleStyle` but without the JavaScript `change` listener.
+///
+/// ```swift
+/// // Installed automatically by `StaticHTMLRenderer`; applied like any SwiftUI toggle style:
+/// Toggle("Enabled", isOn: $isEnabled)
+///   .toggleStyle(StaticHTMLToggleStyle())
+/// ```
 public struct StaticHTMLToggleStyle: ToggleStyle {
+  /// Creates a static HTML toggle style.
   public init() {}
 
+  /// Produces the `<label><input type="checkbox">…label…</label>` markup for the given toggle
+  /// configuration, marking the input checked when the toggle is on.
   public func makeBody(configuration: ToggleStyleConfiguration) -> some View {
     var attributes: [HTMLAttribute: String] = ["type": "checkbox"]
     if configuration.isOn {

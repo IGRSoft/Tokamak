@@ -14,7 +14,10 @@
 
 import TokamakCore
 
+/// Renders `allowsHitTesting(_:)` by emitting the CSS `pointer-events` property to enable or
+/// disable pointer interaction.
 extension _AllowsHitTestingModifier: DOMViewModifier {
+  /// The inline `style` attribute setting `pointer-events` to `auto` or `none`.
   public var attributes: [HTMLAttribute: String] {
     ["style": "pointer-events: \(enabled ? "auto" : "none"); "]
   }

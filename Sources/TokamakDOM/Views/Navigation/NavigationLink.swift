@@ -16,6 +16,8 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a navigation link as a DOM `<a>` element whose click handler
+/// activates the link to push its destination.
 extension NavigationLink: DOMPrimitive {
   var renderedBody: AnyView {
     let proxy = _NavigationLinkProxy(self)

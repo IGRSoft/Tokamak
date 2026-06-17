@@ -17,7 +17,11 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `scaleEffect(_:anchor:)` as a CSS `transform: scale()`
+/// declaration with a matching `transform-origin`.
 extension _ScaleEffect: DOMViewModifier {
+  /// Implementation detail: emits the `transform: scale()` and `transform-origin`
+  /// styles from the effect's scale and anchor.
   public var attributes: [HTMLAttribute: String] {
     [
       "style": """

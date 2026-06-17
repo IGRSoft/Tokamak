@@ -14,8 +14,12 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `saturation(_:)` as a CSS `filter: saturate()` declaration.
 extension _SaturationEffect: DOMViewModifier {
+  /// Implementation detail: keeps stacked filters in separate DOM wrappers so
+  /// they are not flattened into one clobbering `filter:` style.
   public var isOrderDependent: Bool { true }
+  /// Implementation detail: emits the `filter: saturate()` style.
   public var attributes: [HTMLAttribute: String] {
     ["style": "filter: saturate(\(amount)); "]
   }

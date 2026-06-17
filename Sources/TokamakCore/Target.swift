@@ -15,6 +15,11 @@
 //  Created by Max Desiatov on 10/02/2019.
 //
 
+/// A platform-specific render target that a renderer mounts views into.
+///
+/// Renderers declare a concrete conforming type (for example, a DOM node or an
+/// `NSView`) as their ``Renderer/TargetType``.
 public protocol Target: AnyObject {
+  /// The host view currently rendered to this target.
   var view: AnyView { get set }
 }

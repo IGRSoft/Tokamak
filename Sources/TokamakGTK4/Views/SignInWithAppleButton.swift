@@ -21,6 +21,9 @@ import TokamakCore
 // TODO: there is no native "Sign in with Apple" affordance on GTK; the label
 // stands in for the styled black button — best-effort, documented per R5/R6.
 extension _SignInWithAppleButtonContainer: GTKPrimitive {
+  /// Renders a labelled button standing in for the native control (presentation-only GTK4 output).
+  ///
+  /// An implementation detail surfaced via `@_spi(TokamakCore)` for the renderer to consume.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     let proxy = _SignInWithAppleButtonProxy(self)

@@ -20,20 +20,26 @@ import Foundation
 /// Erase a `Layout` conformance to an `AnyLayout`.
 ///
 /// This could potentially be removed in Swift 5.7 in favor of `any Layout`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public protocol _AnyLayout {
+  /// Wraps this layout in a type-erased `AnyLayout`.
   func _erased() -> AnyLayout
 }
 
-/// A type that participates in the layout pass.
+/// A type that defines the geometry of a collection of views.
 ///
 /// Any `View` or `Scene` that implements this protocol will be used to compute layout in
-/// a `FiberRenderer` with `useDynamicLayout` set to `true`.
+/// a `FiberRenderer` with `useDynamicLayout` set to `true`. Conform to `Layout` to arrange
+/// a container's subviews, mirroring SwiftUI's `Layout` protocol.
 public protocol Layout: Animatable, _AnyLayout {
+  /// Properties that describe the layout, such as its stack orientation.
   static var layoutProperties: LayoutProperties { get }
 
+  /// Cached data shared between `sizeThatFits` and `placeSubviews` for a single layout pass.
   associatedtype Cache = ()
 
-  /// Proxies for the children of this container.
+  /// A collection of proxies for the children of this container.
   typealias Subviews = LayoutSubviews
 
   /// Create a fresh `Cache`. Use it to store complex operations,
@@ -88,26 +94,31 @@ public protocol Layout: Animatable, _AnyLayout {
 }
 
 public extension Layout {
+  /// Wraps this layout in a type-erased `AnyLayout`.
   func _erased() -> AnyLayout {
     .init(self)
   }
 }
 
 public extension Layout where Self.Cache == () {
+  /// Returns an empty cache for layouts that do not require one.
   func makeCache(subviews: Self.Subviews) -> Self.Cache {
     ()
   }
 }
 
 public extension Layout {
+  /// The default layout properties, with no stack orientation.
   static var layoutProperties: LayoutProperties {
     .init()
   }
 
+  /// Rebuilds the cache before each layout pass; the default re-creates it from scratch.
   func updateCache(_ cache: inout Self.Cache, subviews: Self.Subviews) {
     cache = makeCache(subviews: subviews)
   }
 
+  /// Returns the union of the spacing preferences of all subviews.
   func spacing(subviews: Self.Subviews, cache: inout Self.Cache) -> ViewSpacing {
     subviews.reduce(
       into: subviews.first.map {
@@ -122,6 +133,7 @@ public extension Layout {
     ) { $0.formUnion($1.spacing) }
   }
 
+  /// Returns the explicit value of a horizontal alignment guide; the default returns `nil`.
   func explicitAlignment(
     of guide: HorizontalAlignment,
     in bounds: CGRect,
@@ -132,6 +144,7 @@ public extension Layout {
     nil
   }
 
+  /// Returns the explicit value of a vertical alignment guide; the default returns `nil`.
   func explicitAlignment(
     of guide: VerticalAlignment,
     in bounds: CGRect,
@@ -151,25 +164,32 @@ public extension Layout {
 }
 
 /// A `View` that renders its children with a `Layout`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public struct LayoutView<L: Layout, Content: View>: View, Layout {
   let layout: L
   let content: Content
 
+  /// The cache type, forwarded from the wrapped layout.
   public typealias Cache = L.Cache
 
+  /// Creates a fresh cache by forwarding to the wrapped layout.
   public func makeCache(subviews: Subviews) -> L.Cache {
     layout.makeCache(subviews: subviews)
   }
 
+  /// Updates the cache by forwarding to the wrapped layout.
   public func updateCache(_ cache: inout L.Cache, subviews: Subviews) {
     layout.updateCache(&cache, subviews: subviews)
   }
 
+  /// Returns the spacing by forwarding to the wrapped layout.
   public func spacing(subviews: Subviews, cache: inout L.Cache) -> ViewSpacing {
     layout.spacing(subviews: subviews, cache: &cache)
   }
 
+  /// Returns the size that fits the proposal by forwarding to the wrapped layout.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -178,6 +198,7 @@ public struct LayoutView<L: Layout, Content: View>: View, Layout {
     layout.sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache)
   }
 
+  /// Places the subviews by forwarding to the wrapped layout.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -187,6 +208,7 @@ public struct LayoutView<L: Layout, Content: View>: View, Layout {
     layout.placeSubviews(in: bounds, proposal: proposal, subviews: subviews, cache: &cache)
   }
 
+  /// Returns the explicit horizontal alignment by forwarding to the wrapped layout.
   public func explicitAlignment(
     of guide: HorizontalAlignment,
     in bounds: CGRect,
@@ -199,6 +221,7 @@ public struct LayoutView<L: Layout, Content: View>: View, Layout {
     )
   }
 
+  /// Returns the explicit vertical alignment by forwarding to the wrapped layout.
   public func explicitAlignment(
     of guide: VerticalAlignment,
     in bounds: CGRect,
@@ -211,6 +234,7 @@ public struct LayoutView<L: Layout, Content: View>: View, Layout {
     )
   }
 
+  /// The content rendered inside the layout container.
   public var body: some View {
     content
   }
@@ -390,30 +414,40 @@ final class ConcreteLayoutBox<L: Layout>: AnyLayoutBox {
   }
 }
 
+/// A type-erased instance of the `Layout` protocol.
+///
+/// Use `AnyLayout` to switch between multiple concrete layout types without changing the type
+/// of the views you are laying out, mirroring SwiftUI's `AnyLayout`.
 @frozen
 public struct AnyLayout: Layout {
   var storage: AnyLayoutBox
 
+  /// Creates a type-erased layout that wraps the given concrete layout.
   public init<L>(_ layout: L) where L: Layout {
     storage = ConcreteLayoutBox(layout)
   }
 
+  /// The cache for a type-erased layout, wrapping the wrapped layout's own cache.
   public struct Cache {
     var erasedCache: Any
   }
 
+  /// Creates a fresh cache by forwarding to the wrapped layout.
   public func makeCache(subviews: AnyLayout.Subviews) -> AnyLayout.Cache {
     .init(erasedCache: storage.makeCache(subviews: subviews))
   }
 
+  /// Updates the cache by forwarding to the wrapped layout.
   public func updateCache(_ cache: inout AnyLayout.Cache, subviews: AnyLayout.Subviews) {
     storage.updateCache(&cache.erasedCache, subviews: subviews)
   }
 
+  /// Returns the spacing by forwarding to the wrapped layout.
   public func spacing(subviews: AnyLayout.Subviews, cache: inout AnyLayout.Cache) -> ViewSpacing {
     storage.spacing(subviews: subviews, cache: &cache.erasedCache)
   }
 
+  /// Returns the size that fits the proposal by forwarding to the wrapped layout.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: AnyLayout.Subviews,
@@ -422,6 +456,7 @@ public struct AnyLayout: Layout {
     storage.sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache.erasedCache)
   }
 
+  /// Places the subviews by forwarding to the wrapped layout.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -436,6 +471,7 @@ public struct AnyLayout: Layout {
     )
   }
 
+  /// Returns the explicit horizontal alignment by forwarding to the wrapped layout.
   public func explicitAlignment(
     of guide: HorizontalAlignment,
     in bounds: CGRect,
@@ -452,6 +488,7 @@ public struct AnyLayout: Layout {
     )
   }
 
+  /// Returns the explicit vertical alignment by forwarding to the wrapped layout.
   public func explicitAlignment(
     of guide: VerticalAlignment,
     in bounds: CGRect,
@@ -467,6 +504,7 @@ public struct AnyLayout: Layout {
     )
   }
 
+  /// The animatable data of the wrapped layout, type-erased.
   public var animatableData: _AnyAnimatableData {
     get {
       _AnyAnimatableData(storage.animatableData)

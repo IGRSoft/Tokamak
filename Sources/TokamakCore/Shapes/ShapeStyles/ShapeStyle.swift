@@ -17,11 +17,19 @@
 
 import Foundation
 
+/// A color or pattern to use when rendering a shape.
+///
+/// Conform to this protocol to define a custom way to style shapes and views.
+/// The framework provides many concrete styles such as ``Color``,
+/// ``LinearGradient``, ``Material``, and ``HierarchicalShapeStyle``.
 public protocol ShapeStyle {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _apply(to shape: inout _ShapeStyle_Shape)
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   static func _apply(to type: inout _ShapeStyle_ShapeType)
 }
 
+/// A type-erased shape style.
 public struct AnyShapeStyle: ShapeStyle {
   let styles: (
     primary: ShapeStyle,
@@ -35,6 +43,7 @@ public struct AnyShapeStyle: ShapeStyle {
 
   let environment: EnvironmentValues
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     shape.environment = environment
     let results = stylesArray.map { style -> _ShapeStyle_Shape.Result in
@@ -69,17 +78,26 @@ public struct AnyShapeStyle: ShapeStyle {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to type: inout _ShapeStyle_ShapeType) {}
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ShapeStyle_Shape {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public let operation: Operation
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var result: Result
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var environment: EnvironmentValues
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var bounds: CGRect?
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var role: ShapeRole
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public var inRecursiveStyle: Bool
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public init(
     for operation: Operation,
     in environment: EnvironmentValues,
@@ -93,24 +111,40 @@ public struct _ShapeStyle_Shape {
     inRecursiveStyle = false
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public enum Operation {
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case prepare(Text, level: Int)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case resolveStyle(levels: Range<Int>)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case fallbackColor(level: Int)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case multiLevel
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case copyForeground
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case primaryStyle
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case modifyBackground
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public enum Result {
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case prepared(Text)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case resolved(_ResolvedStyle)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case style(AnyShapeStyle)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case color(Color)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case bool(Bool)
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     case none
 
+    /// An implementation detail of Tokamak's rendering; not intended for use in application code.
     public func resolvedStyle(
       on shape: _ShapeStyle_Shape,
       in environment: EnvironmentValues
@@ -130,18 +164,26 @@ public struct _ShapeStyle_Shape {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ShapeStyle_ShapeType {}
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public indirect enum _ResolvedStyle {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case color(AnyColorBox.ResolvedValue)
 //  case paint(AnyResolvedPaint) // I think is used for Image as a ShapeStyle (SwiftUI.ImagePaint).
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case foregroundMaterial(AnyColorBox.ResolvedValue, _MaterialStyle)
 //  case backgroundMaterial(AnyColorBox.ResolvedValue)
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case array([_ResolvedStyle])
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case opacity(Float, _ResolvedStyle)
 //  case multicolor(ResolvedMulticolorStyle)
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   case gradient(Gradient, style: _GradientStyle)
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func color(at level: Int) -> Color? {
     switch self {
     case let .color(resolved):

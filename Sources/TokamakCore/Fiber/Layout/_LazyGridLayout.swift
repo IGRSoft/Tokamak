@@ -17,6 +17,9 @@
 
 import Foundation
 
+/// The `Layout.Cache` for `_LazyGridLayout` conforming types.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public struct _LazyGridLayoutCache {
   var resolvedItems = [ResolvedItem]()
@@ -27,11 +30,18 @@ public struct _LazyGridLayoutCache {
   }
 }
 
+/// The protocol the built-in lazy grids conform to, providing shared grid layout logic.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public protocol _LazyGridLayout: Layout where Cache == _LazyGridLayoutCache {
+  /// The axis the grid scrolls along: `vertical` for `LazyVGrid`, `horizontal` for `LazyHGrid`.
   static var axis: Axis { get }
+  /// The grid items describing the tracks on the cross axis.
   var items: [GridItem] { get }
+  /// The full `Alignment` with an ignored value for the main axis.
   var _alignment: Alignment { get }
+  /// The fixed spacing along the main axis, or `nil` to use each subview's spacing preferences.
   var spacing: CGFloat? { get }
 }
 
@@ -54,10 +64,12 @@ public extension _LazyGridLayout {
     }
   }
 
+  /// Creates a fresh, empty cache for the grid.
   func makeCache(subviews: Subviews) -> Cache {
     .init()
   }
 
+  /// Resolves the grid tracks and returns the size needed to lay the subviews out in the grid.
   func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -171,6 +183,7 @@ public extension _LazyGridLayout {
     return result
   }
 
+  /// Places each subview into its grid track, aligned according to its `GridItem` alignment.
   func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -264,14 +277,20 @@ public extension _LazyGridLayout {
 
 @_spi(TokamakCore)
 extension LazyVGrid: _LazyGridLayout {
+  /// A vertical grid grows along the vertical axis.
   public static var axis: Axis { .vertical }
+  /// The grid's tracks, taken from its column definitions.
   public var items: [GridItem] { columns }
+  /// The grid's alignment, applying its horizontal alignment with a centered vertical guide.
   public var _alignment: Alignment { .init(horizontal: alignment, vertical: .center) }
 }
 
 @_spi(TokamakCore)
 extension LazyHGrid: _LazyGridLayout {
+  /// A horizontal grid grows along the horizontal axis.
   public static var axis: Axis { .horizontal }
+  /// The grid's tracks, taken from its row definitions.
   public var items: [GridItem] { rows }
+  /// The grid's alignment, applying its vertical alignment with a centered horizontal guide.
   public var _alignment: Alignment { .init(horizontal: .center, vertical: alignment) }
 }

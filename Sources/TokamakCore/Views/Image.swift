@@ -17,9 +17,13 @@
 
 import Foundation
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public class _AnyImageProviderBox: AnyTokenBox, Equatable {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public struct _Image {
+    /// The kinds of image source an `Image` can resolve to.
     public indirect enum Storage {
+      /// A named image asset, optionally loaded from a specific bundle.
       case named(String, bundle: Bundle?)
       /// A system (SF Symbol) image referenced by its symbol name (e.g. `"heart.fill"`).
       ///
@@ -27,26 +31,44 @@ public class _AnyImageProviderBox: AnyTokenBox, Equatable {
       /// the symbol (notably the web) treat this as a best-effort, non-crashing placeholder
       /// carrying the symbol name as accessible text rather than a real glyph.
       case system(String)
+      /// A resizable variant of another storage, with cap insets and a resizing mode.
       case resizable(Storage, capInsets: EdgeInsets, resizingMode: Image.ResizingMode)
     }
 
+    /// The image source this resolved image draws from.
     public let storage: Storage
+    /// The accessibility label for the image, or `nil` if the image is decorative.
     public let label: Text?
 
+    /// Creates a resolved image from a storage source and an optional label.
+    ///
+    /// - Parameters:
+    ///   - storage: The image source the resolved image draws from.
+    ///   - label: The accessibility label, or `nil` for a decorative image.
     public init(storage: Storage, label: Text?) {
       self.storage = storage
       self.label = label
     }
   }
 
+  /// Returns a Boolean value indicating whether two image provider boxes are equal.
   public static func == (lhs: _AnyImageProviderBox, rhs: _AnyImageProviderBox) -> Bool {
     lhs.equals(rhs)
   }
 
+  /// Returns whether this provider box equals another; subclasses must override this.
+  ///
+  /// - Parameter other: The provider box to compare against.
+  /// - Returns: `true` when the two boxes describe the same image.
   public func equals(_ other: _AnyImageProviderBox) -> Bool {
     fatalError("implement \(#function) in subclass")
   }
 
+  /// Resolves this provider into a concrete `_Image` for the given environment; subclasses
+  /// must override this.
+  ///
+  /// - Parameter environment: The environment values used to resolve the image.
+  /// - Returns: The resolved image.
   public func resolve(in environment: EnvironmentValues) -> _Image {
     fatalError("implement \(#function) in subclass")
   }
@@ -125,17 +147,21 @@ private class ResizableProvider: _AnyImageProviderBox {
   }
 }
 
+/// A view that displays an image.
 public struct Image: _PrimitiveView, Equatable {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public let provider: _AnyImageProviderBox
 
   @Environment(\.self)
   var environment
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   @State
   public var _intrinsicSize: CGSize?
 
+  /// Returns a Boolean value indicating whether two images are equal.
   public static func == (lhs: Self, rhs: Self) -> Bool {
     lhs.provider == rhs.provider
   }
@@ -146,14 +172,30 @@ public struct Image: _PrimitiveView, Equatable {
 }
 
 public extension Image {
+  /// Creates a labeled image from a named asset, using the name as its accessibility label.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the image asset.
+  ///   - bundle: The bundle to load the asset from, or `nil` to use the main bundle.
   init(_ name: String, bundle: Bundle? = nil) {
     self.init(name, bundle: bundle, label: Text(name))
   }
 
+  /// Creates a labeled image from a named asset with an explicit accessibility label.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the image asset.
+  ///   - bundle: The bundle to load the asset from, or `nil` to use the main bundle.
+  ///   - label: The accessibility label describing the image.
   init(_ name: String, bundle: Bundle? = nil, label: Text) {
     self.init(NamedImageProvider(name: name, bundle: bundle, label: label))
   }
 
+  /// Creates a decorative image from a named asset that is ignored by accessibility.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the image asset.
+  ///   - bundle: The bundle to load the asset from, or `nil` to use the main bundle.
   init(decorative name: String, bundle: Bundle? = nil) {
     self.init(NamedImageProvider(name: name, bundle: bundle, label: nil))
   }
@@ -170,11 +212,20 @@ public extension Image {
 }
 
 public extension Image {
+  /// The modes by which a resizable image fills its available space.
   enum ResizingMode: Hashable {
+    /// Repeats the image to fill the available space.
     case tile
+    /// Stretches the image to fill the available space.
     case stretch
   }
 
+  /// Returns a version of the image that can be resized to fit its container.
+  ///
+  /// - Parameters:
+  ///   - capInsets: The insets that protect the image's edges from being resized.
+  ///   - resizingMode: How the interior of the image fills the resized area.
+  /// - Returns: A resizable copy of the image.
   func resizable(
     capInsets: EdgeInsets = EdgeInsets(),
     resizingMode: ResizingMode = .stretch
@@ -185,15 +236,28 @@ public extension Image {
 
 /// This is a helper type that works around absence of "package private" access control in Swift
 public struct _ImageProxy {
+  /// The image this proxy reads from.
   public let subject: Image
 
+  /// Creates a proxy for the given image.
+  ///
+  /// - Parameter subject: The image to inspect.
   public init(_ subject: Image) { self.subject = subject }
 
+  /// The provider box backing the image's source.
   public var provider: _AnyImageProviderBox { subject.provider }
+  /// The environment values captured by the image.
   public var environment: EnvironmentValues { subject.environment }
 }
 
 extension Image: Layout {
+  /// Returns the size the image needs for the given proposal, measured by the environment.
+  ///
+  /// - Parameters:
+  ///   - proposal: The size proposed by the container.
+  ///   - subviews: The image's subviews.
+  ///   - cache: Layout cache shared across calls.
+  /// - Returns: The size that fits the proposal.
   public func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -202,6 +266,13 @@ extension Image: Layout {
     environment.measureImage(self, proposal, environment)
   }
 
+  /// Places the image's subviews within the given bounds.
+  ///
+  /// - Parameters:
+  ///   - bounds: The region in which to place the subviews.
+  ///   - proposal: The size proposed to each subview.
+  ///   - subviews: The image's subviews.
+  ///   - cache: Layout cache shared across calls.
   public func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,

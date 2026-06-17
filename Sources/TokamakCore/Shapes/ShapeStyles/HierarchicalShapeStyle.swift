@@ -26,6 +26,7 @@ public struct HierarchicalShapeStyle: ShapeStyle {
     self.id = id
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _apply(to shape: inout _ShapeStyle_Shape) {
     if let foregroundStyle = shape.environment._foregroundStyle,
        foregroundStyle.stylesArray.count > id
@@ -53,12 +54,17 @@ public struct HierarchicalShapeStyle: ShapeStyle {
     }
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _apply(to type: inout _ShapeStyle_ShapeType) {}
 }
 
 public extension ShapeStyle where Self == HierarchicalShapeStyle {
+  /// A shape style that maps to the first level of the current content style.
   static var primary: HierarchicalShapeStyle { .init(id: 0) }
+  /// A shape style that maps to the second level of the current content style.
   static var secondary: HierarchicalShapeStyle { .init(id: 1) }
+  /// A shape style that maps to the third level of the current content style.
   static var tertiary: HierarchicalShapeStyle { .init(id: 2) }
+  /// A shape style that maps to the fourth level of the current content style.
   static var quaternary: HierarchicalShapeStyle { .init(id: 3) }
 }

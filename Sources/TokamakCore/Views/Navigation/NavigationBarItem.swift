@@ -15,23 +15,33 @@
 //  Created by Carson Katri on 1/19/21.
 //
 
+/// A configuration for a navigation bar that represents a view at the top of a navigation stack.
 public struct NavigationBarItem: Equatable, Sendable {
   let displayMode: TitleDisplayMode
 
+  /// A style for displaying the title of a navigation bar.
   public enum TitleDisplayMode: Hashable, Sendable {
+    /// Inherit the display mode from the previous navigation item.
     case automatic
+    /// Display the title within the standard bounds of the navigation bar.
     case inline
+    /// Display a large title within an expanded navigation bar.
     case large
   }
 }
 
+/// A helper type that works around the absence of "package private" access control in Swift.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _NavigationBarItemProxy {
   let subject: NavigationBarItem
 
+  /// Wraps the given navigation bar item so renderers can inspect its configuration.
   public init(_ subject: NavigationBarItem) {
     self.subject = subject
   }
 
+  /// The title display mode of the wrapped navigation bar item.
   public var displayMode: NavigationBarItem.TitleDisplayMode {
     subject.displayMode
   }

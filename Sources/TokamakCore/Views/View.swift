@@ -15,9 +15,25 @@
 //  Created by Max Desiatov on 07/04/2020.
 //
 
+/// A type that represents part of your app's user interface and provides modifiers
+/// that you use to configure views.
+///
+/// You create custom views by declaring types that conform to the `View` protocol.
+/// Implement the required `body` computed property to provide the content for your
+/// custom view.
+///
+/// ```swift
+/// struct MyView: View {
+///   var body: some View {
+///     Text("Hello, World!")
+///   }
+/// }
+/// ```
 public protocol View {
+  /// The type of view representing the body of this view.
   associatedtype Body: View
 
+  /// The content and behavior of the view.
   @ViewBuilder
   var body: Self.Body { get }
 
@@ -31,6 +47,7 @@ public protocol View {
 }
 
 public extension Never {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   var body: Never {
     fatalError()
@@ -43,16 +60,19 @@ extension Never: View {}
 public protocol _PrimitiveView: View where Body == Never {}
 
 public extension _PrimitiveView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   var body: Never {
     neverBody(String(reflecting: Self.self))
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {}
 }
 
 /// A `View` type that renders with subviews, usually specified in the `Content` type argument
 public protocol ParentView {
+  /// The type-erased child views rendered by this view.
   var children: [AnyView] { get }
 }
 
@@ -60,6 +80,9 @@ public protocol ParentView {
 protocol GroupView: ParentView {}
 
 /// Calls `fatalError` with an explanation that a given `type` is a primitive `View`
+///
+/// - Parameter type: The name of the primitive view type whose `body` was accessed.
+/// - Returns: This function never returns; it always traps.
 public func neverBody(_ type: String) -> Never {
   fatalError("\(type) is a primitive `View`, you're not supposed to access its `body`.")
 }

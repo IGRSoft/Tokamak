@@ -14,22 +14,32 @@
 
 import TokamakCore
 
+/// An implementation detail: a type-erased view of `ModifiedContent` whose modifier is a
+/// ``DOMViewModifier``, used to flatten adjacent modifiers during rendering.
 public protocol _AnyModifiedContent {
+  /// The wrapped content, type-erased to `AnyView`.
   var anyContent: AnyView { get }
+  /// The wrapped modifier, type-erased to ``DOMViewModifier``.
   var anyModifier: DOMViewModifier { get }
 }
 
+/// Type-erases ``ModifiedContent`` so its DOM modifier and content can be inspected for flattening.
 extension ModifiedContent: _AnyModifiedContent where Modifier: DOMViewModifier, Content: View {
+  /// The wrapped content, type-erased to `AnyView`.
   public var anyContent: AnyView {
     AnyView(content)
   }
 
+  /// The wrapped modifier, type-erased to ``DOMViewModifier``.
   public var anyModifier: DOMViewModifier {
     modifier
   }
 }
 
+/// Renders a `ModifiedContent` to HTML, flattening compatible DOM modifiers into a single `div`
+/// and otherwise applying the modifier's `body`.
 extension ModifiedContent: _HTMLPrimitive where Content: View, Modifier: ViewModifier {
+  /// The HTML for the modified content, merging flattenable attributes where possible.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     if let domModifier = modifier as? DOMViewModifier {

@@ -18,6 +18,8 @@
 import Foundation
 
 /// The cache for a `ContainedZLayout`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public struct ContainedZLayoutCache {
   /// The result of `dimensions(in:)` for the primary subview.
@@ -27,8 +29,11 @@ public struct ContainedZLayoutCache {
 /// A layout that fits secondary subviews to the size of a primary subview.
 ///
 /// Used to implement `_BackgroundLayout` and `_OverlayLayout`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @_spi(TokamakCore)
 public protocol ContainedZLayout: Layout where Cache == ContainedZLayoutCache {
+  /// The alignment that positions the secondary subviews relative to the primary subview.
   var alignment: Alignment { get }
   /// An accessor for the primary subview from a `LayoutSubviews` collection.
   static var primarySubview: KeyPath<LayoutSubviews, LayoutSubview?> { get }
@@ -36,14 +41,17 @@ public protocol ContainedZLayout: Layout where Cache == ContainedZLayoutCache {
 
 @_spi(TokamakCore)
 public extension ContainedZLayout {
+  /// Creates a fresh cache for this layout.
   func makeCache(subviews: Subviews) -> Cache {
     .init()
   }
 
+  /// Returns the preferred spacing, taken from the primary subview.
   func spacing(subviews: LayoutSubviews, cache: inout Cache) -> ViewSpacing {
     subviews[keyPath: Self.primarySubview]?.spacing ?? .init()
   }
 
+  /// Returns the size of the primary subview, which the secondary subviews are fit to.
   func sizeThatFits(
     proposal: ProposedViewSize,
     subviews: Subviews,
@@ -57,6 +65,7 @@ public extension ContainedZLayout {
     )
   }
 
+  /// Places the primary subview at the origin and aligns the secondary subviews over it.
   func placeSubviews(
     in bounds: CGRect,
     proposal: ProposedViewSize,
@@ -126,11 +135,13 @@ public extension ContainedZLayout {
 /// Expects the primary subview to be last.
 @_spi(TokamakCore)
 extension _BackgroundLayout: ContainedZLayout {
+  /// The primary subview is the last subview (the foreground content).
   public static var primarySubview: KeyPath<LayoutSubviews, LayoutSubview?> { \.last }
 }
 
 /// Expects the primary subview to be the first.
 @_spi(TokamakCore)
 extension _OverlayLayout: ContainedZLayout {
+  /// The primary subview is the first subview (the base content).
   public static var primarySubview: KeyPath<LayoutSubviews, LayoutSubview?> { \.first }
 }

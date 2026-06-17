@@ -72,6 +72,13 @@ final class GTKRenderer: Renderer {
     }
   }
 
+  /// Creates the GTK widget for `host` and appends it to `parent`, returning the mounted target.
+  ///
+  /// - Parameters:
+  ///   - sibling: The widget the new target should be inserted before, if any.
+  ///   - parent: The target whose GTK container receives the new widget.
+  ///   - host: The mounted host describing the view to instantiate.
+  /// - Returns: The newly mounted `Widget`, or `nil` when the view produces no widget.
   public func mountTarget(
     before sibling: Widget?,
     to parent: Widget,
@@ -136,10 +143,18 @@ final class GTKRenderer: Renderer {
     target.destroy()
   }
 
+  /// Reports whether `type` is a GTK primitive that the renderer draws directly.
+  ///
+  /// - Parameter type: The view type to test.
+  /// - Returns: `true` when the type renders to a native GTK widget.
   public func isPrimitiveView(_ type: Any.Type) -> Bool {
     type is GTKPrimitive.Type
   }
 
+  /// Returns the rendered body of a GTK primitive view, if `view` is one.
+  ///
+  /// - Parameter view: The candidate primitive view.
+  /// - Returns: The primitive's `AnyView` body, or `nil` when `view` is not a GTK primitive.
   public func primitiveBody(for view: Any) -> AnyView? {
     (view as? GTKPrimitive)?.renderedBody
   }

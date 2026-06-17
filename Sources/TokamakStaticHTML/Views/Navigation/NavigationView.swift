@@ -48,6 +48,7 @@ extension NavigationView: _HTMLPrimitive {
     }
   }
 
+  /// Renders the navigation chrome as nested `<div>`s: a toolbar, the content, and a destination.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     let proxy = _NavigationViewProxy(self)

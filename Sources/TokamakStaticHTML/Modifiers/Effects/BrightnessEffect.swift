@@ -14,8 +14,13 @@
 
 import TokamakCore
 
+/// Renders SwiftUI's `brightness(_:)` as a CSS `filter: brightness()` declaration.
 extension _BrightnessEffect: DOMViewModifier {
+  /// Implementation detail: keeps stacked filters in separate DOM wrappers so
+  /// they are not flattened into one clobbering `filter:` style.
   public var isOrderDependent: Bool { true }
+  /// Implementation detail: emits the `filter: brightness()` style, offsetting
+  /// SwiftUI's amount by 1 to match the CSS neutral value.
   public var attributes: [HTMLAttribute: String] {
     // SwiftUI: 0 == unchanged; CSS: brightness(1) == unchanged. Offset by 1.
     ["style": "filter: brightness(\(1 + amount)); "]

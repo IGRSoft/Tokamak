@@ -43,8 +43,12 @@ private extension GraphicsContext.BlendMode {
   }
 }
 
+/// Renders SwiftUI's `blendMode(_:)` as a CSS `mix-blend-mode` declaration.
 extension _BlendModeEffect: DOMViewModifier {
+  /// Implementation detail: keeps each blend mode in its own DOM wrapper so
+  /// stacked modes are not flattened together.
   public var isOrderDependent: Bool { true }
+  /// Implementation detail: emits the `mix-blend-mode` style for the blend mode.
   public var attributes: [HTMLAttribute: String] {
     ["style": "mix-blend-mode: \(blendMode.cssValue); "]
   }

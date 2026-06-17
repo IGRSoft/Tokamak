@@ -22,15 +22,22 @@ import Foundation
 #endif
 import Foundation
 
+/// A shape that is replaced by an inset version of the current container's
+/// shape.
+///
+/// If no container shape was defined, the shape falls back to a rectangle.
 public struct ContainerRelativeShape: Shape {
   var containerShape: (CGRect, GeometryProxy) -> Path? = { _, _ in nil }
 
+  /// Describes this shape as a path within a rectangular frame of reference.
   public func path(in rect: CGRect) -> Path {
     containerShape(rect, GeometryProxy(globalRect: rect)) ?? Rectangle().path(in: rect)
   }
 
+  /// Creates a container-relative shape.
   public init() {}
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public mutating func _setContent(from values: EnvironmentValues) {
     containerShape = values._containerShape
   }
@@ -40,6 +47,7 @@ public struct ContainerRelativeShape: Shape {
 extension ContainerRelativeShape: _EnvironmentReader {}
 
 extension ContainerRelativeShape: InsettableShape {
+  /// Returns this shape inset by the given amount on all sides.
   @inlinable
   public func inset(by amount: CGFloat) -> some InsettableShape {
     _Inset(amount: amount)
@@ -86,20 +94,28 @@ private extension EnvironmentValues {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 @frozen
 public struct _ContainerShapeModifier<Shape>: ViewModifier where Shape: InsettableShape {
+  /// The shape that descendant `ContainerRelativeShape` values resolve to.
   public var shape: Shape
+  /// Creates a modifier that supplies the given container shape.
   @inlinable
   public init(shape: Shape) { self.shape = shape }
 
+  /// Returns the modified content that exposes the container shape to descendants.
   public func body(content: Content) -> some View {
     _ContainerShapeView(content: content, shape: shape)
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public struct _ContainerShapeView: View {
+    /// The wrapped content.
     public let content: Content
+    /// The shape exposed to descendant `ContainerRelativeShape` values.
     public let shape: Shape
 
+    /// The content and behavior of the view.
     public var body: some View {
       content
         .environment(\._containerShape) { rect, proxy in
@@ -112,6 +128,11 @@ public struct _ContainerShapeModifier<Shape>: ViewModifier where Shape: Insettab
 }
 
 public extension View {
+  /// Sets the container shape to use for any `ContainerRelativeShape` within
+  /// this view's hierarchy.
+  ///
+  /// - Parameter shape: The insettable shape that descendant
+  ///   `ContainerRelativeShape` values resolve to.
   @inlinable
   func containerShape<T>(_ shape: T) -> some View where T: InsettableShape {
     modifier(_ContainerShapeModifier(shape: shape))

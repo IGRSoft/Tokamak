@@ -14,19 +14,28 @@
 
 import Foundation
 
+/// A proxy for access to the size and coordinate space (for anchor resolution) of
+/// the container view.
 public struct GeometryProxy {
   @Environment(\._coordinateSpace)
   var coordinates
   let globalRect: CGRect
 
+  /// The size of the container view.
   public var size: CGSize {
     globalRect.size
   }
 
+  /// Creates a proxy whose container occupies the given rectangle in the global
+  /// coordinate space.
   public init(globalRect: CGRect) {
     self.globalRect = globalRect
   }
 
+  /// Returns the container view's bounds rectangle, converted to the given
+  /// coordinate space.
+  /// - Parameter coordinateSpace: The coordinate space in which to compute the
+  ///   container view's bounds rectangle.
   public func frame(in coordinateSpace: CoordinateSpace) -> CGRect {
     switch coordinateSpace {
     case .global:
@@ -46,12 +55,19 @@ public struct GeometryProxy {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public func makeProxy(from rect: CGRect) -> GeometryProxy {
   .init(globalRect: rect)
 }
 
+/// A container view that defines its content as a function of its own size and
+/// coordinate space.
 public struct GeometryReader<Content>: _PrimitiveView where Content: View {
+  /// A closure that produces the container's content from a proxy describing its
+  /// size and coordinate space.
   public let content: (GeometryProxy) -> Content
+  /// Creates a geometry reader whose content is built from a `GeometryProxy`.
+  /// - Parameter content: A view builder that produces the content using the proxy.
   public init(@ViewBuilder content: @escaping (GeometryProxy) -> Content) {
     self.content = content
   }

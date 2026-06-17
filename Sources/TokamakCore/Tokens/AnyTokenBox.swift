@@ -17,6 +17,11 @@
 
 /// Allows "late-binding tokens" to be resolved in an environment by a `Renderer` (or `TokamakCore`)
 public protocol AnyTokenBox: AnyObject {
+  /// The concrete value produced when this token is resolved against an environment.
   associatedtype ResolvedValue
+  /// Resolves the token into a concrete value using the given environment.
+  ///
+  /// - Parameter environment: The environment values used to resolve the token.
+  /// - Returns: The resolved value.
   func resolve(in environment: EnvironmentValues) -> ResolvedValue
 }

@@ -18,10 +18,15 @@
 import Foundation
 
 /// A collection of `LayoutSubview` proxies.
+///
+/// A `Layout` reads and arranges its children through this collection, mirroring SwiftUI's
+/// `LayoutSubviews`.
 public struct LayoutSubviews: Equatable, RandomAccessCollection {
+  /// The layout direction inherited by the subviews.
   public var layoutDirection: LayoutDirection
   var storage: [LayoutSubview]
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var globalOrigin: CGPoint
 
@@ -39,24 +44,33 @@ public struct LayoutSubviews: Equatable, RandomAccessCollection {
     )
   }
 
+  /// A subsequence of subviews is itself a `LayoutSubviews` collection.
   public typealias SubSequence = LayoutSubviews
+  /// The element type of the collection, a single subview proxy.
   public typealias Element = LayoutSubview
+  /// The index type used to access subviews.
   public typealias Index = Int
+  /// The type that represents the valid indices of the collection.
   public typealias Indices = Range<LayoutSubviews.Index>
+  /// The iterator type used to traverse the collection.
   public typealias Iterator = IndexingIterator<LayoutSubviews>
 
+  /// The index of the first subview.
   public var startIndex: Int {
     storage.startIndex
   }
 
+  /// The index one past the last subview.
   public var endIndex: Int {
     storage.endIndex
   }
 
+  /// Accesses the subview at the given index.
   public subscript(index: Int) -> LayoutSubviews.Element {
     storage[index]
   }
 
+  /// Accesses a contiguous range of subviews.
   public subscript(bounds: Range<Int>) -> LayoutSubviews {
     .init(
       layoutDirection: layoutDirection,
@@ -65,6 +79,7 @@ public struct LayoutSubviews: Equatable, RandomAccessCollection {
     )
   }
 
+  /// Accesses the subviews at the given indices.
   public subscript<S>(indices: S) -> LayoutSubviews where S: Sequence, S.Element == Int {
     .init(
       layoutDirection: layoutDirection,
@@ -226,30 +241,54 @@ public struct LayoutSubview: Equatable {
     )
   }
 
+  /// Returns the value of a view trait stored on this subview.
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _trait<K>(key: K.Type) -> K.Value where K: _ViewTraitKey {
     storage.traits?.value(forKey: key) ?? K.defaultValue
   }
 
+  /// Accesses the value of the given layout value key for this subview.
   public subscript<K>(key: K.Type) -> K.Value where K: LayoutValueKey {
     _trait(key: _LayoutTrait<K>.self)
   }
 
+  /// The layout priority of this subview, set with the `layoutPriority(_:)` modifier.
   public var priority: Double {
     _trait(key: LayoutPriorityTraitKey.self)
   }
 
+  /// Asks the subview for the size it would prefer in response to the given proposal.
+  ///
+  /// - Parameter proposal: The proposed size offered to the subview.
+  /// - Returns: The size the subview prefers for the proposal.
   public func sizeThatFits(_ proposal: ProposedViewSize) -> CGSize {
     storage.sizeThatFits(proposal)
   }
 
+  /// Asks the subview for its dimensions and alignment guides for the given proposal.
+  ///
+  /// - Parameter proposal: The proposed size offered to the subview.
+  /// - Returns: The subview's dimensions for the proposal.
   public func dimensions(in proposal: ProposedViewSize) -> ViewDimensions {
     storage.dimensions(sizeThatFits(proposal))
   }
 
+  /// The spacing preferences of this subview.
   public var spacing: ViewSpacing {
     storage.spacing()
   }
 
+  /// Assigns a position and proposed size to the subview.
+  ///
+  /// Call this method from `placeSubviews(in:proposal:subviews:cache:)` for every subview.
+  /// If you do not, the subview is positioned at its center.
+  ///
+  /// - Parameters:
+  ///   - position: The point at which to place the subview, in the container's coordinate space.
+  ///   - anchor: The unit point within the subview to align with `position`. Defaults to
+  ///     `.topLeading`.
+  ///   - proposal: The size proposed to the subview.
   public func place(
     at position: CGPoint,
     anchor: UnitPoint = .topLeading,
@@ -263,6 +302,7 @@ public struct LayoutSubview: Equatable {
     )
   }
 
+  /// Returns a Boolean value indicating whether two subview proxies refer to the same subview.
   public static func == (lhs: LayoutSubview, rhs: LayoutSubview) -> Bool {
     lhs.storage === rhs.storage
   }

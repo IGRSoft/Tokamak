@@ -17,17 +17,38 @@
 
 import OpenCombineShim
 
+/// A type that persists key/value pairs on behalf of `AppStorage` and `SceneStorage`.
+///
+/// Renderers supply a concrete `_StorageProvider` (such as one backed by `localStorage` on the
+/// web) so that stored properties survive app launches.
 public protocol _StorageProvider {
+  /// Persists a boolean value, or removes it when `value` is `nil`, for the given key.
   func store(key: String, value: Bool?)
+
+  /// Persists an integer value, or removes it when `value` is `nil`, for the given key.
   func store(key: String, value: Int?)
+
+  /// Persists a double value, or removes it when `value` is `nil`, for the given key.
   func store(key: String, value: Double?)
+
+  /// Persists a string value, or removes it when `value` is `nil`, for the given key.
   func store(key: String, value: String?)
 
+  /// Reads the boolean value for the given key, or `nil` if no value is stored.
   func read(key: String) -> Bool?
+
+  /// Reads the integer value for the given key, or `nil` if no value is stored.
   func read(key: String) -> Int?
+
+  /// Reads the double value for the given key, or `nil` if no value is stored.
   func read(key: String) -> Double?
+
+  /// Reads the string value for the given key, or `nil` if no value is stored.
   func read(key: String) -> String?
 
+  /// The shared instance of the storage provider.
   static var standard: _StorageProvider { get }
+
+  /// A publisher that emits when the stored values change.
   var publisher: ObservableObjectPublisher { get }
 }

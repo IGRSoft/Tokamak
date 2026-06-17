@@ -19,6 +19,8 @@
 import TokamakCore
 import TokamakStaticHTML
 
+/// Renders a disclosure group as an ARIA `tree` `<div>` with a rotating chevron,
+/// a clickable label that toggles expansion, and conditionally shown content.
 extension DisclosureGroup: DOMPrimitive {
   var chevron: some View {
     DynamicHTML(

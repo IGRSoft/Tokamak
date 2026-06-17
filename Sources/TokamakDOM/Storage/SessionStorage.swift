@@ -23,15 +23,18 @@ import TokamakCore
 // Single-threaded JS event loop (WASM): web storage is only accessed on the main JS thread.
 nonisolated(unsafe) private let sessionStorage = JSObject.global.sessionStorage.object!
 
+/// A storage provider backed by the browser's `sessionStorage`, persisting `SceneStorage` values.
 public class SessionStorage: WebStorage, _StorageProvider {
   let storage = sessionStorage
 
   required init() {}
 
+  /// The shared `sessionStorage`-backed provider used as the default scene storage.
   public static var standard: _StorageProvider {
     Self()
   }
 
+  /// Publishes a change whenever a stored value is written.
   public let publisher = ObservableObjectPublisher()
 }
 

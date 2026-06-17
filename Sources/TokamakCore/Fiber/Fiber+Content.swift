@@ -18,6 +18,9 @@
 import Foundation
 
 public extension FiberReconciler.Fiber {
+  /// The type-erased `App`, `Scene`, or `View` instance managed by a `Fiber`.
+  ///
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   enum Content {
     /// The underlying `App` instance and a function to visit it generically.
     case app(Any, visit: (AppVisitor) -> ())

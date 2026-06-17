@@ -38,3 +38,73 @@ In addition to SwiftUI and React, we'd like to credit [SwiftWebUI](https://githu
 some of the bits of SwiftUI and kickstarting the front-end Swift ecosystem for the web. [Render](https://github.com/alexdrone/Render),
 [ReSwift](https://github.com/ReSwift/ReSwift), [Katana UI](https://github.com/BendingSpoons/katana-ui-swift), and
 [Komponents](https://github.com/freshOS/Komponents) declarative UI frameworks served as additional inspiration for the project.
+
+## How is Tokamak structured? Which module do I import?
+
+`TokamakCore` holds the shared, platform-independent API (the `View`/`App` protocols, state,
+environment, layout, shapes, animation, and the reconciler). You don't import it directly — you
+import a **renderer**:
+
+- `TokamakDOM` for interactive browser apps (WebAssembly),
+- `TokamakStaticHTML` for static-site generation and server-side rendering,
+- `TokamakGTK4` for native GTK 4 on Linux (in progress),
+- or `TokamakShim`, which forwards to SwiftUI on Apple platforms and to the right Tokamak renderer
+  elsewhere — use this for cross-platform code.
+
+See the [Architecture guide](../Sources/TokamakCore/Tokamak.docc/Architecture.md) for the full picture.
+
+## Why do some public symbols start with an underscore?
+
+Swift can't express "public within the package but not to clients." Renderer modules live in separate
+modules, so any `TokamakCore` symbol they reach must be `public`. Symbols that are `public` *only* for
+that reason — not for application code — are prefixed with an underscore (e.g. `_PrimitiveView`). Treat
+underscored symbols as implementation details. The exact rules are in
+[`CONTRIBUTING.md`](../CONTRIBUTING.md).
+
+## How do I manage state? Is Combine available?
+
+The SwiftUI data-flow wrappers all work: `@State`, `@Binding`, `@StateObject`, `@ObservedObject`,
+`@Environment`, `@EnvironmentObject`, `@AppStorage`, and `@SceneStorage`. Observation is built on
+[OpenCombine](https://github.com/OpenCombine/OpenCombine) (an open-source Combine reimplementation),
+so `ObservableObject` and `@Published` are available off Apple platforms. See the
+[State and Data Flow guide](../Sources/TokamakCore/Tokamak.docc/StateAndDataFlow.md).
+
+## What's the difference between the stack and fiber reconcilers?
+
+The original `StackReconciler` walks the view tree recursively and approximates layout with CSS. The
+newer `FiberReconciler` (modeled on React Fiber) builds a work-in-progress tree for more efficient
+updates and can run an explicit, SwiftUI-faithful layout pass instead of CSS approximation. Opt into
+it through your `App`'s configuration:
+
+```swift
+static let _configuration = _AppConfiguration(reconciler: .fiber(useDynamicLayout: true))
+```
+
+Not every view and modifier is supported on the fiber path yet.
+
+## How do I add a new view or build a custom renderer?
+
+To add a primitive view, write the core struct plus a `_*Container: _PrimitiveView` hook, then
+per-renderer extensions (`DOMPrimitive`, `_HTMLPrimitive` + `HTMLConvertible`, `GTKPrimitive`) —
+`TabView`, `Menu`, and `SplitView` are good references. To target a new platform, implement the
+`Renderer`/`Target` protocols as described in the [Renderers Guide](RenderersGuide.md). Any new or
+changed view must also be registered in the [demo catalog](DemoCatalog.md) with regenerated
+screenshots.
+
+## Which browsers are supported?
+
+Any browser with [WebAssembly](https://caniuse.com/wasm) and the required JavaScript features
+(notably `FinalizationRegistry`). Building with `-Xswiftc -DJAVASCRIPTKIT_WITHOUT_WEAKREFS` lowers the
+requirement for older browsers. See the *Requirements* section of the [README](../README.md) for
+specific versions.
+
+## `swift test` fails — how do I run the tests?
+
+Use the package test product, not `swift test` (which tries to build unrelated targets):
+
+```sh
+swift build --product TokamakPackageTests && `xcrun --find xctest` .build/debug/TokamakPackageTests.xctest
+```
+
+This and other tooling notes (SwiftFormat/SwiftLint, the pre-commit hook) are in
+[`CONTRIBUTING.md`](../CONTRIBUTING.md).

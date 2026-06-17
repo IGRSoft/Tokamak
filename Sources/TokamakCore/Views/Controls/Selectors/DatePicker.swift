@@ -27,10 +27,18 @@ public struct DatePicker<Label>: _PrimitiveView where Label: View {
   let min: Date?
   let max: Date?
 
+  /// The set of date components a date picker can display and edit.
   public typealias Components = DatePickerComponents
 }
 
 public extension DatePicker {
+  /// Creates a date picker for selecting a date within a closed range, with a custom label.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the selected date.
+  ///   - range: The inclusive range of selectable dates.
+  ///   - displayedComponents: The date components the picker displays and edits.
+  ///   - label: A view builder that produces the picker's label.
   init(
     selection: Binding<Date>,
     in range: ClosedRange<Date>,
@@ -46,6 +54,12 @@ public extension DatePicker {
     )
   }
 
+  /// Creates a date picker for selecting a date, with a custom label.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the selected date.
+  ///   - displayedComponents: The date components the picker displays and edits.
+  ///   - label: A view builder that produces the picker's label.
   init(
     selection: Binding<Date>,
     displayedComponents: DatePickerComponents = [.hourAndMinute, .date],
@@ -60,6 +74,13 @@ public extension DatePicker {
     )
   }
 
+  /// Creates a date picker for selecting a date on or after a given date, with a custom label.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the selected date.
+  ///   - range: The range of selectable dates, starting at its lower bound.
+  ///   - displayedComponents: The date components the picker displays and edits.
+  ///   - label: A view builder that produces the picker's label.
   init(
     selection: Binding<Date>,
     in range: PartialRangeFrom<Date>,
@@ -75,6 +96,13 @@ public extension DatePicker {
     )
   }
 
+  /// Creates a date picker for selecting a date on or before a given date, with a custom label.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the selected date.
+  ///   - range: The range of selectable dates, ending at its upper bound.
+  ///   - displayedComponents: The date components the picker displays and edits.
+  ///   - label: A view builder that produces the picker's label.
   init(
     selection: Binding<Date>,
     in range: PartialRangeThrough<Date>,
@@ -92,6 +120,13 @@ public extension DatePicker {
 }
 
 public extension DatePicker where Label == Text {
+  /// Creates a date picker for a closed date range that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the picker.
+  ///   - selection: A binding to the selected date.
+  ///   - range: The inclusive range of selectable dates.
+  ///   - displayedComponents: The date components the picker displays and edits.
   init<S>(
     _ title: S,
     selection: Binding<Date>,
@@ -107,6 +142,12 @@ public extension DatePicker where Label == Text {
     )
   }
 
+  /// Creates a date picker that generates its label from a string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the picker.
+  ///   - selection: A binding to the selected date.
+  ///   - displayedComponents: The date components the picker displays and edits.
   init<S>(
     _ title: S,
     selection: Binding<Date>,
@@ -121,6 +162,14 @@ public extension DatePicker where Label == Text {
     )
   }
 
+  /// Creates a date picker for dates on or after a given date that generates its label from a
+  /// string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the picker.
+  ///   - selection: A binding to the selected date.
+  ///   - range: The range of selectable dates, starting at its lower bound.
+  ///   - displayedComponents: The date components the picker displays and edits.
   init<S>(
     _ title: S,
     selection: Binding<Date>,
@@ -136,6 +185,14 @@ public extension DatePicker where Label == Text {
     )
   }
 
+  /// Creates a date picker for dates on or before a given date that generates its label from a
+  /// string.
+  ///
+  /// - Parameters:
+  ///   - title: A string that describes the purpose of the picker.
+  ///   - selection: A binding to the selected date.
+  ///   - range: The range of selectable dates, ending at its upper bound.
+  ///   - displayedComponents: The date components the picker displays and edits.
   init<S>(
     _ title: S,
     selection: Binding<Date>,
@@ -152,26 +209,44 @@ public extension DatePicker where Label == Text {
   }
 }
 
+/// The set of date components a date picker can display and edit.
 public struct DatePickerComponents: OptionSet, Sendable {
+  /// Displays hour and minute components.
   public static let hourAndMinute = DatePickerComponents(rawValue: 1 << 0)
+  /// Displays day, month, and year components.
   public static let date = DatePickerComponents(rawValue: 1 << 1)
 
+  /// The raw bitmask value backing the option set.
   public let rawValue: UInt
 
+  /// Creates a set of date picker components from a raw bitmask value.
+  ///
+  /// - Parameter rawValue: The raw bitmask value backing the option set.
   public init(rawValue: UInt) {
     self.rawValue = rawValue
   }
 }
 
 /// This is a helper type that works around absence of "package private" access control in Swift
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _DatePickerProxy<Label> where Label: View {
+  /// The date picker this proxy reads from.
   public let subject: DatePicker<Label>
 
+  /// Creates a proxy that exposes the internals of the given date picker.
+  ///
+  /// - Parameter subject: The date picker to wrap.
   public init(_ subject: DatePicker<Label>) { self.subject = subject }
 
+  /// The picker's label view.
   public var label: Label { subject.label }
+  /// A binding to the selected date.
   public var valueBinding: Binding<Date> { subject.valueBinding }
+  /// The date components the picker displays and edits.
   public var displayedComponents: DatePickerComponents { subject.displayedComponents }
+  /// The earliest selectable date, if bounded.
   public var min: Date? { subject.min }
+  /// The latest selectable date, if bounded.
   public var max: Date? { subject.max }
 }

@@ -16,11 +16,15 @@
 //
 
 /// Transforms a `PreferenceKey.Value`.
+///
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _PreferenceTransformModifier<Key>: _PreferenceWritingModifierProtocol
   where Key: PreferenceKey
 {
+  /// The closure that transforms the preference value in place.
   public let transform: (inout Key.Value) -> ()
 
+  /// Creates a modifier that transforms the value for `Key` using `transform`.
   public init(
     key _: Key.Type = Key.self,
     transform: @escaping (inout Key.Value) -> ()
@@ -28,6 +32,7 @@ public struct _PreferenceTransformModifier<Key>: _PreferenceWritingModifierProto
     self.transform = transform
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func body(_ content: Content, with preferenceStore: inout _PreferenceStore) -> AnyView {
     var newValue = preferenceStore.value(forKey: Key.self).value
     transform(&newValue)
@@ -35,6 +40,7 @@ public struct _PreferenceTransformModifier<Key>: _PreferenceWritingModifierProto
     return content.view
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public static func _makeView(_ inputs: ViewInputs<Self>) -> ViewOutputs {
     .init(
       inputs: inputs,
@@ -49,6 +55,13 @@ public struct _PreferenceTransformModifier<Key>: _PreferenceWritingModifierProto
 }
 
 public extension View {
+  /// Applies a transformation to a preference value.
+  ///
+  /// - Parameters:
+  ///   - key: The preference key type whose value is transformed.
+  ///   - callback: A closure that modifies the current value of the preference
+  ///     in place.
+  /// - Returns: A view that transforms the value of `key`.
   func transformPreference<K>(
     _ key: K.Type = K.self,
     _ callback: @escaping (inout K.Value) -> ()

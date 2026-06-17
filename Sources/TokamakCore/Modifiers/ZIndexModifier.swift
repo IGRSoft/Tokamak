@@ -12,9 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _ZIndexModifier: ViewModifier {
+  /// The relative front-to-back ordering of the view within its parent.
   public let index: Double
 
+  /// The content and behavior of the modified view.
   public func body(content: Content) -> some View {
     content
   }

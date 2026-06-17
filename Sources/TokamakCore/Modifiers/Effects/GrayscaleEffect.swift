@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _GrayscaleEffect: Animatable, ViewModifier, Equatable {
+  /// The amount of grayscale to apply to the modified view.
   public var amount: Double
 
+  /// Creates a grayscale effect with the given amount.
   public init(amount: Double) {
     self.amount = amount
   }
 
+  /// Returns the modifier's body for the given content.
   public func body(content: Content) -> some View {
     content
   }
 
+  /// The data to animate, exposing the grayscale amount for interpolation.
   public var animatableData: Double {
     get { amount }
     set { amount = newValue }
@@ -30,6 +35,11 @@ public struct _GrayscaleEffect: Animatable, ViewModifier, Equatable {
 }
 
 public extension View {
+  /// Adds a grayscale effect to this view.
+  ///
+  /// - Parameter amount: The intensity of grayscale to apply, from 0.0 for no
+  ///   change to 1.0 for fully grayscale.
+  /// - Returns: A view that applies the specified grayscale effect.
   func grayscale(_ amount: Double) -> some View {
     modifier(_GrayscaleEffect(amount: amount))
   }

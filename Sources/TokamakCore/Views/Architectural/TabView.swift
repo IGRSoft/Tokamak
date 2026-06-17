@@ -27,6 +27,11 @@ public struct TabView<SelectionValue, Content>: View
   let selection: Binding<SelectionValue>?
   let content: Content
 
+  /// Creates a tab view bound to a selection value.
+  ///
+  /// - Parameters:
+  ///   - selection: A binding to the identity of the selected tab, or `nil` for display-only.
+  ///   - content: A view builder that produces the tabbed child views.
   public init(
     selection: Binding<SelectionValue>?,
     @ViewBuilder content: () -> Content
@@ -35,6 +40,7 @@ public struct TabView<SelectionValue, Content>: View
     self.content = content()
   }
 
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var body: some View {
     _TabViewContainer(selection: selection, content: content)
@@ -51,10 +57,19 @@ public extension TabView where SelectionValue == Int {
 
 /// One resolved tab: its selection identity, its `.tabItem` label, and its body.
 public struct _TabItem {
+  /// The tab's selection identity.
   public let id: AnyHashable
+  /// The tab's `.tabItem` label, shown in the tab strip.
   public let label: AnyView
+  /// The tab's content view, shown when the tab is selected.
   public let content: AnyView
 
+  /// Creates a resolved tab from its identity, label, and content.
+  ///
+  /// - Parameters:
+  ///   - id: The tab's selection identity.
+  ///   - label: The tab's label, shown in the tab strip.
+  ///   - content: The tab's content view.
   public init(id: AnyHashable, label: AnyView, content: AnyView) {
     self.id = id
     self.label = label
@@ -62,6 +77,7 @@ public struct _TabItem {
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _TabViewContainer<SelectionValue, Content>: _PrimitiveView
   where SelectionValue: Hashable, Content: View
 {
@@ -78,17 +94,23 @@ public struct _TabViewContainer<SelectionValue, Content>: _PrimitiveView
 }
 
 extension _TabViewContainer: ParentView {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] {
     (content as? GroupView)?.children ?? [AnyView(content)]
   }
 }
 
+/// An implementation detail of Tokamak's rendering; not intended for use in application code.
 public struct _TabViewProxy<SelectionValue, Content>
   where SelectionValue: Hashable, Content: View
 {
+  /// The tab view container this proxy reads from.
   public var subject: _TabViewContainer<SelectionValue, Content>
 
+  /// Creates a proxy for the given tab view container.
+  ///
+  /// - Parameter subject: The container to inspect.
   public init(_ subject: _TabViewContainer<SelectionValue, Content>) { self.subject = subject }
 
   /// The resolved tabs, in declaration order. A tab without an explicit `.tag`
@@ -107,6 +129,10 @@ public struct _TabViewProxy<SelectionValue, Content>
     }
   }
 
+  /// Returns whether the given tab is currently selected.
+  ///
+  /// - Parameter tab: The tab to test.
+  /// - Returns: `true` if the tab matches the current selection.
   public func isSelected(_ tab: _TabItem) -> Bool {
     if let selection = subject.selection {
       return AnyHashable(selection.wrappedValue) == tab.id
@@ -115,6 +141,9 @@ public struct _TabViewProxy<SelectionValue, Content>
     }
   }
 
+  /// Selects the given tab, updating the selection binding or the fallback selection.
+  ///
+  /// - Parameter tab: The tab to select.
   public func select(_ tab: _TabItem) {
     if let selection = subject.selection {
       if let value = tab.id.base as? SelectionValue {

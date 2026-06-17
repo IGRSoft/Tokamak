@@ -50,6 +50,8 @@ extension WidgetAttributeModifier {
 }
 
 extension ModifiedContent: GTKPrimitive where Content: View {
+  /// Implementation detail: applies the wrapped widget modifier and renders the modified
+  /// content into its native GTK widget.
   @_spi(TokamakCore)
   public var renderedBody: AnyView {
     guard let widgetModifier = modifier as? WidgetModifier else {

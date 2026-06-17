@@ -12,20 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// A type that collects multiple instances of a content type, such as views, into a single unit.
+///
+/// Use a group to collect multiple views into a single instance, without affecting the layout of
+/// those views, like an `HStack`, `VStack`, or `Section` would. After creating a group, any
+/// modifier you apply to the group affects all of that group's members.
 public struct Group<Content> {
   let content: Content
+  /// Creates a group with the provided content.
   public init(@ViewBuilder content: () -> Content) {
     self.content = content()
   }
 }
 
 extension Group: _PrimitiveView, View where Content: View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   public func _visitChildren<V>(_ visitor: V) where V: ViewVisitor {
     visitor.visit(content)
   }
 }
 
 extension Group: ParentView where Content: View {
+  /// An implementation detail of Tokamak's rendering; not intended for use in application code.
   @_spi(TokamakCore)
   public var children: [AnyView] { (content as? ParentView)?.children ?? [AnyView(content)] }
 }

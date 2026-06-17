@@ -17,6 +17,7 @@
 extension _PasteButtonContainer: _HTMLPrimitive {
   // SSR cannot read the clipboard, so the button renders as a static
   // `<button>Paste</button>` with no payload action wired.
+  /// Implementation detail: the SSR markup, a static `<button>Paste</button>` with no action.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
     AnyView(staticBody)
@@ -37,14 +38,19 @@ extension _PasteButtonContainer: _HTMLPrimitive {
 // path so the button markup renders there too.
 @_spi(TokamakStaticHTML)
 extension _PasteButtonContainer: HTMLConvertible {
+  /// Implementation detail: the `<button>` tag emitted for the paste button on the Fiber path.
   @_spi(TokamakStaticHTML)
   public var tag: String { "button" }
 
+  /// Implementation detail: the paste button's class attribute for the Fiber path.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     ["class": "_tokamak-pastebutton"]
   }
 
+  /// Implementation detail: visits the static "Paste" label as the button's child (Fiber path).
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout path is active; ignored here.
   @_spi(TokamakStaticHTML)
   public func primitiveVisitor<V: ViewVisitor>(useDynamicLayout: Bool) -> ((V) -> ())? {
     { visitor in

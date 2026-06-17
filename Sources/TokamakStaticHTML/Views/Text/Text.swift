@@ -65,6 +65,7 @@ public extension Font.Design {
 }
 
 extension Font.Leading: CustomStringConvertible {
+  /// The CSS `line-height` value for this leading: `"normal"`, `"1.5"`, or `"0.5"`.
   public var description: String {
     switch self {
     case .standard:
@@ -78,6 +79,9 @@ extension Font.Leading: CustomStringConvertible {
 }
 
 public extension Font {
+  /// The resolved CSS style declarations (family, weight, style, size, line-height, variant) for
+  /// this font in the given environment.
+  /// - Parameter environment: The environment values used to resolve the font.
   func styles(in environment: EnvironmentValues) -> [String: String] {
     let proxy = _FontProxy(self).resolve(in: environment)
     return [
@@ -90,6 +94,9 @@ public extension Font {
     ]
   }
 
+  /// The ordered CSS `font-family` stack for this font in the given environment, including any
+  /// custom-font fallbacks.
+  /// - Parameter environment: The environment values used to resolve the font.
   func families(in environment: EnvironmentValues) -> [String] {
     let proxy = _FontProxy(self).resolve(in: environment)
     switch proxy._name {
@@ -107,6 +114,7 @@ public extension Font {
 }
 
 extension TextAlignment: CustomStringConvertible {
+  /// The CSS `text-align` value for this alignment: `"left"`, `"center"`, or `"right"`.
   public var description: String {
     switch self {
     case .leading: return "left"
@@ -125,6 +133,9 @@ private struct TextSpan: AnyHTML {
 }
 
 extension Text: AnyHTML {
+  /// The sanitized inner HTML of this text, with newlines converted to `<br />` and styled spans
+  /// emitted for segmented (attributed) text.
+  /// - Parameter shouldSortAttributes: Whether span attributes should be emitted in sorted order.
   public func innerHTML(shouldSortAttributes: Bool) -> String? {
     let proxy = _TextProxy(self)
     let innerHTML: String
@@ -149,7 +160,9 @@ extension Text: AnyHTML {
     return innerHTML.replacingOccurrences(of: "\n", with: "<br />")
   }
 
+  /// The HTML tag a `Text` renders to: `"span"`.
   public var tag: String { "span" }
+  /// The HTML attributes for this text: the resolved inline CSS style derived from its modifiers.
   public var attributes: [HTMLAttribute: String] {
     let proxy = _TextProxy(self)
     return Self.attributes(
@@ -161,11 +174,14 @@ extension Text: AnyHTML {
 
 @_spi(TokamakStaticHTML)
 extension Text: HTMLConvertible {
+  /// The Fiber-path inner HTML of this text, with attributes emitted in unsorted order.
   @_spi(TokamakStaticHTML)
   public var innerHTML: String? {
     innerHTML(shouldSortAttributes: false)
   }
 
+  /// The Fiber-path HTML attributes for this text: the inline CSS style from its modifiers.
+  /// - Parameter useDynamicLayout: Whether the dynamic-layout Fiber renderer is in use.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     attributes
   }

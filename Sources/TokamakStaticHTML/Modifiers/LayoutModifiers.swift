@@ -55,8 +55,12 @@ private extension HorizontalAlignment {
   }
 }
 
+/// Renders `frame(width:height:alignment:)` by emitting a fixed-size flexbox `div` with the
+/// requested dimensions and alignment.
 extension _FrameLayout: DOMViewModifier {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
+  /// The inline `style` attribute encoding the fixed width, height, and alignment.
   public var attributes: [HTMLAttribute: String] {
     ["style": """
     \(unwrapToStyle(\.width, property: "width"))
@@ -73,17 +77,25 @@ extension _FrameLayout: DOMViewModifier {
   }
 }
 
+/// Provides the `div` wrapper that carries the fixed-frame layout when static layout is used.
 @_spi(TokamakStaticHTML)
 extension _FrameLayout: HTMLConvertible {
+  /// The HTML tag used to host the framed content.
   public var tag: String { "div" }
+  /// The frame attributes, omitted when dynamic (in-browser) layout drives sizing.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return attributes
   }
 }
 
+/// Renders `frame(minWidth:idealWidth:maxWidth:...)` by emitting a flexbox `div` with min/ideal/max
+/// dimensions and alignment.
 extension _FlexFrameLayout: DOMViewModifier {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
+  /// The inline `style` attribute encoding the flexible width, height, and alignment.
   public var attributes: [HTMLAttribute: String] {
     ["style": """
     \(unwrapToStyle(\.minWidth, property: "min-width"))
@@ -104,9 +116,13 @@ extension _FlexFrameLayout: DOMViewModifier {
   }
 }
 
+/// Provides the `div` wrapper that carries the flexible-frame layout when static layout is used.
 @_spi(TokamakStaticHTML)
 extension _FlexFrameLayout: HTMLConvertible {
+  /// The HTML tag used to host the flexibly framed content.
   public var tag: String { "div" }
+  /// The frame attributes, omitted when dynamic (in-browser) layout drives sizing.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return attributes
@@ -135,8 +151,11 @@ private extension EdgeInsets {
   }
 }
 
+/// Renders `padding(_:_:)` by emitting per-edge CSS `padding-*` properties for the selected edges.
 extension _PaddingLayout: DOMViewModifier {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
+  /// The inline `style` attribute with `padding-*` declarations for each selected edge.
   public var attributes: [HTMLAttribute: String] {
     var padding = [(String, CGFloat)]()
     let insets = insets ?? .init(_all: 10)
@@ -151,16 +170,23 @@ extension _PaddingLayout: DOMViewModifier {
   }
 }
 
+/// Provides the `div` wrapper that carries the padding when static layout is used.
 @_spi(TokamakStaticHTML)
 extension _PaddingLayout: HTMLConvertible {
+  /// The HTML tag used to host the padded content.
   public var tag: String { "div" }
+  /// The padding attributes, omitted when dynamic (in-browser) layout drives sizing.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return attributes
   }
 }
 
+/// Renders a resolved `shadow(...)` effect by emitting a CSS `box-shadow` from its offset, radius,
+/// and color.
 extension _ShadowEffect._Resolved: DOMViewModifier {
+  /// The inline `style` attribute encoding the `box-shadow`.
   public var attributes: [HTMLAttribute: String] {
     [
       "style": """
@@ -169,11 +195,16 @@ extension _ShadowEffect._Resolved: DOMViewModifier {
     ]
   }
 
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
 }
 
+/// Renders `aspectRatio(_:contentMode:)` by emitting the CSS `aspect-ratio` property and a
+/// fill/fit class.
 extension _AspectRatioLayout: DOMViewModifier {
+  /// Indicates this modifier must not be flattened with adjacent ones.
   public var isOrderDependent: Bool { true }
+  /// The inline `style` attribute and class encoding the aspect ratio and content mode.
   public var attributes: [HTMLAttribute: String] {
     [
       "style": """
@@ -186,7 +217,10 @@ extension _AspectRatioLayout: DOMViewModifier {
   }
 }
 
+/// Renders `background(_:alignment:)` as an inline-grid `div` that overlays the background beneath
+/// the content with the requested alignment.
 extension _BackgroundLayout: _HTMLPrimitive {
+  /// The grid-based HTML placing the background behind the content.
   public var renderedBody: AnyView {
     AnyView(
       HTML(
@@ -216,17 +250,24 @@ extension _BackgroundLayout: _HTMLPrimitive {
   }
 }
 
+/// Provides the inline-grid `div` and child visitor that layer the background under the content
+/// when static layout is used.
 @_spi(TokamakStaticHTML)
 extension _BackgroundLayout: HTMLConvertible {
+  /// The HTML tag hosting the grid.
   public var tag: String {
     "div"
   }
 
+  /// The grid `style`, omitted when dynamic (in-browser) layout drives sizing.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return ["style": "display: inline-grid; grid-template-columns: auto auto;"]
   }
 
+  /// Visits the background and content cells in render order, unless dynamic layout is active.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     guard !useDynamicLayout else { return nil }
     return {
@@ -252,7 +293,10 @@ extension _BackgroundLayout: HTMLConvertible {
   }
 }
 
+/// Renders `overlay(_:alignment:)` as an inline-grid `div` that layers the overlay above the
+/// content with the requested alignment.
 extension _OverlayLayout: _HTMLPrimitive {
+  /// The grid-based HTML placing the overlay in front of the content.
   public var renderedBody: AnyView {
     AnyView(
       HTML(
@@ -282,14 +326,21 @@ extension _OverlayLayout: _HTMLPrimitive {
   }
 }
 
+/// Provides the inline-grid `div` and child visitor that layer the overlay over the content when
+/// static layout is used.
 @_spi(TokamakStaticHTML)
 extension _OverlayLayout: HTMLConvertible {
+  /// The HTML tag hosting the grid.
   public var tag: String { "div" }
+  /// The grid `style`, omitted when dynamic (in-browser) layout drives sizing.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func attributes(useDynamicLayout: Bool) -> [HTMLAttribute: String] {
     guard !useDynamicLayout else { return [:] }
     return ["style": "display: inline-grid; grid-template-columns: auto auto;"]
   }
 
+  /// Visits the content and overlay cells in render order, unless dynamic layout is active.
+  /// - Parameter useDynamicLayout: Whether the renderer computes layout dynamically.
   public func primitiveVisitor<V>(useDynamicLayout: Bool) -> ((V) -> ())? where V: ViewVisitor {
     guard !useDynamicLayout else { return nil }
     return {
