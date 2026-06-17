@@ -93,7 +93,7 @@ All entry points render the *same* catalog; they differ only in platform and ren
 | `TokamakDemoRun` | `Sources/TokamakDemoRun/main.swift` | WebAssembly / `TokamakDOM` | `swift run TokamakDemo` (or bundle with `carton` / a wasm SDK) |
 | `NativeDemo` | `NativeDemo/TokamakDemo.xcodeproj` | macOS & iOS / SwiftUI | Open in Xcode, or `xcodebuild` the `ScreenshotTests` scheme |
 | `TokamakStaticHTMLDemo` | `Sources/TokamakStaticHTMLDemo/main.swift` | Host / `TokamakStaticHTML` SSR | `swift run TokamakStaticHTMLDemo` (prints HTML) |
-| `TokamakGTKDemo` | `Sources/TokamakGTKDemo/Demo.swift` | Linux / `TokamakGTK4` | `swift run TokamakGTKDemo` (GTK4 + pkg-config; usually via Docker) |
+| `TokamakGTKDemo` | `Sources/TokamakGTKDemo/main.swift` | Linux / `TokamakGTK4` | `swift run TokamakGTKDemo` (GTK4 + pkg-config; usually via Docker) |
 
 The library target `TokamakDemo` holds the catalog and views; the thin `TokamakDemoRun` executable
 and the macOS-gated screenshot generators import it. See

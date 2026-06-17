@@ -33,10 +33,12 @@ extension WidgetAttributeModifier {
 
     let renderedStyle = attributes.reduce("") { $0 + "\($1.0):\($1.1);" }
 
-    gtk_css_provider_load_from_string(
+    // jammy ships GTK 4.6; `gtk_css_provider_load_from_string` is GTK 4.12+. Use the
+    // 4.6 `…_load_from_data(provider, data, length)` form (length -1 = NUL-terminated).
+    gtk_css_provider_load_from_data(
       provider!,
       "* { \(renderedStyle) }",
-
+      -1
     )
 
     gtk_style_context_add_provider(

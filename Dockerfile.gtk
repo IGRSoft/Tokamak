@@ -1,0 +1,57 @@
+# syntax=docker/dockerfile:1
+#
+# Linux + GTK4 image that BUILDS the TokamakGTK4 renderer + the catalog-driven
+# TokamakGTKDemo and (at `docker run`) captures one PNG per supported demo under Xvfb.
+#
+# Kept entirely SEPARATE from the wasm `Dockerfile` (which targets SwiftWasm/nginx).
+# The overlay manifest `Package.gtk.swift` is copied over `Package.swift` INSIDE the
+# image only — the host `Package.swift` is never touched.
+FROM swift:6.3.2-jammy
+
+# GTK4 toolchain + headless capture stack. Installed BEFORE `COPY . .` so this slow
+# layer caches across source rebuilds.
+#   libgtk-4-dev pkg-config : the `CGTK4` modulemap links `gtk-4`; pkg-config feeds the
+#                             include/link flags to SwiftPM.
+#   xvfb                    : headless X server for offscreen rendering.
+#   imagemagick             : `import` window capture.
+#   xdotool                 : poll for a mapped top-level window before capturing.
+#   fonts-dejavu-core fontconfig : MANDATORY — without fonts GTK text rasterizes blank,
+#                             producing empty/duplicate PNGs that fail the pixel gate.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libgtk-4-dev pkg-config \
+      xvfb imagemagick \
+      xdotool \
+      fonts-dejavu-core fontconfig \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+COPY . .
+
+# Apply the GTK overlay AND drop the host Package.resolved: its pins reference the full
+# host dependency graph (swift-snapshot-testing, swift-syntax, swift-docc-plugin, …) that
+# the slim overlay never declares, which otherwise forces minutes of needless fetches.
+RUN cp Package.gtk.swift Package.swift && rm -f Package.resolved
+
+# Build the demo. The pkg-config bridge translates each gtk4 flag into SwiftPM's
+# `-Xcc -I` / `-Xcc -D` / `-Xlinker -l` form. A TOKEN-BY-TOKEN loop is used instead of a
+# `sed` substitution because `sed 's/-l/-Xlinker -l/g'` also rewrites the `-l` inside
+# library *paths* (e.g. `aarch64-linux-gnu` -> `aarch64-Xlinker -linux-gnu`), corrupting
+# the include dirs. Parallelism capped at `-j 2`: the deeply-generic TokamakCore view
+# types are memory-heavy to type-check (wasm image hit OOM at higher parallelism).
+RUN set -eu; \
+    GTK_FLAGS=""; \
+    for tok in $(pkg-config --cflags --libs gtk4); do \
+      case "$tok" in \
+        -I*|-D*) GTK_FLAGS="$GTK_FLAGS -Xcc $tok" ;; \
+        -l*)     GTK_FLAGS="$GTK_FLAGS -Xlinker $tok" ;; \
+        -pthread) GTK_FLAGS="$GTK_FLAGS -Xcc -pthread" ;; \
+        *)       GTK_FLAGS="$GTK_FLAGS $tok" ;; \
+      esac; \
+    done; \
+    swift build -j 2 --product TokamakGTKDemo $GTK_FLAGS
+
+# Capture happens at `docker run` (see Scripts/screenshots/gtk-docker.sh), not build, so
+# the build layer stays deterministic and cacheable. A bare `docker run` just lists the
+# catalog (non-interactive). NOTE: no `ENV TOKAMAK_GTK_LIST` — an inherited list flag would
+# override an explicit `TOKAMAK_GTK_DEMO=<id>` render request.
+CMD [".build/debug/TokamakGTKDemo", "--list"]

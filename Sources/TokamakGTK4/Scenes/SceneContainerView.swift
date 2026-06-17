@@ -31,8 +31,10 @@ struct SceneContainerView<Content: View>: View, AnyWidget {
     window = gtk_application_window_new(application)
     print("window.new")
     window.withMemoryRebound(to: GtkWindow.self, capacity: 1) {
-      gtk_window_set_title($0, "Welcome to GNOME")
-      gtk_window_set_default_size($0, 200, 100)
+      gtk_window_set_title($0, "Tokamak GTK Demo")
+      // Give the demo content room to lay out (200x100 was too small to show real
+      // widget trees; the screenshot harness renders at 1280x900).
+      gtk_window_set_default_size($0, 800, 600)
     }
     print("Window made")
     // gtk_widget_show_all(window)

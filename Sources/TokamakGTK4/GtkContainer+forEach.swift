@@ -46,4 +46,8 @@ extension UnsafeMutablePointer where Pointee == GtkWidget {
   func isStack() -> Bool {
     tokamak_gtk_widget_is_stack(self) == gboolean(1)
   }
+
+  func isWindow() -> Bool {
+    tokamak_gtk_widget_is_window(self) == gboolean(1)
+  }
 }

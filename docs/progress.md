@@ -17,20 +17,19 @@ Table columns:
 - **DOM** — `TokamakDOM` interactive web renderer
 - **SSR** — `TokamakStaticHTML` server-side render
 - **wasm** — browser DOM gallery (full catalog; authoritative for `<img>` and JS-gated output)
-- **GTK4** — `TokamakGTK4` (Linux; untested on the current macOS host)
+- **GTK4** — `TokamakGTK4` (Linux; builds in Docker via `Dockerfile.gtk`. After the GTK3→GTK4 attach fix — `gtk_window_set_child` for the window child + real `GtkBox` for stacks — **25 demos render real distinct content** to `screenshots/gtk/<Name>.png`; 26 remain deny-set/no-content. See `screenshots/gtk/UNSUPPORTED.md` for the per-entry split.)
 - **What's left** — remaining work for full cross-platform parity
 
-Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (framework limitation) ·
-❔ untested (no GTK4 toolchain on host) · — not applicable
+Per-platform cell legend: ✅ complete · 🚧 partial · ◑ renders (partial fidelity; text/layout only; some shapes/buttons render as labels) · ➖ inert no-op (framework limitation) · ❌ not rendered · — not applicable
 
 ### Text
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [Text](https://developer.apple.com/documentation/swiftui/text) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [TextField](https://developer.apple.com/documentation/swiftui/textfield) | ✅ | ✅ | ✅ | ❔ | GTK4 verification (interactive DOM input + static SSR `<input>` done) |
-| ✅ | [SecureField](https://developer.apple.com/documentation/swiftui/securefield) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [TextEditor](https://developer.apple.com/documentation/swiftui/texteditor) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
+| ✅ | [Text](https://developer.apple.com/documentation/swiftui/text) | ✅ | ✅ | ✅ | ◑ | — (rendered) |
+| ✅ | [TextField](https://developer.apple.com/documentation/swiftui/textfield) | ✅ | ✅ | ✅ | ◑ | — (rendered) |
+| ✅ | [SecureField](https://developer.apple.com/documentation/swiftui/securefield) | ✅ | ✅ | ✅ | ◑ | — (rendered) |
+| ✅ | [TextEditor](https://developer.apple.com/documentation/swiftui/texteditor) | ✅ | ✅ | ✅ | ◑ | — (rendered) |
 
 **Notes on Text inputs (Text, TextField, SecureField, Label):**
 - ✅ **Text** — `Text: AnyHTML`/`HTMLConvertible` in `TokamakStaticHTML/Views/Text/Text.swift` emits `<span>` on both SSR engines; DOM via the same module. Was already complete; flag corrected.
@@ -53,7 +52,7 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [Image](https://developer.apple.com/documentation/swiftui/image) ¹ | ✅ | ✅ | ✅ | 🚧 | SF Symbol glyph rasterization on web (¹ placeholder only); `.renderingMode`/`.interpolation`; GTK4 `system` glyphs |
+| ✅ | [Image](https://developer.apple.com/documentation/swiftui/image) ¹ | ✅ | ✅ | ✅ | ◑ | SF Symbol glyph rasterization on web (¹ placeholder only); `.renderingMode`/`.interpolation`; GTK4 `system` glyphs (rendered but limited) |
 
 **Notes on Image:**
 - ✅ **Works on DOM + StaticHTML SSR** (must-pass, string-assertion tested in
@@ -85,12 +84,12 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [Button](https://developer.apple.com/documentation/swiftui/button) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| 🚧 | [NavigationLink](https://developer.apple.com/documentation/swiftui/navigationlink) | 🚧 | ➖ | 🚧 | ❔ | StaticHTML conformance; push/pop is JS-only (inert under SSR); GTK4 |
-| ✅ | [EditButton](https://developer.apple.com/documentation/swiftui/editbutton) | ✅ | ✅ | ✅ | ✅ | — (Core-only, drives DynamicViewContent edit state) |
-| 🚧 | [PasteButton](https://developer.apple.com/documentation/swiftui/pastebutton) | 🚧 | ➖ | 🚧 | ➖ | UTType/Transferable payloads; clipboard on SSR/GTK4 (DOM = plain-text only) |
-| 🚧 | [SignInWithAppleButton](https://developer.apple.com/documentation/swiftui/signinwithapplebutton) | 🚧 | 🚧 | 🚧 | 🚧 | AuthenticationServices credential flow (visual stand-in only; `onTap` fires, no credential) |
-| 🚧 | [Menu](https://developer.apple.com/documentation/swiftui/menu) | ✅ | ✅ | ✅ | ❔ | GTK4 verification (DOM/SSR `role="menu"` complete) |
+| ✅ | [Button](https://developer.apple.com/documentation/swiftui/button) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered (label only) |
+| 🚧 | [NavigationLink](https://developer.apple.com/documentation/swiftui/navigationlink) | 🚧 | ➖ | 🚧 | ❌ | StaticHTML conformance; push/pop is JS-only (inert under SSR); GTK4 not rendered |
+| ✅ | [EditButton](https://developer.apple.com/documentation/swiftui/editbutton) | ✅ | ✅ | ✅ | ◑ | — (Core-only, drives DynamicViewContent edit state; GTK4 rendered) |
+| 🚧 | [PasteButton](https://developer.apple.com/documentation/swiftui/pastebutton) | 🚧 | ➖ | 🚧 | ◑ | UTType/Transferable payloads; clipboard on SSR/GTK4 (DOM = plain-text only; GTK4 rendered as button) |
+| 🚧 | [SignInWithAppleButton](https://developer.apple.com/documentation/swiftui/signinwithapplebutton) | 🚧 | 🚧 | 🚧 | ◑ | AuthenticationServices credential flow (visual stand-in only; GTK4 rendered) |
+| 🚧 | [Menu](https://developer.apple.com/documentation/swiftui/menu) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered (DOM/SSR `role="menu"` complete) |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
@@ -107,12 +106,12 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [Toggle](https://developer.apple.com/documentation/swiftui/toggle) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
-| ✅ | [Picker](https://developer.apple.com/documentation/swiftui/picker) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
-| ✅ | [DatePicker](https://developer.apple.com/documentation/swiftui/datepicker) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
-| ✅ | [Slider](https://developer.apple.com/documentation/swiftui/slider) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (mac/web demo skipped — captured via wasm) |
-| ✅ | [Stepper](https://developer.apple.com/documentation/swiftui/stepper) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
-| ✅ | [ColorPicker](https://developer.apple.com/documentation/swiftui/colorpicker) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
+| ✅ | [Toggle](https://developer.apple.com/documentation/swiftui/toggle) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [Picker](https://developer.apple.com/documentation/swiftui/picker) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered (label only) |
+| ✅ | [DatePicker](https://developer.apple.com/documentation/swiftui/datepicker) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [Slider](https://developer.apple.com/documentation/swiftui/slider) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered (mac/web demo skipped — captured via wasm) |
+| ✅ | [Stepper](https://developer.apple.com/documentation/swiftui/stepper) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [ColorPicker](https://developer.apple.com/documentation/swiftui/colorpicker) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
 
 **Notes:**
 - ✅ Value Selectors all render on **both** must-pass renderers. DOM emits real interactive
@@ -148,10 +147,10 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [ProgressView](https://developer.apple.com/documentation/swiftui/progressview) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
-| ✅ | [Gauge](https://developer.apple.com/documentation/swiftui/gauge) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
-| ✅ | [Label](https://developer.apple.com/documentation/swiftui/label) | ✅ | ✅ | ✅ | ✅ | — (composes Image + Text) |
-| ✅ | [Link](https://developer.apple.com/documentation/swiftui/link) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
+| ✅ | [ProgressView](https://developer.apple.com/documentation/swiftui/progressview) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [Gauge](https://developer.apple.com/documentation/swiftui/gauge) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [Label](https://developer.apple.com/documentation/swiftui/label) | ✅ | ✅ | ✅ | ❌ | (composes Image + Text; GTK4 not rendered as distinct) |
+| ✅ | [Link](https://developer.apple.com/documentation/swiftui/link) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
 
 **Notes:**
 - ✅ **ProgressView** renders on **both** must-pass renderers. The determinate variant
@@ -184,11 +183,11 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [HStack](https://developer.apple.com/documentation/swiftui/hstack) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [VStack](https://developer.apple.com/documentation/swiftui/vstack) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [ZStack](https://developer.apple.com/documentation/swiftui/zstack) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [LazyHStack](https://developer.apple.com/documentation/swiftui/lazyhstack) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [LazyVStack](https://developer.apple.com/documentation/swiftui/lazyvstack) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
+| ✅ | [HStack](https://developer.apple.com/documentation/swiftui/hstack) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered |
+| ✅ | [VStack](https://developer.apple.com/documentation/swiftui/vstack) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered |
+| ✅ | [ZStack](https://developer.apple.com/documentation/swiftui/zstack) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered |
+| ✅ | [LazyHStack](https://developer.apple.com/documentation/swiftui/lazyhstack) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [LazyVStack](https://developer.apple.com/documentation/swiftui/lazyvstack) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
@@ -202,9 +201,9 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [LazyHGrid](https://developer.apple.com/documentation/swiftui/lazyhgrid) | ✅ | ✅ | ✅ | 🚧 | Native GTK4 grid (composite fallback only) |
-| ✅ | [LazyVGrid](https://developer.apple.com/documentation/swiftui/lazyvgrid) | ✅ | ✅ | ✅ | 🚧 | Native GTK4 grid (composite fallback only) |
-| ✅ | [GridItem](https://developer.apple.com/documentation/swiftui/griditem) | ✅ | ✅ | ✅ | 🚧 | — (config struct; consumed by grids) |
+| ✅ | [LazyHGrid](https://developer.apple.com/documentation/swiftui/lazyhgrid) | ✅ | ✅ | ✅ | ❌ | Native GTK4 grid (composite fallback only; not rendered) |
+| ✅ | [LazyVGrid](https://developer.apple.com/documentation/swiftui/lazyvgrid) | ✅ | ✅ | ✅ | ❌ | Native GTK4 grid (composite fallback only; not rendered) |
+| ✅ | [GridItem](https://developer.apple.com/documentation/swiftui/griditem) | ✅ | ✅ | ✅ | ❌ | (config struct; consumed by grids; not rendered) |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
@@ -216,12 +215,12 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [List](https://developer.apple.com/documentation/swiftui/list) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [ForEach](https://developer.apple.com/documentation/swiftui/foreach) | ✅ | ✅ | ✅ | ✅ | — (structural; children render via own primitives) |
-| ✅ | [ScrollView](https://developer.apple.com/documentation/swiftui/scrollview) | ✅ | ✅ | ✅ | ❔ | GTK4; programmatic scroll is JS-only (see Reader/Proxy) |
-| 🚧 | [ScrollViewReader](https://developer.apple.com/documentation/swiftui/scrollviewreader) | 🚧 | ➖ | 🚧 | ❔ | Programmatic `scrollTo` needs JS (no-op under SSR) |
-| 🚧 | [ScrollViewProxy](https://developer.apple.com/documentation/swiftui/scrollviewproxy) | 🚧 | ➖ | 🚧 | ❔ | Programmatic `scrollTo` needs JS (inert-safe under SSR) |
-| ✅ | [DynamicViewContent](https://developer.apple.com/documentation/swiftui/dynamicviewcontent) | ✅ | ✅ | ✅ | ❔ | Native drag-to-reorder (JS/DOM events); `.onInsert`; GTK4 |
+| ✅ | [List](https://developer.apple.com/documentation/swiftui/list) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+| ✅ | [ForEach](https://developer.apple.com/documentation/swiftui/foreach) | ✅ | ✅ | ✅ | ◑ | (structural; children render via own primitives; GTK4 renders) |
+| ✅ | [ScrollView](https://developer.apple.com/documentation/swiftui/scrollview) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered; programmatic scroll is JS-only (see Reader/Proxy) |
+| 🚧 | [ScrollViewReader](https://developer.apple.com/documentation/swiftui/scrollviewreader) | 🚧 | ➖ | 🚧 | ❌ | Programmatic `scrollTo` needs JS (no-op under SSR); GTK4 not rendered |
+| 🚧 | [ScrollViewProxy](https://developer.apple.com/documentation/swiftui/scrollviewproxy) | 🚧 | ➖ | 🚧 | ❌ | Programmatic `scrollTo` needs JS (inert-safe under SSR); GTK4 not rendered |
+| ✅ | [DynamicViewContent](https://developer.apple.com/documentation/swiftui/dynamicviewcontent) | ✅ | ✅ | ✅ | ◑ | Native drag-to-reorder (JS/DOM events); `.onInsert`; GTK4 rendered |
 
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
@@ -238,10 +237,10 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [Form](https://developer.apple.com/documentation/swiftui/form) | ✅ | ✅ | ✅ | ❔ | GTK4 verification (via List) |
-| ✅ | [Group](https://developer.apple.com/documentation/swiftui/group) | ✅ | ✅ | ✅ | ✅ | — (transparent grouping) |
-| ✅ | [GroupBox](https://developer.apple.com/documentation/swiftui/groupbox) | ✅ | ✅ | ✅ | ❔ | GTK4 verification (DOM `<fieldset>`, SSR bordered VStack) |
-| ✅ | [Section](https://developer.apple.com/documentation/swiftui/section) | ✅ | ✅ | ✅ | ❔ | GTK4 verification (via List rows) |
+| ✅ | [Form](https://developer.apple.com/documentation/swiftui/form) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered (via List) |
+| ✅ | [Group](https://developer.apple.com/documentation/swiftui/group) | ✅ | ✅ | ✅ | ◑ | (transparent grouping; GTK4 renders via children) |
+| ✅ | [GroupBox](https://developer.apple.com/documentation/swiftui/groupbox) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered (DOM `<fieldset>`, SSR bordered VStack) |
+| ✅ | [Section](https://developer.apple.com/documentation/swiftui/section) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered (via List rows) |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
@@ -253,8 +252,8 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [OutlineGroup](https://developer.apple.com/documentation/swiftui/outlinegroup) | ✅ | ✅ | ✅ | ❔ | GTK4; SSR renders fully expanded (no JS toggle) |
-| ✅ | [DisclosureGroup](https://developer.apple.com/documentation/swiftui/disclosuregroup) | ✅ | ✅ | ✅ | ❔ | GTK4; SSR renders expanded (DOM keeps interactive chevron) |
+| ✅ | [OutlineGroup](https://developer.apple.com/documentation/swiftui/outlinegroup) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered; SSR renders fully expanded (no JS toggle) |
+| ✅ | [DisclosureGroup](https://developer.apple.com/documentation/swiftui/disclosuregroup) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered; SSR renders expanded (DOM keeps interactive chevron) |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
@@ -267,8 +266,8 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [Spacer](https://developer.apple.com/documentation/swiftui/spacer) | ✅ | ✅ | ✅ | ❔ | GTK4 verification |
-| ✅ | [Divider](https://developer.apple.com/documentation/swiftui/divider) | ✅ | ✅ | ✅ | 🚧 | GTK4 verification (best-effort) |
+| ✅ | [Spacer](https://developer.apple.com/documentation/swiftui/spacer) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered |
+| ✅ | [Divider](https://developer.apple.com/documentation/swiftui/divider) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered (best-effort) |
 
 **Notes:**
 - ✅ **Divider** renders on **both** must-pass renderers. It emits a colorScheme-aware `<hr>`
@@ -288,6 +287,10 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 ### GeometryReader
 
+| Status | View | DOM | SSR | wasm | GTK4 | What's left |
+| :-: | --- | :-: | :-: | :-: | :-: | --- |
+| ✅ | [GeometryReader](https://developer.apple.com/documentation/swiftui/geometryreader) | ✅ | ✅ | ✅ | ❌ | GTK4 not rendered |
+
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
 | Demo | mac | web | ios | wasm |
@@ -298,10 +301,10 @@ Per-platform cell legend: ✅ complete · 🚧 partial · ➖ inert no-op (frame
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| 🚧 | [NavigationView](https://developer.apple.com/documentation/swiftui/navigationview) | 🚧 | ➖ | 🚧 | ❔ | Stateful — SSR rejects/emits empty by design; nav chrome is DOM/runtime; GTK4 |
-| 🚧 | [TabView](https://developer.apple.com/documentation/swiftui/tabview) | ✅ | ✅ | ✅ | ❔ | GTK4 (no system libs on host); DOM/SSR `role="tablist"` complete |
-| 🚧 | [HSplitView](https://developer.apple.com/documentation/swiftui/hsplitview) | ✅ | ✅ | ✅ | 🚧 | Draggable resize handles (GtkPaned); GTK4 verification |
-| 🚧 | [VSplitView](https://developer.apple.com/documentation/swiftui/vsplitview) | ✅ | ✅ | ✅ | 🚧 | Draggable resize handles (GtkPaned); GTK4 verification |
+| 🚧 | [NavigationView](https://developer.apple.com/documentation/swiftui/navigationview) | 🚧 | ➖ | 🚧 | ❌ | Stateful — SSR rejects/emits empty by design; nav chrome is DOM/runtime; GTK4 not rendered |
+| 🚧 | [TabView](https://developer.apple.com/documentation/swiftui/tabview) | ✅ | ✅ | ✅ | ◑ | GTK4 rendered (label only); DOM/SSR `role="tablist"` complete |
+| 🚧 | [HSplitView](https://developer.apple.com/documentation/swiftui/hsplitview) | ✅ | ✅ | ✅ | ◑ | Draggable resize handles (GtkPaned); GTK4 rendered (static layout) |
+| 🚧 | [VSplitView](https://developer.apple.com/documentation/swiftui/vsplitview) | ✅ | ✅ | ✅ | ◑ | Draggable resize handles (GtkPaned); GTK4 rendered (static layout) |
 
 **Foundational-views audit (DOM + StaticHTML SSR verified on macOS host; GTK4 = best-effort/untested):**
 
@@ -426,17 +429,21 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [EmptyView](https://developer.apple.com/documentation/swiftui/emptyview) | ✅ | ✅ | ✅ | ✅ | — |
-| ✅ | [EquatableView](https://developer.apple.com/documentation/swiftui/equatableview) | ✅ | ✅ | ✅ | ✅ | — (transparent pass-through) |
+| ✅ | [EmptyView](https://developer.apple.com/documentation/swiftui/emptyview) | ✅ | ✅ | ✅ | ◑ | GTK4 renders (no-op) |
+| ✅ | [EquatableView](https://developer.apple.com/documentation/swiftui/equatableview) | ✅ | ✅ | ✅ | ◑ | (transparent pass-through; GTK4 renders) |
 
 ### Infrequently Used Views
 
 | Status | View | DOM | SSR | wasm | GTK4 | What's left |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | [AnyView](https://developer.apple.com/documentation/swiftui/anyview) | ✅ | ✅ | ✅ | ✅ | — |
-| ✅ | [TupleView](https://developer.apple.com/documentation/swiftui/tupleview) | ✅ | ✅ | ✅ | ✅ | — |
+| ✅ | [AnyView](https://developer.apple.com/documentation/swiftui/anyview) | ✅ | ✅ | ✅ | ◑ | GTK4 renders (transparent pass-through) |
+| ✅ | [TupleView](https://developer.apple.com/documentation/swiftui/tupleview) | ✅ | ✅ | ✅ | ◑ | GTK4 renders (transparent pass-through) |
 
 ### Gestures
+
+| Status | View | DOM | SSR | wasm | GTK4 | What's left |
+| :-: | --- | :-: | :-: | :-: | :-: | --- |
+| 🚧 | Gesture handlers | 🚧 | ➖ | 🚧 | ◑ | Tap/drag event binding (DOM = JS gesture events); GTK4 rendered (demo content rendered but no gesture response) |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
@@ -446,6 +453,15 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
 | Gesture & CoordinateSpace | ![Gesture & CoordinateSpace (mac)](../screenshots/mac/Gesture-%26-CoordinateSpace.png) | ![Gesture & CoordinateSpace (web)](../screenshots/web/Gesture-%26-CoordinateSpace.png) | ![Gesture & CoordinateSpace (ios)](../screenshots/ios/Gesture-%26-CoordinateSpace.png) | ![Gesture & CoordinateSpace (wasm)](../screenshots/wasm/Gesture-%26-CoordinateSpace.png) |
 
 ### Animation, State & Storage
+
+| Status | Demo | GTK4 | Notes |
+| :-: | --- | :-: | --- |
+| 🚧 | Animation | ◑ | Timing/easing only; transitions render but animation timing does not persist in static capture |
+| 🚧 | Transitions | ❌ | Transition states are runtime-only; static capture shows no distinct content |
+| 🚧 | Environment | ❌ | Aborted before window map (runtime issue) |
+| ✅ | Preferences | ◑ | Preference key demo renders (basic display; state binding GTK-limited) |
+| 🚧 | AppStorage | ❌ | Aborted before window map (runtime issue) |
+| ✅ | Redaction | ◑ | Redaction modifier renders (blur/redaction appears on static display) |
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 

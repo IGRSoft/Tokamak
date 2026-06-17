@@ -67,9 +67,11 @@ struct TextDemo: View {
         Text("THICK TEXT")
           .kerning(0.5)
       }
-      // `AttributedString` is part of Foundation's ICU-backed string layer, which
-      // is unavailable in the WASI Foundation; fall back to a plain `Text` there.
-      #if os(WASI)
+      // `AttributedString`'s `inlinePresentationIntent` scope is provided by Apple's
+      // SDK Foundation only; WASI and Linux swift-corelibs-foundation both lack it, so
+      // fall back to a plain `Text` on those platforms (verified: missing on jammy AND
+      // noble — gtk-screenshots DV0). Apple hosts keep the rich AttributedString demo.
+      #if os(WASI) || os(Linux)
       Text("This text has been concatenated")
       #else
       Text({ () -> AttributedString in
