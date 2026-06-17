@@ -93,12 +93,16 @@ struct GTKDemoApp: App {
 
 // MARK: - Entry point
 //
-// Three modes:
-//   1. `--list` / `TOKAMAK_GTK_LIST=1`  -> print `ID <id>` per catalog entry, exit 0.
-//   2. `TOKAMAK_GTK_DEMO=<id>`          -> deny-check, then render that one entry.
-//   3. (neither)                        -> default to list mode (safe, non-interactive).
+// Two modes:
+//   1. `TOKAMAK_GTK_DEMO=<id>` set -> deny-check, then render that one entry.
+//   2. (not set)                   -> print `ID <id>` per catalog entry, exit 0.
+//
+// `TOKAMAK_GTK_DEMO` always wins. The Dockerfile CMD supplies `--list` as the default
+// arg, but that arg is irrelevant when `TOKAMAK_GTK_DEMO` is set: the isEmpty check
+// exits first, so a non-empty env var is never overridden by CMD's `--list` flag.
+// When `TOKAMAK_GTK_DEMO` is not set the binary falls into list mode regardless of
+// whether `--list` was passed, so no separate `--list` check is needed.
 
-let args = CommandLine.arguments
 let env = ProcessInfo.processInfo.environment
 
 func runListMode() {
@@ -108,15 +112,9 @@ func runListMode() {
   exit(0)
 }
 
-// Precedence: an explicit `TOKAMAK_GTK_DEMO=<id>` ALWAYS selects render mode, even if a
-// stale `TOKAMAK_GTK_LIST=1` is inherited from the image ENV. Only fall back to list mode
-// when no entry is selected (or `--list` is passed explicitly).
 let wantedIDRaw = env["TOKAMAK_GTK_DEMO"] ?? ""
 if wantedIDRaw.isEmpty {
-  // Bare invocation or explicit list request: enumerate ids and exit 0 (non-interactive).
-  runListMode()  // exits
-}
-if args.contains("--list") {
+  // Bare invocation or Dockerfile CMD default (`--list` arg with no TOKAMAK_GTK_DEMO).
   runListMode()  // exits
 }
 let wantedID = wantedIDRaw
