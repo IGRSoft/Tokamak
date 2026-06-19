@@ -256,9 +256,24 @@ run_wasm() {
 
 run_gtk() {
   echo "== gtk (best-effort) =="
+  # gtk-docker.sh builds Dockerfile.gtk, captures one PNG per supported demo, and
+  # ALWAYS exits 0 (Docker-absent -> SKIPPED.md; build-fail -> UNSUPPORTED.md; capture
+  # -> removes SKIPPED.md). It must never block the must-pass mac/web/ios subset.
   bash Scripts/screenshots/gtk-docker.sh || true
   local n; n=$(png_count screenshots/gtk)
-  record gtk "$([ "$n" -gt 0 ] && echo PARTIAL || echo SKIP)" "$n"
+  # Honest accounting (AR Decision 5):
+  #   n>0                          -> PARTIAL n (real captures; never FAIL).
+  #   n==0 and SKIPPED.md present  -> SKIP 0   (Docker absent / build failed / no window).
+  #   n==0 and no SKIPPED.md       -> PARTIAL 0 (attempted but captured nothing).
+  local status
+  if [ "$n" -gt 0 ]; then
+    status=PARTIAL
+  elif [ -f screenshots/gtk/SKIPPED.md ]; then
+    status=SKIP
+  else
+    status=PARTIAL
+  fi
+  record gtk "$status" "$n"
 }
 
 [ $# -ge 1 ] || { echo "usage: $0 <web|mac|ios|wasm|gtk|all>..."; exit 64; }

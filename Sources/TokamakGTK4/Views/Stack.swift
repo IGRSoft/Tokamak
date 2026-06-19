@@ -32,13 +32,12 @@ struct Box<Content: View>: View, ParentView, AnyWidget, StackProtocol {
   let expand = true
 
   func new(_ application: UnsafeMutablePointer<GtkApplication>) -> UnsafeMutablePointer<GtkWidget> {
-    let grid = gtk_grid_new()!
-    gtk_orientable_set_orientation(OpaquePointer(grid), orientation)
-    grid.withMemoryRebound(to: GtkGrid.self, capacity: 1) {
-      gtk_grid_set_row_spacing($0, UInt32(spacing))
-      gtk_grid_set_column_spacing($0, UInt32(spacing))
-    }
-    return grid
+    // GTK4: a real `GtkBox` (not a `GtkGrid`). The renderer's mount path appends children
+    // with `gtk_box_append`, which asserts `GTK_IS_BOX` — a grid is NOT a box, so the old
+    // `gtk_grid_new()` produced the `GTK_IS_BOX (box) failed` runtime warnings and detached
+    // every child (empty windows). `gtk_box_new(orientation, spacing)` is the GTK4 form.
+    let box = gtk_box_new(orientation, Int32(spacing))!
+    return box
   }
 
   func update(widget: Widget) {}

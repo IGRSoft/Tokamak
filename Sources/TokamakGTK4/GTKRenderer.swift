@@ -23,7 +23,7 @@ extension EnvironmentValues {
   /// Returns default settings for the GTK environment
   static var defaultEnvironment: Self {
     var environment = EnvironmentValues()
-    environment[_ColorSchemeKey] = .light
+    environment[_ColorSchemeKey.self] = .light // subscript takes the EnvironmentKey metatype (matches DOM/StaticHTML)
     // environment._defaultAppStorage = LocalStorage.standard
     // _DefaultSceneStorageProvider.default = SessionStorage.standard
 
@@ -34,13 +34,15 @@ extension EnvironmentValues {
 final class GTKRenderer: Renderer {
   private(set) var reconciler: StackReconciler<GTKRenderer>?
   private var gtkAppRef: UnsafeMutablePointer<GtkApplication>
-  static var sharedWindow: UnsafeMutablePointer<GtkWidget>!
+  // GTK is single-threaded (all access is on the GLib main loop), so the mutable
+  // static is safe; `nonisolated(unsafe)` satisfies Swift 6 strict concurrency.
+  nonisolated(unsafe) static var sharedWindow: UnsafeMutablePointer<GtkWidget>!
 
   init<A: App>(
     _ app: A,
     _ rootEnvironment: EnvironmentValues? = nil
   ) {
-    gtkAppRef = gtk_application_new(nil, G_APPLICATION_DEFAULT_FLAGS)
+    gtkAppRef = gtk_application_new(nil, G_APPLICATION_FLAGS_NONE) // jammy GLib 2.72: DEFAULT_FLAGS (2.74+) absent
 
     gtkAppRef.withMemoryRebound(to: GApplication.self, capacity: 1) { gApp in
       gApp.connect(signal: "activate") {
@@ -59,9 +61,15 @@ final class GTKRenderer: Renderer {
           environment: .defaultEnvironment.merging(rootEnvironment),
           renderer: self,
           scheduler: { next in
+            // GTK is single-threaded on the GLib main loop; DispatchQueue.main runs on
+            // that same thread, so sending these non-Sendable captures is safe. Launder
+            // them through nonisolated(unsafe) locals to satisfy Swift 6 (AR-predicted
+            // #SendingRisksDataRace on the @convention(c)-adjacent scheduler closure).
+            nonisolated(unsafe) let nextUnsafe = next
+            nonisolated(unsafe) let windowUnsafe = window
             DispatchQueue.main.async {
-              next()
-              gtk_widget_show(window)
+              nextUnsafe()
+              gtk_widget_show(windowUnsafe)
             }
           }
         )
@@ -106,16 +114,26 @@ final class GTKRenderer: Renderer {
       widget = ctor(app)
     case let .widget(parentWidget):
       widget = ctor(gtkAppRef)
-      parentWidget.withMemoryRebound(to: GtkBox.self, capacity: 1) {
-        // gtk_container_add($0, widget)
-        gtk_box_append($0, widget)
-        if let stack = mapAnyView(parent.view, transform: { (view: StackProtocol) in view }) {
-          gtk_widget_set_valign(widget, stack.alignment.vertical.gtkValue)
-          gtk_widget_set_halign(widget, stack.alignment.horizontal.gtkValue)
-          if anyWidget.expand {
-            gtk_widget_set_hexpand(widget, gboolean(1))
-            gtk_widget_set_vexpand(widget, gboolean(1))
-          }
+      // GTK4 attach is parent-type-specific (NOT the GTK3 `gtk_container_add` for all):
+      //  * a `GtkWindow` (the root SceneContainerView) holds exactly ONE child via
+      //    `gtk_window_set_child` — calling `gtk_box_append` on a window asserts
+      //    `GTK_IS_BOX` and detaches the child (the empty-window bug).
+      //  * a `GtkBox` (VStack/HStack, now real boxes) appends via `gtk_box_append`.
+      if parentWidget.isWindow() {
+        parentWidget.withMemoryRebound(to: GtkWindow.self, capacity: 1) {
+          gtk_window_set_child($0, widget)
+        }
+      } else {
+        parentWidget.withMemoryRebound(to: GtkBox.self, capacity: 1) {
+          gtk_box_append($0, widget)
+        }
+      }
+      if let stack = mapAnyView(parent.view, transform: { (view: StackProtocol) in view }) {
+        gtk_widget_set_valign(widget, stack.alignment.vertical.gtkValue)
+        gtk_widget_set_halign(widget, stack.alignment.horizontal.gtkValue)
+        if anyWidget.expand {
+          gtk_widget_set_hexpand(widget, gboolean(1))
+          gtk_widget_set_vexpand(widget, gboolean(1))
         }
       }
     }
