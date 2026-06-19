@@ -132,6 +132,8 @@
 		L10N0000000000000000B002 /* LocalizationDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = L10N0000000000000000F001 /* LocalizationDemo.swift */; };
 		L10N0000000000000000B003 /* Localizations.swift in Sources */ = {isa = PBXBuildFile; fileRef = L10N0000000000000000F002 /* Localizations.swift */; };
 		L10N0000000000000000B004 /* Localizations.swift in Sources */ = {isa = PBXBuildFile; fileRef = L10N0000000000000000F002 /* Localizations.swift */; };
+		L10N0000000000000000B005 /* Localizations.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = L10N0000000000000000F003 /* Localizations.generated.swift */; };
+		L10N0000000000000000B006 /* Localizations.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = L10N0000000000000000F003 /* Localizations.generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -241,6 +243,7 @@
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* DynamicListDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DynamicListDemo.swift; sourceTree = "<group>"; };
 		L10N0000000000000000F001 /* LocalizationDemo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalizationDemo.swift; sourceTree = "<group>"; };
 		L10N0000000000000000F002 /* Localizations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizations.swift; sourceTree = "<group>"; };
+		L10N0000000000000000F003 /* Localizations.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Localizations.generated.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -436,6 +439,7 @@
 			isa = PBXGroup;
 			children = (
 				L10N0000000000000000F002 /* Localizations.swift */,
+				L10N0000000000000000F003 /* Localizations.generated.swift */,
 			);
 			path = Localization;
 			sourceTree = "<group>";
@@ -716,6 +720,7 @@
 				B2C3D4E5F6A7B8C9D0E1F2A4 /* DynamicListDemo.swift in Sources */,
 				L10N0000000000000000B001 /* LocalizationDemo.swift in Sources */,
 				L10N0000000000000000B003 /* Localizations.swift in Sources */,
+				L10N0000000000000000B005 /* Localizations.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -783,6 +788,7 @@
 				B2C3D4E5F6A7B8C9D0E1F2A5 /* DynamicListDemo.swift in Sources */,
 				L10N0000000000000000B002 /* LocalizationDemo.swift in Sources */,
 				L10N0000000000000000B004 /* Localizations.swift in Sources */,
+				L10N0000000000000000B006 /* Localizations.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

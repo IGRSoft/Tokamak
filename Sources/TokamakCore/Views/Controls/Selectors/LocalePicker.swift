@@ -63,7 +63,11 @@ public struct LocalePicker: View {
   public var body: some View {
     Picker(
       selection: Binding(
-        get: { locale },
+        // Region-fold the current locale to a bare language code so that a locale carrying
+        // a region variant (e.g. en_US) highlights the matching option tag (e.g. "en").
+        // Without folding, en_US != en and no option appears selected. Resolution and the
+        // apply action are unchanged — only the display/match comparison is folded. (REQ-6)
+        get: { Locale(identifier: LocalizationCatalog.languageCode(for: locale)) },
         set: { localeAction.apply($0) }
       ),
       label: Text("menu.localization.title")

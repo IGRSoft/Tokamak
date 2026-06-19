@@ -24,39 +24,72 @@ import TokamakShim
 /// backed by `LocalizationCatalog.shared`. On the SwiftUI host build it falls back to
 /// a native `Picker` over the two registered locales so the macOS screenshot gallery
 /// still shows a meaningful preview.
+///
+/// The SwiftUI branch resolves translatable strings via `LocalizationCatalog.shared`
+/// (populated by `registerDemoLocalizations()` at startup) so that the screenshot harness
+/// sees Ukrainian text when `\.locale` is pinned to `uk` — regardless of whether
+/// `Bundle.module` resolves under `ImageRenderer`.
 public struct LocalizationDemo: View {
   public init() {}
 
   #if canImport(SwiftUI)
+  @Environment(\.locale) private var locale
   @State private var localeID: String = "en"
   private let localeIDs = ["en", "uk"]
   #endif
 
   public var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text("Localization")
-        .font(.title)
-
-      Text(
-        "Switch the app language. On the web the page reloads with the new language."
-      )
-      .foregroundColor(.secondary)
-
       #if !canImport(SwiftUI)
+        Text("Localization")
+          .font(.title)
+
+        Text(
+          "Switch the app language. On the web the page reloads with the new language."
+        )
+        .foregroundColor(.secondary)
+
         LocalePicker()
       #else
+        // SwiftUI host (macOS + iOS): resolve via the generated tables keyed on the
+        // environment locale. `_demoUILocalized` needs neither TokamakCore nor `Bundle`,
+        // so it compiles in the NativeDemo iOS Xcode project and renders Ukrainian under
+        // ImageRenderer when `\.locale` is pinned to uk.
+        Text(verbatim: _demoUILocalized("Localization", locale: locale))
+          .font(.title)
+
+        Text(verbatim: _demoUILocalized(
+          "Switch the app language. On the web the page reloads with the new language.",
+          locale: locale
+        ))
+        .foregroundColor(.secondary)
+
         Picker(
           selection: $localeID,
-          label: Text("menu.localization.title")
+          label: Text(verbatim: _demoUILocalized("menu.localization.title", locale: locale))
         ) {
           ForEach(localeIDs, id: \.self) { id in
-            Text(id).tag(id)
+            Text(verbatim: id).tag(id)
           }
         }
         .pickerStyle(.menu)
-        .environment(\.locale, Locale(identifier: localeID))
       #endif
     }
     .padding()
   }
 }
+
+#if canImport(SwiftUI)
+  import Foundation
+
+  /// Resolves a demo UI string for the SwiftUI screenshot path (macOS host + iOS NativeDemo),
+  /// region-folding `locale` to a bare language code and reading the generated tables that are
+  /// derived from `Localizable.xcstrings` (the single source of truth). Depends on neither
+  /// TokamakCore nor `Bundle`, so it compiles in the NativeDemo Xcode project (which links no
+  /// TokamakCore) and resolves correctly under `ImageRenderer` (where `Bundle.module` does not).
+  func _demoUILocalized(_ key: String, locale: Locale) -> String {
+    let code = locale.identifier.lowercased().hasPrefix("uk") ? "uk" : "en"
+    let table = code == "uk" ? _GeneratedDemoLocalizations.uk : _GeneratedDemoLocalizations.en
+    return table[key] ?? key
+  }
+#endif

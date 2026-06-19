@@ -48,6 +48,11 @@ func pngDimensions(_ data: Data) -> (Int, Int)? {
 
 @MainActor
 func run() -> Int32 {
+  // Populate LocalizationCatalog.shared before any rendering so that
+  // FallbackLocalizationDemo (and any other catalog-resolve path) can resolve
+  // strings deterministically without depending on Bundle.module.
+  registerDemoLocalizations()
+
   let fm = FileManager.default
   let repoRoot = fm.currentDirectoryPath
   let webDir = "\(repoRoot)/screenshots/web"

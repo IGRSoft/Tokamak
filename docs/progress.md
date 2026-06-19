@@ -2,7 +2,7 @@
 
 ## Project Milestones
 
-- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (52 entries as of string-catalog localization) to PNG galleries on macOS, web, iOS, and wasm. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. Gallery PNG counts will be finalized when FN0 regenerates (task #8): exact counts depend on which demos are skipped on each platform due to offscreen-rasterization limits. The new `Misc/Localization` demo entry (LocalePicker switcher with en/uk catalogs) is cataloged and will be included in the next regeneration.
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (52 entries as of string-catalog localization) to PNG galleries on macOS, web, iOS, and wasm. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. Galleries: macOS 41, web 41, iOS 41 (must-pass), wasm 51 and gtk 26 (best-effort). The `Misc/Localization` demo (LocalePicker switcher; en/uk catalogs) is captured pinned to `uk`, so its gallery image renders Ukrainian on mac/web/iOS; wasm/gtk best-effort.
 
 ## Views and Controls
 
@@ -478,20 +478,21 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
 
 | Status | Demo | DOM | SSR | wasm | GTK4 | Notes |
 | :-: | --- | :-: | :-: | :-: | :-: | --- |
-| ✅ | Localization | ✅ | ✅ | ✅ | ◑ | `LocalePicker` locale switcher; DOM persists to `localStorage`; en/uk demo catalogs registered; GTK4 builds (Picker support) |
+| ✅ | Localization | ✅ | ✅ | ✅ | ◑ | Single `.xcstrings` source, build-time codegen (`Localizations.generated.swift`), runtime `LocalePicker` switcher (DOM persists to `localStorage`), en/uk catalogs, GTK4 best-effort |
 
 **Notes on Localization:**
-- ✅ **Native string-catalog localization** — ``LocalizedStringKey`` type + localized `Text(_:)` initializer + ``LocalizationCatalog`` registry + ``LocalePicker`` control.
-- Catalog is a synchronous, in-memory registry (`[String: String]` tables per locale) with three-tier fallback: active locale → development language (`en`) → raw key.
-- Resolution happens at render time via `_TextProxy.rawText(in: environment)` so all renderers (StaticHTML, DOM, GTK4) resolve localized strings identically.
-- ``LocalePicker`` title is driven by the `menu.localization.title` catalog key; DOM implementation persists locale choice to `localStorage` and sets `<html lang>` before reload; native/SSR renderers apply in-memory state update (no full-page reload).
-- Known limitation: native SwiftUI runtime resolution of library strings (via `.module` bundle) is incompatible with Tokamak's cross-platform `Text` interface and is deferred to a follow-up.
+- ✅ **Single source of truth:** `Sources/TokamakDemo/Resources/Localizable.xcstrings` is the authoritative store of demo localizations (en + uk). Hand-maintained table file retired. `Scripts/gen-localizations.sh` parses `.xcstrings` → generates `Localizations.generated.swift` (in-memory `LocalizationCatalog` registration for Tokamak renderers). Native SwiftUI consumes the same `.xcstrings` via SwiftPM `defaultLocalization: "en"` + `.process` resource.
+- ✅ **Build-time codegen:** `gen-localizations.sh` emits a deterministic, idempotent `Localizations.generated.swift` file (181 en/uk key pairs (after removing 8 symbol-hostile identity keys)). Run `gen-localizations.sh --check` to verify freshness; integrated into `Scripts/screenshots/generate.sh` pre-step.
+- ✅ **Native SwiftUI resolution:** `Text(LocalizedStringKey)` in the TokamakDemo library resolves against `Bundle.module` (via the `demoLocalized(_:)` helper) on mac/ios, picking up the processed `.xcstrings` catalog at screenshot time.
+- ✅ **LocalePicker runtime switching (Fiber path fixed):** `DOMFiberRenderer.defaultEnvironment` now seeds `\.locale` + `_localeAction` (was a no-op before). DOM apply chain: `localStorage["tokamak.locale"]` → `<html lang>` → `window.location.reload()`. Region-folded locale matching: `en_US` current locale correctly highlights the `en` option tag.
+- ✅ **Localized screenshots:** The `Misc/Localization` demo capture is pinned to `\.locale = uk`, so the regenerated gallery shows Ukrainian strings. All other demo entries stay English.
+- ℹ️ **Known gap (best-effort):** GTK renderer has no `TOKAMAK_LOCALE` env var hook; GTK Localization capture defaults to en. Per-key constraints: symbol-hostile keys (`+ − → ▾` and emoji operators) cannot appear in `.xcstrings` — use `Text(verbatim:)` for these strings instead; see `CONTRIBUTING.md` "Editing Localizations" for details.
 
 **Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
 
 | Demo | mac | web | ios | wasm |
 | --- | :-: | :-: | :-: | :-: |
-| Localization | (FN pending) | (FN pending) | (FN pending) | (FN pending) |
+| Localization | ✅ uk | ✅ uk | ✅ uk | ◑ en (best-effort) |
 
 ## View Modifiers
 

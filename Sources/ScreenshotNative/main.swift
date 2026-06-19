@@ -35,6 +35,10 @@ private func md5Hex(_ data: Data) -> String {
 @available(macOS 13.0, *)
 @MainActor
 func run() -> Int32 {
+  // Populate LocalizationCatalog.shared before any rendering so that
+  // FallbackLocalizationDemo (and any other catalog-resolve path) can resolve
+  // strings deterministically without depending on Bundle.module.
+  registerDemoLocalizations()
   let repoRoot = FileManager.default.currentDirectoryPath
   let macDir = URL(fileURLWithPath: "\(repoRoot)/screenshots/mac", isDirectory: true)
 

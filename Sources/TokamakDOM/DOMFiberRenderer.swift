@@ -121,6 +121,10 @@ public struct DOMFiberRenderer: FiberRenderer {
     environment[_ColorSchemeKey.self] = .light
     environment._defaultAppStorage = LocalStorage.standard
     _DefaultSceneStorageProvider.default = SessionStorage.standard
+    // Seed \.locale (recovered from localStorage / navigator.language / "en") and
+    // _localeAction (.dom) so LocalePicker runtime switching works on the Fiber path
+    // exactly as it already does on the stack DOMRenderer path. (REQ-5)
+    DOMLocaleSeeding.seed(into: &environment)
     return environment
   }
 

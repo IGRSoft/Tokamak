@@ -504,7 +504,7 @@ public func demoCaptureWrapped(_ entry: DemoEntry, size: CGSize) -> AnyView {
   let content: AnyView = entry.usesStaticControlFallback
     ? AnyView(staticControlFallbackView(for: entry))
     : entry.view
-  return AnyView(
+  var wrapped = AnyView(
     demoRootEnvironment(content)
       .frame(maxWidth: size.width, alignment: .top)
       // DV2: signal capture mode to the whole subtree so demos can swap an
@@ -512,6 +512,14 @@ public func demoCaptureWrapped(_ entry: DemoEntry, size: CGSize) -> AnyView {
       // mock. The live app never goes through this wrapper, so it is unaffected.
       .environment(\.demoCaptureMode, true)
   )
+  // S6 uk-pin: the Localization demo is captured in Ukrainian to showcase l10n;
+  // the rest of the gallery stays at the default locale (en). This is a
+  // capture-path-only concern — the live app is never routed through this wrapper,
+  // so the on-screen picker behavior is unaffected.
+  if entry.id == "Misc/Localization" {
+    wrapped = AnyView(wrapped.environment(\.locale, Locale(identifier: "uk")))
+  }
+  return wrapped
 }
 
 // MARK: - Group-B T11: capture-path-only control fallbacks
@@ -1015,20 +1023,40 @@ struct FallbackVSplitViewDemo: View {
 /// Mirrors `LocalizationDemo`: heading, body text, and a static language-picker
 /// affordance — the pure-SwiftUI stand-in used by the screenshot harness because
 /// the real Picker/LocalePicker lowers to an AppKit NSPopUpButton offscreen.
+///
+/// On macOS, translatable strings resolve via `demoCatalogResolved` (backed by
+/// `LocalizationCatalog.shared`, populated at screenshot-executor startup via
+/// `registerDemoLocalizations()`) so the uk-pinned capture shows Ukrainian text when
+/// `\.locale` is set to `uk` — regardless of whether `Bundle.module` resolves under
+/// `ImageRenderer`. On iOS, `Bundle.module` is available in the NativeDemo Xcode project
+/// so `demoLocalized` (the bundle-based helper) is used directly.
+/// Identity strings (`"en"` and `"▾"`) remain verbatim.
 struct FallbackLocalizationDemo: View {
+  @Environment(\.locale) private var locale
+
   var body: some View {
+    // Resolve via the generated tables (single source: Localizable.xcstrings) using the
+    // environment locale. `_demoUILocalized` depends on neither TokamakCore nor `Bundle`,
+    // so it works under SwiftUI `ImageRenderer` (mac/web) AND the NativeDemo iOS Xcode
+    // project. The capture pins `\.locale = uk` for this demo, so the gallery renders Ukrainian.
+    let titleText = _demoUILocalized("Localization", locale: locale)
+    let bodyText = _demoUILocalized(
+      "Switch the app language. On the web the page reloads with the new language.",
+      locale: locale
+    )
+    let langLabel = _demoUILocalized("Language", locale: locale)
     VStack(alignment: .leading, spacing: 16) {
-      Text("Localization")
+      Text(verbatim: titleText)
         .font(.title)
-      Text("Switch the app language. On the web the page reloads with the new language.")
+      Text(verbatim: bodyText)
         .foregroundColor(.secondary)
       // Static stand-in for the Picker / LocalePicker: label + chevron in a bordered pill.
       HStack(spacing: 6) {
-        Text("Language")
+        Text(verbatim: langLabel)
         Spacer()
         HStack(spacing: 6) {
-          Text("en")
-          Text("▾")
+          Text(verbatim: "en")
+          Text(verbatim: "▾")
             .foregroundColor(.secondary)
         }
         .padding(.horizontal, 10)
