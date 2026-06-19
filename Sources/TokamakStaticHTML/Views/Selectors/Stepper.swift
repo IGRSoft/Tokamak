@@ -32,10 +32,10 @@ extension Stepper: _HTMLPrimitive {
         proxy.label
         HTML("div", ["class": "_tokamak-stepper"]) {
           HTML("button", ["class": "_tokamak-stepper-button"]) {
-            Text("−")
+            Text(verbatim: "−")
           }
           HTML("button", ["class": "_tokamak-stepper-button"]) {
-            Text("+")
+            Text(verbatim: "+")
           }
         }
       }

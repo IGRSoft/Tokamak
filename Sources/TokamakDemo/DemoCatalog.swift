@@ -258,6 +258,8 @@ private func buildDemoCatalog() -> [DemoEntry] {
   if #available(OSX 11.0, iOS 14.0, *) {
     c.append(DemoEntry(section: "Misc", name: "Redaction", view: RedactionDemo()))
   } // else: was NavItem(unavailable:) — omitted from catalog.
+  c.append(DemoEntry(section: "Misc", name: "Localization", view: LocalizationDemo(),
+                     usesStaticControlFallback: true))
 
   // MARK: TokamakDOM  (WASI-only — compiles out everywhere else)
 
@@ -568,6 +570,8 @@ func staticControlFallbackView(for entry: DemoEntry) -> some View {
     FallbackHSplitViewDemo()
   case "Architectural/VSplitView":
     FallbackVSplitViewDemo()
+  case "Misc/Localization":
+    FallbackLocalizationDemo()
   default:
     EmptyView()
   }
@@ -1004,6 +1008,34 @@ struct FallbackVSplitViewDemo: View {
     }
     .frame(maxWidth: .infinity)
     .overlay(Rectangle().stroke(Color.gray.opacity(0.4)))
+    .padding()
+  }
+}
+
+/// Mirrors `LocalizationDemo`: heading, body text, and a static language-picker
+/// affordance — the pure-SwiftUI stand-in used by the screenshot harness because
+/// the real Picker/LocalePicker lowers to an AppKit NSPopUpButton offscreen.
+struct FallbackLocalizationDemo: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Localization")
+        .font(.title)
+      Text("Switch the app language. On the web the page reloads with the new language.")
+        .foregroundColor(.secondary)
+      // Static stand-in for the Picker / LocalePicker: label + chevron in a bordered pill.
+      HStack(spacing: 6) {
+        Text("Language")
+        Spacer()
+        HStack(spacing: 6) {
+          Text("en")
+          Text("▾")
+            .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(RoundedRectangle(cornerRadius: 6).stroke(Color.gray))
+      }
+    }
     .padding()
   }
 }

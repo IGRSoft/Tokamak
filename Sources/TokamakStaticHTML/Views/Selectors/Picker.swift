@@ -30,7 +30,7 @@ extension _PickerContainer: _HTMLPrimitive {
   public var renderedBody: AnyView {
     AnyView(HTML("label") {
       label
-      Text(" ")
+      Text(verbatim: " ")
       HTML("select", ["class": "_tokamak-formcontrol"]) {
         content
       }

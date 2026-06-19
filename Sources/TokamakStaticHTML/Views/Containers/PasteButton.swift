@@ -28,7 +28,7 @@ extension _PasteButtonContainer: _HTMLPrimitive {
   @ViewBuilder
   private var staticBody: some View {
     HTML("button", ["class": "_tokamak-pastebutton"]) {
-      Text("Paste")
+      Text(verbatim: "Paste")
     }
   }
 }
@@ -54,7 +54,7 @@ extension _PasteButtonContainer: HTMLConvertible {
   @_spi(TokamakStaticHTML)
   public func primitiveVisitor<V: ViewVisitor>(useDynamicLayout: Bool) -> ((V) -> ())? {
     { visitor in
-      visitor.visit(Text("Paste"))
+      visitor.visit(Text(verbatim: "Paste"))
     }
   }
 }

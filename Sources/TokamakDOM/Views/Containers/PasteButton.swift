@@ -52,7 +52,7 @@ extension _PasteButtonContainer: DOMPrimitive {
         },
       ]
     ) {
-      Text("Paste")
+      Text(verbatim: "Paste")
     })
   }
 }

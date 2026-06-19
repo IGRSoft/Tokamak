@@ -103,6 +103,8 @@ struct GTKDemoApp: App {
 // When `TOKAMAK_GTK_DEMO` is not set the binary falls into list mode regardless of
 // whether `--list` was passed, so no separate `--list` check is needed.
 
+registerDemoLocalizations()
+
 let env = ProcessInfo.processInfo.environment
 
 func runListMode() {

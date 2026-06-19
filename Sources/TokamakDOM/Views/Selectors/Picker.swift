@@ -23,7 +23,7 @@ extension _PickerContainer: DOMPrimitive {
   var renderedBody: AnyView {
     AnyView(HTML("label") {
       label
-      Text(" ")
+      Text(verbatim: " ")
       DynamicHTML("select", ["class": "_tokamak-formcontrol"], listeners: ["change": {
         guard
           let valueString = $0.target.object!.value.string,

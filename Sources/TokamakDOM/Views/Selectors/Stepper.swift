@@ -31,14 +31,14 @@ extension Stepper: DOMPrimitive {
             ["class": "_tokamak-stepper-button"],
             listeners: ["pointerup": { _ in proxy.onDecrement?() }]
           ) {
-            Text("−")
+            Text(verbatim: "−")
           }
           DynamicHTML(
             "button",
             ["class": "_tokamak-stepper-button"],
             listeners: ["pointerup": { _ in proxy.onIncrement?() }]
           ) {
-            Text("+")
+            Text(verbatim: "+")
           }
         }
       }

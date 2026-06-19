@@ -138,7 +138,7 @@ final class VisitorTests: XCTestCase {
         var values
 
         var body: some View {
-          Text("\(values[TestKey.self])")
+          Text(verbatim: "\(values[TestKey.self])")
             .identified(by: DynamicPropertyTest.environment)
         }
       }
@@ -173,7 +173,7 @@ final class VisitorTests: XCTestCase {
           var count: Count
 
           var body: some View {
-            Text("\(count.count)")
+            Text(verbatim: "\(count.count)")
               .identified(by: DynamicPropertyTest.observedObject)
           }
         }
@@ -183,7 +183,7 @@ final class VisitorTests: XCTestCase {
           var count: Count
 
           var body: some View {
-            Text("\(count.count)")
+            Text(verbatim: "\(count.count)")
               .identified(by: DynamicPropertyTest.environmentObject)
           }
         }
@@ -192,16 +192,16 @@ final class VisitorTests: XCTestCase {
 
     let reconciler = TestFiberRenderer(.root, size: .zero).render(TestView())
 
-    // State
+    // State (labels come from runtime-interpolated values → verbatim storage).
     let button = reconciler.findView(id: DynamicPropertyTest.state, as: Button<Text>.self)
-    XCTAssertEqual(button.label, Text("0"))
+    XCTAssertEqual(button.label, Text(verbatim: "0"))
     button.tap()
-    XCTAssertEqual(button.label, Text("1"))
+    XCTAssertEqual(button.label, Text(verbatim: "1"))
 
     // Environment
     XCTAssertEqual(
       reconciler.findView(id: DynamicPropertyTest.environment).view,
-      Text("5")
+      Text(verbatim: "5")
     )
 
     // StateObject
@@ -209,18 +209,18 @@ final class VisitorTests: XCTestCase {
       id: DynamicPropertyTest.stateObject,
       as: Button<Text>.self
     )
-    XCTAssertEqual(stateObjectButton.label, Text("0"))
+    XCTAssertEqual(stateObjectButton.label, Text(verbatim: "0"))
     stateObjectButton.tap()
-    XCTAssertEqual(stateObjectButton.label, Text("5"))
+    XCTAssertEqual(stateObjectButton.label, Text(verbatim: "5"))
 
     XCTAssertEqual(
       reconciler.findView(id: DynamicPropertyTest.observedObject).view,
-      Text("5")
+      Text(verbatim: "5")
     )
 
     XCTAssertEqual(
       reconciler.findView(id: DynamicPropertyTest.environmentObject).view,
-      Text("5")
+      Text(verbatim: "5")
     )
   }
 }

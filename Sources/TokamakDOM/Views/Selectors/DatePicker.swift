@@ -39,7 +39,7 @@ extension DatePicker: DOMPrimitive {
     return AnyView(
       HStack {
         proxy.label
-        Text(" ")
+        Text(verbatim: " ")
         DynamicHTML(
           "input",
           attributes,

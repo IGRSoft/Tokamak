@@ -30,7 +30,8 @@ private struct Counter: View {
     if count < limit {
       VStack {
         Button("Increment") { count += 1 }
-        Text("\(count)")
+        // Runtime-interpolated value: stays verbatim (not a localization key).
+        Text(verbatim: "\(count)")
       }
     } else {
       VStack { Text("Limit exceeded") }

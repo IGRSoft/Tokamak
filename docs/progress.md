@@ -2,7 +2,7 @@
 
 ## Project Milestones
 
-- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (51 entries) to PNG galleries on macOS (40), web (40), iOS (40), and wasm (51 — all entries, incl. the 11 window/scroll-context demos that native/web cannot rasterize). Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery fixed in [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode project updated to include all 14 missing demo files added since #28; verified: 39 PNGs, `[verify] OK` — no blanks, no nosign placeholders, no unexpected duplicates). Extended to 51 entries (ImageDemo + DynamicListDemo); iOS updated to 40 PNGs.
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (52 entries as of string-catalog localization) to PNG galleries on macOS, web, iOS, and wasm. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. Gallery PNG counts will be finalized when FN0 regenerates (task #8): exact counts depend on which demos are skipped on each platform due to offscreen-rasterization limits. The new `Misc/Localization` demo entry (LocalePicker switcher with en/uk catalogs) is cataloged and will be included in the next regeneration.
 
 ## Views and Controls
 
@@ -473,6 +473,25 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
 | Preferences | ![Preferences (mac)](../screenshots/mac/Preferences.png) | ![Preferences (web)](../screenshots/web/Preferences.png) | ![Preferences (ios)](../screenshots/ios/Preferences.png) | ![Preferences (wasm)](../screenshots/wasm/Preferences.png) |
 | AppStorage | ![AppStorage (mac)](../screenshots/mac/AppStorage.png) | ![AppStorage (web)](../screenshots/web/AppStorage.png) | ![AppStorage (ios)](../screenshots/ios/AppStorage.png) | ![AppStorage (wasm)](../screenshots/wasm/AppStorage.png) |
 | Redaction | ![Redaction (mac)](../screenshots/mac/Redaction.png) | ![Redaction (web)](../screenshots/web/Redaction.png) | ![Redaction (ios)](../screenshots/ios/Redaction.png) | ![Redaction (wasm)](../screenshots/wasm/Redaction.png) |
+
+### Localization
+
+| Status | Demo | DOM | SSR | wasm | GTK4 | Notes |
+| :-: | --- | :-: | :-: | :-: | :-: | --- |
+| ✅ | Localization | ✅ | ✅ | ✅ | ◑ | `LocalePicker` locale switcher; DOM persists to `localStorage`; en/uk demo catalogs registered; GTK4 builds (Picker support) |
+
+**Notes on Localization:**
+- ✅ **Native string-catalog localization** — ``LocalizedStringKey`` type + localized `Text(_:)` initializer + ``LocalizationCatalog`` registry + ``LocalePicker`` control.
+- Catalog is a synchronous, in-memory registry (`[String: String]` tables per locale) with three-tier fallback: active locale → development language (`en`) → raw key.
+- Resolution happens at render time via `_TextProxy.rawText(in: environment)` so all renderers (StaticHTML, DOM, GTK4) resolve localized strings identically.
+- ``LocalePicker`` title is driven by the `menu.localization.title` catalog key; DOM implementation persists locale choice to `localStorage` and sets `<html lang>` before reload; native/SSR renderers apply in-memory state update (no full-page reload).
+- Known limitation: native SwiftUI runtime resolution of library strings (via `.module` bundle) is incompatible with Tokamak's cross-platform `Text` interface and is deferred to a follow-up.
+
+**Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
+
+| Demo | mac | web | ios | wasm |
+| --- | :-: | :-: | :-: | :-: |
+| Localization | (FN pending) | (FN pending) | (FN pending) | (FN pending) |
 
 ## View Modifiers
 

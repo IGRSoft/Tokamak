@@ -16,6 +16,7 @@
 //
 
 #if canImport(JavaScriptKit)
+import Foundation
 import JavaScriptEventLoop
 import JavaScriptKit
 import OpenCombineJS
@@ -36,6 +37,16 @@ extension EnvironmentValues {
     environment.colorScheme = .init(matchMediaDarkScheme: matchMediaDarkScheme)
     environment._defaultAppStorage = LocalStorage.standard
     _DefaultSceneStorageProvider.default = SessionStorage.standard
+
+    // Recover the active locale: stored choice (localStorage) wins, then the browser language,
+    // then the development language. The region/script is stripped to the bare language code.
+    let storedCode = JSObject.global.localStorage.object?.getItem!("tokamak.locale").string
+    let browserLang = JSObject.global.navigator.object?.language.string
+    let rawCode = storedCode ?? browserLang ?? "en"
+    let localeCode = rawCode.components(separatedBy: CharacterSet(charactersIn: "_-")).first ?? "en"
+    environment.locale = Locale(identifier: localeCode)
+    // Install the DOM apply action: localStorage + <html lang> + reload (see LocalePicker+DOM.swift).
+    environment._localeAction = .dom
 
     return environment
   }
