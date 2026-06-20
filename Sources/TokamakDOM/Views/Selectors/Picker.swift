@@ -40,11 +40,14 @@ extension _PickerContainer: DOMPrimitive {
 /// Renders a single picker choice as a DOM `<option>` element tagged with its selection index.
 extension _PickerElement: DOMPrimitive {
   var renderedBody: AnyView {
-    let attributes: [HTMLAttribute: String]
+    var attributes: [HTMLAttribute: String] = [:]
     if let value = valueIndex {
-      attributes = [.value: "\(value)"]
-    } else {
-      attributes = [:]
+      attributes[.value] = "\(value)"
+    }
+    // Reflect the binding: mark the selected `<option>` so the `<select>` shows the current
+    // value (and so selecting a *different* option produces a `change` event).
+    if isSelected {
+      attributes[HTMLAttribute("selected", isUpdatedAsProperty: true)] = "selected"
     }
 
     return AnyView(HTML("option", attributes) {

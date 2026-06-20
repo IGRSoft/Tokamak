@@ -24,7 +24,12 @@ extension _LocaleAction {
   /// This closure is the anti-corruption seam: TokamakCore never references JavaScriptKit; the
   /// DOM renderer installs this action into the root environment (`DOMRenderer.defaultEnvironment`),
   /// and `LocalePicker` (Core) merely invokes `environment._localeAction.apply(...)`.
-  static let dom = _LocaleAction { locale in
+  ///
+  /// `nonisolated(unsafe)`: `_LocaleAction` is not `Sendable` (it wraps a plain closure), but the
+  /// DOM/Wasm runtime is single-threaded — this global is installed once at startup and only read
+  /// during rendering, never accessed concurrently. (Matches the pattern used by the other
+  /// renderer/environment globals, e.g. `LocalizationCatalog.shared`.)
+  nonisolated(unsafe) static let dom = _LocaleAction { locale in
     let code = LocalizationCatalog.languageCode(for: locale)
     _ = JSObject.global.localStorage.object?.setItem!("tokamak.locale", code)
     JSObject.global.document.object?.documentElement.object?.lang = .string(code)

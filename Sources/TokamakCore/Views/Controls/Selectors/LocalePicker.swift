@@ -61,19 +61,31 @@ public struct LocalePicker: View {
   public init() {}
 
   public var body: some View {
-    Picker(
+    // Tokamak's DOM `Picker` only round-trips an *Int* selection (its `<select>` change
+    // handler maps the chosen `<option>`'s positional value back through `Int(...) as?
+    // SelectionValue`). A `Picker` over `Locale` tags therefore never updates its binding on
+    // the web — the change is silently dropped — so the switch never fires. We bind an Int
+    // INDEX into the available locales instead (mirroring the working `PickerDemo`): the index
+    // round-trips, and the setter maps it back to the chosen `Locale` and invokes the
+    // renderer-supplied `_localeAction` (DOM: persist + `<html lang>` + reload). (REQ-2/REQ-6)
+    let locales = LocalizationCatalog.shared.availableLocales
+    let activeCode = LocalizationCatalog.languageCode(for: locale)
+    // Region-fold the active locale (e.g. en_US -> en) so the matching option is preselected.
+    let currentIndex = locales.firstIndex {
+      LocalizationCatalog.languageCode(for: $0) == activeCode
+    } ?? 0
+    return Picker(
       selection: Binding(
-        // Region-fold the current locale to a bare language code so that a locale carrying
-        // a region variant (e.g. en_US) highlights the matching option tag (e.g. "en").
-        // Without folding, en_US != en and no option appears selected. Resolution and the
-        // apply action are unchanged — only the display/match comparison is folded. (REQ-6)
-        get: { Locale(identifier: LocalizationCatalog.languageCode(for: locale)) },
-        set: { localeAction.apply($0) }
+        get: { currentIndex },
+        set: { index in
+          guard locales.indices.contains(index) else { return }
+          localeAction.apply(locales[index])
+        }
       ),
       label: Text("menu.localization.title")
     ) {
-      ForEach(LocalizationCatalog.shared.availableLocales, id: \.identifier) { loc in
-        Text(verbatim: Self.displayName(for: loc)).tag(loc)
+      ForEach(Array(locales.indices), id: \.self) { index in
+        Text(verbatim: Self.displayName(for: locales[index]))
       }
     }
   }

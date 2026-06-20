@@ -34,48 +34,56 @@ public struct LocalizationDemo: View {
 
   #if canImport(SwiftUI)
   @Environment(\.locale) private var locale
-  @State private var localeID: String = "en"
+  // The user's in-demo language choice. `nil` means "follow the environment locale" — which the
+  // screenshot harness pins to `uk`, so the gallery still renders Ukrainian. Selecting in the
+  // Picker sets this and re-renders the strings live (SwiftUI re-render; no reload on Apple).
+  @State private var override: String? = nil
   private let localeIDs = ["en", "uk"]
   #endif
 
   public var body: some View {
-    VStack(alignment: .leading, spacing: 16) {
-      #if !canImport(SwiftUI)
-        Text("Localization")
-          .font(.title)
+    #if canImport(SwiftUI)
+    // Effective language: the user's pick, else the (possibly screenshot-pinned) environment.
+    let code = override ?? (locale.identifier.lowercased().hasPrefix("uk") ? "uk" : "en")
+    let eff = Locale(identifier: code)
+    return VStack(alignment: .leading, spacing: 16) {
+      Text(verbatim: _demoUILocalized("Localization", locale: eff))
+        .font(.title)
 
-        Text(
-          "Switch the app language. On the web the page reloads with the new language."
-        )
-        .foregroundColor(.secondary)
+      Text(verbatim: _demoUILocalized(
+        "Switch the app language. On the web the page reloads with the new language.",
+        locale: eff
+      ))
+      .foregroundColor(.secondary)
 
-        LocalePicker()
-      #else
-        // SwiftUI host (macOS + iOS): resolve via the generated tables keyed on the
-        // environment locale. `_demoUILocalized` needs neither TokamakCore nor `Bundle`,
-        // so it compiles in the NativeDemo iOS Xcode project and renders Ukrainian under
-        // ImageRenderer when `\.locale` is pinned to uk.
-        Text(verbatim: _demoUILocalized("Localization", locale: locale))
-          .font(.title)
-
-        Text(verbatim: _demoUILocalized(
-          "Switch the app language. On the web the page reloads with the new language.",
-          locale: locale
-        ))
-        .foregroundColor(.secondary)
-
-        Picker(
-          selection: $localeID,
-          label: Text(verbatim: _demoUILocalized("menu.localization.title", locale: locale))
-        ) {
-          ForEach(localeIDs, id: \.self) { id in
-            Text(verbatim: id).tag(id)
-          }
+      // Native Picker: selecting a language updates `override`, which re-renders the strings
+      // above in that language (SwiftUI live re-render — the macOS/iOS equivalent of the web
+      // LocalePicker's reload).
+      Picker(
+        selection: Binding(get: { code }, set: { override = $0 }),
+        label: Text(verbatim: _demoUILocalized("menu.localization.title", locale: eff))
+      ) {
+        ForEach(localeIDs, id: \.self) { id in
+          Text(verbatim: id).tag(id)
         }
-        .pickerStyle(.menu)
-      #endif
+      }
+      .pickerStyle(.menu)
     }
     .padding()
+    #else
+    return VStack(alignment: .leading, spacing: 16) {
+      Text("Localization")
+        .font(.title)
+
+      Text(
+        "Switch the app language. On the web the page reloads with the new language."
+      )
+      .foregroundColor(.secondary)
+
+      LocalePicker()
+    }
+    .padding()
+    #endif
   }
 }
 

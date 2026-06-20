@@ -48,8 +48,13 @@ enum DOMLocaleSeeding {
   /// `DOMFiberRenderer.defaultEnvironment` so the two renderer paths share one locale
   /// seeding implementation (closes AR1-R4 drift risk).
   static func seed(into environment: inout EnvironmentValues) {
-    environment.locale = recoveredLocale()
+    let locale = recoveredLocale()
+    environment.locale = locale
     environment._localeAction = .dom
+    // Reflect the active locale on `<html lang>` on every load. `_LocaleAction.dom` sets this
+    // before reloading, but the served `index.html` resets it, so re-apply here so the document
+    // language stays correct after the reload (accessibility / SEO).
+    JSObject.global.document.object?.documentElement.object?.lang = .string(locale.identifier)
   }
 }
 #endif
