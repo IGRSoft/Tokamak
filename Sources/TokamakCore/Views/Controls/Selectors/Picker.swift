@@ -122,20 +122,21 @@ public struct Picker<Label: View, SelectionValue: Hashable, Content: View>: View
       return forEach
     }()
 
-    // An option at positional `index` is the selected one when the index (cast to the
-    // selection type) equals the current selection — the common index-based case. For
-    // non-Int selection types the cast yields `nil`, so nothing is force-marked (no change
-    // from prior behavior).
     let selectedValue = selection.wrappedValue
-    func isOption(_ index: Int) -> Bool { (index as? SelectionValue) == selectedValue }
 
     return _PickerContainer(selection: selection, label: label, elements: elements) {
       if let forEach = bareForEach {
         let nestedChildren = forEach.children
         ForEach(0..<nestedChildren.count) { nestedIndex in
+          let element = forEach.element(at: nestedIndex)
           _PickerElement(
-            valueIndex: nestedIndex,
-            isSelected: isOption(nestedIndex),
+            // Use the actual element value (not its position) as the <option> value attribute
+            // so the DOM change handler maps the selection back to the correct binding value.
+            // Falls back to nestedIndex for non-Int SelectionValue (change handler ignores it).
+            valueIndex: element as? Int ?? nestedIndex,
+            // Compare the actual data element against the current selection so the correct
+            // <option> is pre-selected regardless of whether the data is index-based.
+            isSelected: (element as? SelectionValue) == selectedValue,
             content: nestedChildren[nestedIndex]
           )
         }
@@ -150,9 +151,10 @@ public struct Picker<Label: View, SelectionValue: Hashable, Content: View>: View
             let nestedChildren = forEach.children
 
             ForEach(0..<nestedChildren.count) { nestedIndex in
+              let element = forEach.element(at: nestedIndex)
               _PickerElement(
-                valueIndex: nestedIndex,
-                isSelected: isOption(nestedIndex),
+                valueIndex: element as? Int ?? nestedIndex,
+                isSelected: (element as? SelectionValue) == selectedValue,
                 content: nestedChildren[nestedIndex]
               )
             }
