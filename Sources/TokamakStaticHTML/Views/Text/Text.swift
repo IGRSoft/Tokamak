@@ -142,12 +142,19 @@ extension Text: AnyHTML {
     switch proxy.storage {
     case let .verbatim(text):
       innerHTML = proxy.environment.domTextSanitizer(text)
+    case .localized:
+      // Resolve the key against the environment locale before sanitizing.
+      // `proxy.rawText` is locale-resolved (see `_TextProxy.rawText`).
+      innerHTML = proxy.environment.domTextSanitizer(proxy.rawText)
     case let .segmentedText(segments):
       innerHTML = segments
         .reduce(into: "") {
           $0.append(
             TextSpan(
-              content: proxy.environment.domTextSanitizer($1.storage.rawText),
+              // Resolve each segment against the environment so nested localized leaves
+              // are localized too (not just emitted as their raw key).
+              content: proxy.environment
+                .domTextSanitizer($1.storage.rawText(in: proxy.environment)),
               attributes: Self.attributes(
                 from: $1.modifiers,
                 environment: proxy.environment

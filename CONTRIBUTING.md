@@ -45,6 +45,28 @@ are absent. Commit the regenerated `screenshots/<platform>/*.png` and `screensho
 and keep `docs/progress.md` flags and `screenshots/README.md` counts in sync with the catalog. See
 [screenshots/README.md](screenshots/README.md) for prerequisites.
 
+### Editing Localizations
+
+Tokamak demo localizations are sourced from a single Apple String Catalog, `Sources/TokamakDemo/Resources/Localizable.xcstrings`. To edit or add demo strings:
+
+1. **Edit the catalog:** Open `Localizable.xcstrings` in Xcode and add or change string entries. The String Catalog UI lets you manage translations side-by-side (English and Ukrainian currently supported).
+
+2. **Run the codegen:** After editing, run `Scripts/gen-localizations.sh` to regenerate the in-memory `LocalizationCatalog` registration:
+   ```sh
+   Scripts/gen-localizations.sh
+   ```
+   This produces `Sources/TokamakDemo/Localization/Localizations.generated.swift` — never edit this file by hand.
+
+3. **Verify freshness:** To check that the generated file matches the catalog (e.g., in CI), run:
+   ```sh
+   Scripts/gen-localizations.sh --check
+   ```
+   Exits 0 if fresh; exits 1 and shows a diff if the catalog has drifted.
+
+**Important: Key naming constraint —** the String Catalog is processed by macOS SwiftPM via `xcstringstool generate-symbols`, which requires keys to be valid Swift identifiers. **Do not use pure-symbol or emoji keys** (e.g. `+`, `−`, `→`, `▾`, `⚡️`, `❤️`, `⭐️`, or case-colliding pairs like `Label` and `label`). For such strings, use `Text(verbatim: "...")` directly in the view code instead of a catalog entry — the three-tier localization fallback will return the raw string, which is the correct fallback behavior.
+
+See `Sources/TokamakDemo/Localization/LocalizedText+Bundle.swift` for the native SwiftUI bundle-resolution helper (`demoLocalized(_:)`), which is used by demo views that render on macOS/iOS.
+
 ### Testing
 
 Tokamak uses [SnapshotTesting](https://github.com/pointfreeco/swift-snapshot-testing) library to

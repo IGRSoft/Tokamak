@@ -258,6 +258,12 @@
     "section" : "Misc"
   },
   {
+    "file" : "Localization.png",
+    "id" : "Misc\/Localization",
+    "name" : "Localization",
+    "section" : "Misc"
+  },
+  {
     "file" : "EditButton.png",
     "id" : "Buttons\/EditButton",
     "name" : "EditButton",

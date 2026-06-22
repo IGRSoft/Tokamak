@@ -2,7 +2,7 @@
 
 ## Project Milestones
 
-- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (51 entries) to PNG galleries on macOS (40), web (40), iOS (40), and wasm (51 — all entries, incl. the 11 window/scroll-context demos that native/web cannot rasterize). Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. iOS gallery fixed in [#30](https://github.com/IGRSoft/Tokamak/issues/30) (NativeDemo Xcode project updated to include all 14 missing demo files added since #28; verified: 39 PNGs, `[verify] OK` — no blanks, no nosign placeholders, no unexpected duplicates). Extended to 51 entries (ImageDemo + DynamicListDemo); iOS updated to 40 PNGs.
+- ✅ **Multi-platform screenshot harness** — Renders the shared `TokamakDemo` catalog (52 entries as of string-catalog localization) to PNG galleries on macOS, web, iOS, and wasm. Single source of truth: `Sources/TokamakDemo/DemoCatalog.swift`. See `Scripts/screenshots/generate.sh` and `screenshots/README.md`. Galleries: macOS 41, web 41, iOS 41 (must-pass), wasm 51 and gtk 26 (best-effort). The `Misc/Localization` demo (LocalePicker switcher; en/uk catalogs) is captured pinned to `uk`, so its gallery image renders Ukrainian on mac/web/iOS; wasm/gtk best-effort.
 
 ## Views and Controls
 
@@ -473,6 +473,31 @@ decomposition into already-supported primitives (Stack/List/ScrollView/Divider).
 | Preferences | ![Preferences (mac)](../screenshots/mac/Preferences.png) | ![Preferences (web)](../screenshots/web/Preferences.png) | ![Preferences (ios)](../screenshots/ios/Preferences.png) | ![Preferences (wasm)](../screenshots/wasm/Preferences.png) |
 | AppStorage | ![AppStorage (mac)](../screenshots/mac/AppStorage.png) | ![AppStorage (web)](../screenshots/web/AppStorage.png) | ![AppStorage (ios)](../screenshots/ios/AppStorage.png) | ![AppStorage (wasm)](../screenshots/wasm/AppStorage.png) |
 | Redaction | ![Redaction (mac)](../screenshots/mac/Redaction.png) | ![Redaction (web)](../screenshots/web/Redaction.png) | ![Redaction (ios)](../screenshots/ios/Redaction.png) | ![Redaction (wasm)](../screenshots/wasm/Redaction.png) |
+
+### Localization
+
+| Status | Demo | DOM | SSR | wasm | GTK4 | Notes |
+| :-: | --- | :-: | :-: | :-: | :-: | --- |
+| 🚧 | Localization | ✅ | ✅ | ✅ | ◑ | **WIP** — single `.xcstrings` source + build-time codegen, runtime `LocalePicker` switcher (DOM persists to `localStorage` + reload), en/uk catalogs. Open items in notes below. |
+
+**Notes on Localization (🚧 work in progress):**
+- 🚧 **Status:** the demo localizes and the web `LocalePicker` switches en↔uk end-to-end (verified live on the wasm/DOM build), but the localization *logic* is not yet feature-complete — see the open items at the end.
+- ✅ **Single source of truth:** `Sources/TokamakDemo/Resources/Localizable.xcstrings` is the authoritative store of demo localizations (en + uk). Hand-maintained table file retired. `Scripts/gen-localizations.sh` parses `.xcstrings` → generates `Localizations.generated.swift` (in-memory `LocalizationCatalog` registration for the Tokamak renderers). Native SwiftUI also consumes the same `.xcstrings` via SwiftPM `defaultLocalization: "en"` + `.process` resource.
+- ✅ **Build-time codegen:** `gen-localizations.sh` emits a deterministic, idempotent `Localizations.generated.swift` file (181 en/uk key pairs, after removing 8 symbol-hostile identity keys). Run `gen-localizations.sh --check` to verify freshness; integrated into the `Scripts/screenshots/generate.sh` pre-step.
+- ✅ **Web `LocalePicker` switching:** selecting a language updates the binding → `_LocaleAction.dom` persists `localStorage["tokamak.locale"]`, sets `<html lang>`, and reloads; the `<select>` reflects the active locale and switch-back works. Required fixing a framework `Picker` DOM-binding bug (bare-`ForEach` options now carry index values; the selected `<option>` is marked).
+- ✅ **macOS/iOS switcher:** `LocalizationDemo`'s native picker re-renders strings via `_demoUILocalized` (the generated tables) keyed on the chosen locale (no reload — live SwiftUI re-render).
+- ✅ **Localized screenshots:** the `Misc/Localization` demo capture is pinned to `\.locale = uk`, so the regenerated mac/web/ios gallery shows Ukrainian; all other demo entries stay English.
+- 🚧 **Open items / known gaps:**
+    - **Web Picker (general):** only **Int-selection** `Picker`s round-trip their binding on the DOM `<select>` change handler; non-Int (tag-based) `Picker`s still don't update on the web — `LocalePicker` uses an Int index as a workaround. A general `selectedIndex → tag` mapping is the proper framework fix.
+    - **Native runtime resolution:** arbitrary library `Text(LocalizedStringKey)` does not resolve from `Bundle.module` under `ImageRenderer`; on Apple the demo resolves via `_demoUILocalized` (generated tables) rather than a general framework mechanism.
+    - **GTK:** no `TOKAMAK_LOCALE` env hook — the GTK Localization capture defaults to en.
+    - **`.xcstrings` keys:** symbol-hostile keys (`+ − → ▾`, emoji) cannot appear (8 dropped) — use `Text(verbatim:)`; see `CONTRIBUTING.md` "Editing Localizations".
+
+**Gallery** — cross-platform renders ( — = not captured on that host; see [why](../screenshots/README.md) ):
+
+| Demo | mac | web | ios | wasm |
+| --- | :-: | :-: | :-: | :-: |
+| Localization | ✅ uk | ✅ uk | ✅ uk | ◑ en (best-effort) |
 
 ## View Modifiers
 

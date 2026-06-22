@@ -65,6 +65,10 @@ public struct _PickerContainer<
 public struct _PickerElement: _PrimitiveView {
   /// The index of the selectable value this element represents, if any.
   public let valueIndex: Int?
+  /// Whether this element is the picker's currently-selected value. Renderers use this to mark
+  /// the corresponding `<option selected>` so the control reflects the binding (and so a
+  /// subsequent change to a *different* option fires a `change` event).
+  public let isSelected: Bool
   /// The content view of the picker option.
   public let content: AnyView
 
@@ -105,21 +109,58 @@ public struct Picker<Label: View, SelectionValue: Hashable, Content: View>: View
   public var body: some View {
     let children = self.children
 
-    return _PickerContainer(selection: selection, label: label, elements: elements) {
-      // Need to implement a special behavior here. If one of the children is `ForEach`
-      // and its `Data.Element` type is the same as `SelectionValue` type, then we can
-      // update the binding.
-      ForEach(0..<children.count) { index in
-        if let forEach = mapAnyView(children[index], transform: { (v: ForEachProtocol) in v }),
-           forEach.elementType == SelectionValue.self
-        {
-          let nestedChildren = forEach.children
+    // When the picker's content is *itself* a `ForEach` over `SelectionValue` (the common
+    // `Picker { ForEach(data) { … } }` shape), `self.children` flattens it through `GroupView`
+    // into the individual options, so the per-child recognition below never sees the `ForEach`
+    // and every option ends up with `valueIndex == nil` — i.e. no `value` attribute, so the
+    // renderer's `<select>` change handler can't map the selection back to the binding. Detect
+    // that bare-`ForEach` case directly off `content` (the same cast `elements` uses) and emit
+    // index-tagged options so the selection round-trips.
+    let bareForEach: ForEachProtocol? = {
+      guard let forEach = content as? ForEachProtocol,
+            forEach.elementType == SelectionValue.self else { return nil }
+      return forEach
+    }()
 
-          ForEach(0..<nestedChildren.count) { nestedIndex in
-            _PickerElement(valueIndex: nestedIndex, content: nestedChildren[nestedIndex])
+    let selectedValue = selection.wrappedValue
+
+    return _PickerContainer(selection: selection, label: label, elements: elements) {
+      if let forEach = bareForEach {
+        let nestedChildren = forEach.children
+        ForEach(0..<nestedChildren.count) { nestedIndex in
+          let element = forEach.element(at: nestedIndex)
+          _PickerElement(
+            // Use the actual element value (not its position) as the <option> value attribute
+            // so the DOM change handler maps the selection back to the correct binding value.
+            // Falls back to nestedIndex for non-Int SelectionValue (change handler ignores it).
+            valueIndex: element as? Int ?? nestedIndex,
+            // Compare the actual data element against the current selection so the correct
+            // <option> is pre-selected regardless of whether the data is index-based.
+            isSelected: (element as? SelectionValue) == selectedValue,
+            content: nestedChildren[nestedIndex]
+          )
+        }
+      } else {
+        // Need to implement a special behavior here. If one of the children is `ForEach`
+        // and its `Data.Element` type is the same as `SelectionValue` type, then we can
+        // update the binding.
+        ForEach(0..<children.count) { index in
+          if let forEach = mapAnyView(children[index], transform: { (v: ForEachProtocol) in v }),
+             forEach.elementType == SelectionValue.self
+          {
+            let nestedChildren = forEach.children
+
+            ForEach(0..<nestedChildren.count) { nestedIndex in
+              let element = forEach.element(at: nestedIndex)
+              _PickerElement(
+                valueIndex: element as? Int ?? nestedIndex,
+                isSelected: (element as? SelectionValue) == selectedValue,
+                content: nestedChildren[nestedIndex]
+              )
+            }
+          } else {
+            _PickerElement(valueIndex: nil, isSelected: false, content: children[index])
           }
-        } else {
-          _PickerElement(valueIndex: nil, content: children[index])
         }
       }
     }

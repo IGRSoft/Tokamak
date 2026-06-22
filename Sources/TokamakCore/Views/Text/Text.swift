@@ -58,6 +58,8 @@ public struct Text: _PrimitiveView, Equatable {
     case verbatim(String)
     /// Text composed of multiple segments, each with its own storage and modifiers.
     case segmentedText([(storage: _Storage, modifiers: [_Modifier])])
+    /// Text stored as a localization key, resolved against the environment locale at render time.
+    case localized(LocalizedStringKey)
 
     /// Returns a Boolean value indicating whether two storage values are equal.
     public static func == (lhs: Text._Storage, rhs: Text._Storage) -> Bool {
@@ -65,6 +67,9 @@ public struct Text: _PrimitiveView, Equatable {
       case let .verbatim(lhsVerbatim):
         guard case let .verbatim(rhsVerbatim) = rhs else { return false }
         return lhsVerbatim == rhsVerbatim
+      case let .localized(lhsKey):
+        guard case let .localized(rhsKey) = rhs else { return false }
+        return lhsKey == rhsKey
       case let .segmentedText(lhsSegments):
         guard case let .segmentedText(rhsSegments) = rhs,
               lhsSegments.count == rhsSegments.count else { return false }
@@ -117,13 +122,33 @@ public struct Text: _PrimitiveView, Equatable {
   }
 
   /// Creates a text view that displays the contents of a string.
+  ///
+  /// Marked `@_disfavoredOverload` so a bare string *literal* (e.g. `Text("a.b.c")`) binds to the
+  /// localized ``init(_:)-(LocalizedStringKey)`` initializer instead, matching SwiftUI. A
+  /// `String`-typed variable still resolves here and is rendered verbatim.
+  @_disfavoredOverload
   public init<S>(_ content: S) where S: StringProtocol {
     self.init(storage: .verbatim(String(content)))
+  }
+
+  /// Creates a text view that displays localized content identified by a key.
+  ///
+  /// The key is resolved against the environment ``EnvironmentValues/locale`` through
+  /// ``LocalizationCatalog`` at render time. A bare string literal binds here:
+  ///
+  ///     Text("greeting.hello")   // localized
+  ///     Text(verbatim: "raw")    // not localized
+  public init(_ key: LocalizedStringKey) {
+    self.init(storage: .localized(key))
   }
 }
 
 public extension Text._Storage {
   /// The concatenated plain-text content of this storage, ignoring any modifiers.
+  ///
+  /// This is the legacy, UNLOCALIZED accessor: a `.localized` case returns its raw key.
+  /// Renderers should prefer ``rawText(in:)`` (or `_TextProxy.rawText`, which resolves the
+  /// environment locale) to obtain localized output.
   var rawText: String {
     switch self {
     case let .segmentedText(segments):
@@ -132,6 +157,30 @@ public extension Text._Storage {
         .reduce("", +)
     case let .verbatim(text):
       return text
+    case let .localized(key):
+      return key.key
+    }
+  }
+
+  /// The concatenated plain-text content of this storage, resolved against `environment`.
+  ///
+  /// A `.localized` case is resolved through ``LocalizationCatalog`` using the environment
+  /// locale (three-tier fallback). `.verbatim` is returned as-is; `.segmentedText` recurses
+  /// with the same environment so nested localized leaves resolve too.
+  func rawText(in environment: EnvironmentValues) -> String {
+    switch self {
+    case let .verbatim(text):
+      return text
+    case let .localized(key):
+      return LocalizationCatalog.shared.resolve(
+        key: key.key,
+        table: key.table,
+        locale: environment.locale
+      )
+    case let .segmentedText(segments):
+      return segments
+        .map { $0.0.rawText(in: environment) }
+        .reduce("", +)
     }
   }
 }
@@ -163,9 +212,13 @@ public struct _TextProxy {
 
   /// The underlying storage of the proxied text.
   public var storage: Text._Storage { subject.storage }
-  /// The concatenated plain-text content of the proxied text.
+  /// The concatenated plain-text content of the proxied text, resolved against the proxy's
+  /// environment locale.
+  ///
+  /// Localized storage is resolved through ``LocalizationCatalog`` here, so every renderer that
+  /// reads `rawText` (StaticHTML, DOM, GTK) gets localized output with no per-renderer logic.
   public var rawText: String {
-    subject.storage.rawText
+    subject.storage.rawText(in: subject.environment)
   }
 
   /// The resolved modifiers for the proxied text, including environment font and color.

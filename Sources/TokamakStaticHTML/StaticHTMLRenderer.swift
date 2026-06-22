@@ -30,6 +30,11 @@ extension EnvironmentValues {
     // (mirrors `TokamakDOM.EnvironmentValues.defaultEnvironment`).
     environment[_ToggleStyleKey.self] = _AnyToggleStyle(StaticHTMLToggleStyle())
 
+    // SSR is deterministic: default to the development language. A static demo entry point can
+    // override the active locale via `rootEnvironment`. No reload — SSR re-render is host-driven.
+    environment.locale = Locale(identifier: "en")
+    environment._localeAction = _LocaleAction { _ in }
+
     return environment
   }
 }

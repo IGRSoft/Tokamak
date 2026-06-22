@@ -38,5 +38,6 @@ struct TokamakDemoApp: App {
 // If @main was supported for executable Swift Packages,
 // this would match SwiftUI 100%
 if #available(OSX 10.16, iOS 14.0, *) {
+  registerDemoLocalizations()
   TokamakDemoApp.main()
 }

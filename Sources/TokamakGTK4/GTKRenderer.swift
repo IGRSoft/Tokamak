@@ -17,6 +17,7 @@
 
 import CGTK4
 import Dispatch
+import Foundation
 @_spi(TokamakCore) import TokamakCore
 
 extension EnvironmentValues {
@@ -26,6 +27,11 @@ extension EnvironmentValues {
     environment[_ColorSchemeKey.self] = .light // subscript takes the EnvironmentKey metatype (matches DOM/StaticHTML)
     // environment._defaultAppStorage = LocalStorage.standard
     // _DefaultSceneStorageProvider.default = SessionStorage.standard
+
+    // Native host: seed the system locale. The GTK locale action is a no-op for this run
+    // (a full reconciler-driven re-render on locale change is best-effort, out of scope).
+    environment.locale = Locale.current
+    environment._localeAction = _LocaleAction { _ in }
 
     return environment
   }

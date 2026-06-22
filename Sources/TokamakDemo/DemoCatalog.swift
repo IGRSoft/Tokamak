@@ -258,6 +258,8 @@ private func buildDemoCatalog() -> [DemoEntry] {
   if #available(OSX 11.0, iOS 14.0, *) {
     c.append(DemoEntry(section: "Misc", name: "Redaction", view: RedactionDemo()))
   } // else: was NavItem(unavailable:) — omitted from catalog.
+  c.append(DemoEntry(section: "Misc", name: "Localization", view: LocalizationDemo(),
+                     usesStaticControlFallback: true))
 
   // MARK: TokamakDOM  (WASI-only — compiles out everywhere else)
 
@@ -502,7 +504,7 @@ public func demoCaptureWrapped(_ entry: DemoEntry, size: CGSize) -> AnyView {
   let content: AnyView = entry.usesStaticControlFallback
     ? AnyView(staticControlFallbackView(for: entry))
     : entry.view
-  return AnyView(
+  var wrapped = AnyView(
     demoRootEnvironment(content)
       .frame(maxWidth: size.width, alignment: .top)
       // DV2: signal capture mode to the whole subtree so demos can swap an
@@ -510,6 +512,14 @@ public func demoCaptureWrapped(_ entry: DemoEntry, size: CGSize) -> AnyView {
       // mock. The live app never goes through this wrapper, so it is unaffected.
       .environment(\.demoCaptureMode, true)
   )
+  // S6 uk-pin: the Localization demo is captured in Ukrainian to showcase l10n;
+  // the rest of the gallery stays at the default locale (en). This is a
+  // capture-path-only concern — the live app is never routed through this wrapper,
+  // so the on-screen picker behavior is unaffected.
+  if entry.id == "Misc/Localization" {
+    wrapped = AnyView(wrapped.environment(\.locale, Locale(identifier: "uk")))
+  }
+  return wrapped
 }
 
 // MARK: - Group-B T11: capture-path-only control fallbacks
@@ -568,6 +578,8 @@ func staticControlFallbackView(for entry: DemoEntry) -> some View {
     FallbackHSplitViewDemo()
   case "Architectural/VSplitView":
     FallbackVSplitViewDemo()
+  case "Misc/Localization":
+    FallbackLocalizationDemo()
   default:
     EmptyView()
   }
@@ -1004,6 +1016,52 @@ struct FallbackVSplitViewDemo: View {
     }
     .frame(maxWidth: .infinity)
     .overlay(Rectangle().stroke(Color.gray.opacity(0.4)))
+    .padding()
+  }
+}
+
+/// Mirrors `LocalizationDemo`: heading, body text, and a static language-picker
+/// affordance — the pure-SwiftUI stand-in used by the screenshot harness because
+/// the real Picker/LocalePicker lowers to an AppKit NSPopUpButton offscreen.
+///
+/// Translatable strings resolve via `_demoUILocalized`, which reads the generated
+/// `_GeneratedDemoLocalizations` tables (derived from `Localizable.xcstrings`) keyed on the
+/// environment locale — no TokamakCore or `Bundle.module` dependency, so it renders Ukrainian
+/// under `ImageRenderer` when the capture pins `\.locale` to `uk`, and compiles in the NativeDemo
+/// Xcode project. Identity strings (`"en"` and `"▾"`) remain verbatim.
+struct FallbackLocalizationDemo: View {
+  @Environment(\.locale) private var locale
+
+  var body: some View {
+    // Resolve via the generated tables (single source: Localizable.xcstrings) using the
+    // environment locale. `_demoUILocalized` depends on neither TokamakCore nor `Bundle`,
+    // so it works under SwiftUI `ImageRenderer` (mac/web) AND the NativeDemo iOS Xcode
+    // project. The capture pins `\.locale = uk` for this demo, so the gallery renders Ukrainian.
+    let titleText = _demoUILocalized("Localization", locale: locale)
+    let bodyText = _demoUILocalized(
+      "Switch the app language. On the web the page reloads with the new language.",
+      locale: locale
+    )
+    let langLabel = _demoUILocalized("Language", locale: locale)
+    VStack(alignment: .leading, spacing: 16) {
+      Text(verbatim: titleText)
+        .font(.title)
+      Text(verbatim: bodyText)
+        .foregroundColor(.secondary)
+      // Static stand-in for the Picker / LocalePicker: label + chevron in a bordered pill.
+      HStack(spacing: 6) {
+        Text(verbatim: langLabel)
+        Spacer()
+        HStack(spacing: 6) {
+          Text(verbatim: "en")
+          Text(verbatim: "▾")
+            .foregroundColor(.secondary)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(RoundedRectangle(cornerRadius: 6).stroke(Color.gray))
+      }
+    }
     .padding()
   }
 }

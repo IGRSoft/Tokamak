@@ -18,6 +18,23 @@ set -uo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
+# S6 codegen freshness gate: ensure Localizations.generated.swift matches the .xcstrings
+# source before generating any screenshots. A stale generated file would cause the
+# Tokamak renderers (wasm/gtk/StaticHTML) to use outdated translations. Exit non-zero
+# to fail fast and clearly rather than producing a gallery with wrong strings.
+echo "== gen-localizations freshness check =="
+if command -v python3 >/dev/null 2>&1; then
+  if Scripts/gen-localizations.sh --check; then
+    echo "[gen-localizations] CLEAN"
+  else
+    echo "[gen-localizations] STALE — regenerating..."
+    Scripts/gen-localizations.sh
+    echo "[gen-localizations] regenerated; continuing"
+  fi
+else
+  echo "[gen-localizations] python3 absent; skipping freshness check"
+fi
+
 SIM_NAME="${SIM_NAME:-iPhone 17 Pro}"
 # bash 3.2 (macOS default) has no associative arrays; accumulate "plat status count"
 # lines into SUMMARY_ROWS instead.

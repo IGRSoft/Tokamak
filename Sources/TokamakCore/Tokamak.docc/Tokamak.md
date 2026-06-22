@@ -106,6 +106,7 @@ diffs your view tree. It is consumed through a **renderer module** rather than i
 - ``Menu``
 - ``EditButton``
 - ``ControlGroup``
+- ``LocalePicker``
 
 ### Layout
 
@@ -233,6 +234,11 @@ diffs your view tree. It is consumed through a **renderer module** rather than i
 - ``ColorScheme``
 - ``LayoutDirection``
 - ``TextAlignment``
+
+### Localization
+
+- ``LocalizedStringKey``
+- ``LocalizationCatalog``
 
 ### Building a Renderer
 

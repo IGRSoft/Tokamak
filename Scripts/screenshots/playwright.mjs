@@ -39,8 +39,24 @@ let written = 0;
 let skipped = 0;
 for (const entry of catalog) {
   const file = `${OUT}/${sanitize(entry.name)}.png`;
+  // S6 uk-pin: the Localization demo is captured in Ukrainian so the wasm gallery
+  // shows the l10n feature. Set localStorage["tokamak.locale"]="uk" BEFORE loading
+  // the page so DOMLocaleSeeding.recoveredLocale() picks it up on hydration. Clear
+  // the override after capture so all subsequent entries stay at the default locale.
+  const isLocalizationEntry = entry.id === "Misc/Localization";
   try {
     await page.goto(BASE, { waitUntil: "load", timeout: 30000 });
+    if (isLocalizationEntry) {
+      await page.evaluate(() => {
+        localStorage.setItem("tokamak.locale", "uk");
+      });
+      // Reload so the Tokamak Fiber renderer re-seeds \.locale from localStorage="uk".
+      await page.goto(BASE, { waitUntil: "load", timeout: 30000 });
+      await page.waitForFunction(
+        () => document.body && document.body.innerText.trim().length > 20,
+        { timeout: 15000 }
+      );
+    }
     // Wait for wasm hydration. TokamakDOM mounts the app into <body> (not into a
     // dedicated #root node), so gate on the catalog navigation being present rather
     // than on #root child count — the latter never populates and produced a false
@@ -163,6 +179,13 @@ for (const entry of catalog) {
         navigated ? "" : " (landing; no nav delta)"
       }`
     );
+    // Clear the uk locale pin after the Localization capture so subsequent entries
+    // restore the default locale (en) on their next page.goto().
+    if (isLocalizationEntry) {
+      await page.evaluate(() => {
+        localStorage.removeItem("tokamak.locale");
+      });
+    }
   } catch (err) {
     skipped++;
     appendFileSync(

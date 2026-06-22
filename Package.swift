@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
   name: "Tokamak",
+  defaultLocalization: "en",
   platforms: [
     .macOS(.v26),
     .iOS(.v26),
@@ -155,7 +156,10 @@ let package = Package(
           condition: .when(platforms: [.wasi])
         ),
       ],
-      resources: [.copy("logo-header.png")],
+      resources: [
+        .copy("logo-header.png"),
+        .process("Resources/Localizable.xcstrings"),
+      ],
       linkerSettings: [
         // Tokamak's deeply-nested generic view types (e.g. ModifiedContent<ModifiedContent<…>>)
         // make the Swift runtime's recursive type-name demangler blow the default ~1MB wasm

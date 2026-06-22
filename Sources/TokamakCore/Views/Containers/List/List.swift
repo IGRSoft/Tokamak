@@ -151,7 +151,7 @@ public struct List<SelectionValue, Content>: View
         HStack(spacing: 8) {
           if let onDelete = dynamic._onDelete {
             Button(action: { onDelete(IndexSet(integer: index)) }) {
-              Text("Delete")
+              Text(verbatim: "Delete")
             }
           }
           row
@@ -160,13 +160,13 @@ public struct List<SelectionValue, Content>: View
             Button(action: {
               guard index > 0 else { return }
               onMove(IndexSet(integer: index), index - 1)
-            }) { Text("Up") }
+            }) { Text(verbatim: "Up") }
             Button(action: {
               guard index < rows.count - 1 else { return }
               // SwiftUI's move destination is expressed as a pre-removal offset;
               // moving down one slot targets `index + 2`.
               onMove(IndexSet(integer: index), index + 2)
-            }) { Text("Down") }
+            }) { Text(verbatim: "Down") }
           }
         }
       )

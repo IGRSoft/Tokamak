@@ -30,7 +30,7 @@ extension _PickerContainer: _HTMLPrimitive {
   public var renderedBody: AnyView {
     AnyView(HTML("label") {
       label
-      Text(" ")
+      Text(verbatim: " ")
       HTML("select", ["class": "_tokamak-formcontrol"]) {
         content
       }
@@ -42,11 +42,12 @@ extension _PickerElement: _HTMLPrimitive {
   /// The server-rendered markup for a single picker choice: an `<option>` carrying its value index.
   @_spi(TokamakStaticHTML)
   public var renderedBody: AnyView {
-    let attributes: [HTMLAttribute: String]
+    var attributes: [HTMLAttribute: String] = [:]
     if let value = valueIndex {
-      attributes = [.value: "\(value)"]
-    } else {
-      attributes = [:]
+      attributes[.value] = "\(value)"
+    }
+    if isSelected {
+      attributes[HTMLAttribute("selected", isUpdatedAsProperty: true)] = "selected"
     }
 
     return AnyView(HTML("option", attributes) {

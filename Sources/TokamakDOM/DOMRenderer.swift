@@ -16,6 +16,7 @@
 //
 
 #if canImport(JavaScriptKit)
+import Foundation
 import JavaScriptEventLoop
 import JavaScriptKit
 import OpenCombineJS
@@ -36,6 +37,11 @@ extension EnvironmentValues {
     environment.colorScheme = .init(matchMediaDarkScheme: matchMediaDarkScheme)
     environment._defaultAppStorage = LocalStorage.standard
     _DefaultSceneStorageProvider.default = SessionStorage.standard
+
+    // Recover the active locale and install the DOM apply action via the shared helper.
+    // This mirrors the same seeding that DOMFiberRenderer.defaultEnvironment now does,
+    // keeping both renderer paths in sync (AR1-R4 drift fix). See DOMLocaleSeeding.swift.
+    DOMLocaleSeeding.seed(into: &environment)
 
     return environment
   }

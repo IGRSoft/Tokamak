@@ -109,9 +109,10 @@ public struct _FoundationProgressView: View {
     ProgressView(
       value: progress.isIndeterminate ? nil : progress.fractionCompleted
     ) {
-      Text("\(Int(progress.fractionCompleted * 100))% completed")
+      // Runtime-interpolated values: verbatim (not localization keys).
+      Text(verbatim: "\(Int(progress.fractionCompleted * 100))% completed")
     } currentValueLabel: {
-      Text("\(progress.completedUnitCount)/\(progress.totalUnitCount)")
+      Text(verbatim: "\(progress.completedUnitCount)/\(progress.totalUnitCount)")
     }
   }
 }

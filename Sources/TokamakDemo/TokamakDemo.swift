@@ -17,6 +17,10 @@
 
 import TokamakShim
 
+#if !canImport(SwiftUI)
+  import TokamakCore
+#endif
+
 struct TitleViewModifier: ViewModifier {
   let title: String
 
@@ -125,6 +129,9 @@ public struct TokamakDemoView: View {
         Image("logo-header.png", label: Text("Tokamak Demo"))
           .frame(height: 50)
           .padding(.bottom, 20)
+        #if !canImport(SwiftUI)
+          LocalePicker()
+        #endif
         catalogSections
       }
       .frame(minHeight: 300)
