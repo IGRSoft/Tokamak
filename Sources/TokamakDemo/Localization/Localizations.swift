@@ -20,46 +20,18 @@
 #if canImport(SwiftUI)
 import Foundation
 
-/// Registers the demo's English and Ukrainian string tables with the shared
-/// ``LocalizationCatalog`` used by the Tokamak renderers.
+/// No-op on Apple platforms.
 ///
-/// On Apple platforms (where SwiftUI resolves `Text(LocalizedStringKey)` natively
-/// from the bundled `Localizable.xcstrings`) the in-memory catalog is still populated
-/// here so the catalog-resolve fallback path (e.g. FallbackLocalizationDemo) works
-/// on every host including the screenshot generators.
+/// There the demo is a real SwiftUI app: localized `Text` resolves natively from the bundled
+/// `Localizable.xcstrings`, and the demo views (`FallbackLocalizationDemo`, `LocalizationDemo`)
+/// resolve the same generated tables directly via `_demoUILocalized`. The Tokamak in-memory
+/// ``LocalizationCatalog`` is never consulted, so there is nothing to register here.
 ///
-/// Call once at startup, before the first render.
-public func registerDemoLocalizations() {
-  // TokamakCore (and LocalizationCatalog) is only available on macOS in the SPM build.
-  // On iOS the Xcode NativeDemo project links only TokamakShim; LocalizationCatalog is
-  // not reachable there. The #if os(macOS) guard keeps the iOS screenshot build clean.
-  #if os(macOS)
-  LocalizationCatalog.shared.register(languageCode: "en", entries: _GeneratedDemoLocalizations.en)
-  LocalizationCatalog.shared.register(languageCode: "uk", entries: _GeneratedDemoLocalizations.uk)
-  #endif
-}
+/// This must NOT reference `TokamakCore`: the NativeDemo Xcode project compiles this file with
+/// `SCREENSHOT_INLINE` and links only SwiftUI (no TokamakCore), so importing it would fail to
+/// resolve. The empty body keeps the call site uniform across every host.
+public func registerDemoLocalizations() {}
 
-#if os(macOS)
-import TokamakCore
-
-/// Resolves a localized string key against `LocalizationCatalog.shared` for a given locale.
-///
-/// Use this from view files that import `TokamakShim` (which re-exports SwiftUI on macOS) and
-/// cannot also import `TokamakCore` without causing `View`/`Environment` ambiguity. This helper
-/// lives in a file that imports only `TokamakCore` (no TokamakShim), so it is unambiguous here,
-/// and the result (a plain `String`) can be used as `Text(verbatim:)` in the caller.
-///
-/// Only compiled on macOS — the Xcode NativeDemo project (used for the iOS screenshot path) does
-/// not include TokamakCore, so this helper must be excluded from that build target.
-///
-/// - Parameters:
-///   - key: The localized string key.
-///   - locale: The active `Locale` — typically from `@Environment(\.locale)`.
-/// - Returns: The resolved string for `locale`, or the English fallback, or `key` itself.
-public func demoCatalogResolved(_ key: String, locale: Locale) -> String {
-  LocalizationCatalog.shared.resolve(key: key, table: nil, locale: locale)
-}
-#endif
 #else
 import TokamakCore
 

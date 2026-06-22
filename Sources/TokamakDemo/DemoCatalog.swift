@@ -1024,13 +1024,11 @@ struct FallbackVSplitViewDemo: View {
 /// affordance — the pure-SwiftUI stand-in used by the screenshot harness because
 /// the real Picker/LocalePicker lowers to an AppKit NSPopUpButton offscreen.
 ///
-/// On macOS, translatable strings resolve via `demoCatalogResolved` (backed by
-/// `LocalizationCatalog.shared`, populated at screenshot-executor startup via
-/// `registerDemoLocalizations()`) so the uk-pinned capture shows Ukrainian text when
-/// `\.locale` is set to `uk` — regardless of whether `Bundle.module` resolves under
-/// `ImageRenderer`. On iOS, `Bundle.module` is available in the NativeDemo Xcode project
-/// so `demoLocalized` (the bundle-based helper) is used directly.
-/// Identity strings (`"en"` and `"▾"`) remain verbatim.
+/// Translatable strings resolve via `_demoUILocalized`, which reads the generated
+/// `_GeneratedDemoLocalizations` tables (derived from `Localizable.xcstrings`) keyed on the
+/// environment locale — no TokamakCore or `Bundle.module` dependency, so it renders Ukrainian
+/// under `ImageRenderer` when the capture pins `\.locale` to `uk`, and compiles in the NativeDemo
+/// Xcode project. Identity strings (`"en"` and `"▾"`) remain verbatim.
 struct FallbackLocalizationDemo: View {
   @Environment(\.locale) private var locale
 
